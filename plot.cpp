@@ -16,9 +16,7 @@ void plot (){
     if (myfile.is_open()){
         string tp;
         vector <double> w;
-
         int k=0, m, j=0;
-
         while(getline(myfile, tp)){ //read data from file object and put it into string.
             if (isalpha(tp[0]) == 0) {
                 if (k>0) {
@@ -39,12 +37,30 @@ void plot (){
         }
         //non prendo l'ultimo evetno perchè è incompleto
         myfile.close(); //close the file object.
-        cout<< v[v.size()-1][v[v.size()-1].size()-1] <<endl;
+        //cout<< v[v.size()-1][v[v.size()-1].size()-1] <<endl;
 
     }    
     TCanvas *c1 = new TCanvas("c1","A Simple Graph Example");
-    TGraph* gr = new TGraph(t.size(), &t[0], &v[0][0]);
-    gr->Draw("AC*");
+    TGraph* gr = new TGraph(t.size(), &t[0], &v[1][0]);
+    //gr->Draw("AC*");
+    vector <double> charge (v.size());
+    double h;
+    TCanvas *c2 = new TCanvas("c2","histo charge");
+
+    for (int i=0; i<v.size(); i++){
+        h = 0;
+        for (int j=0; j<200; j++){
+            h += v[i][j] / 200;
+        }
+        for (int j=400; j<900; j++){
+            charge[i] += abs(h-v[i][j]);
+        }
+    }
+    TH1F *isto_co_1=  new TH1F("isto_co_1","co_1", 1000, 200000, 600000);
+    for (int i=0; i< charge.size(); i++){
+        isto_co_1->Fill(charge[i]);
+    }
+    isto_co_1->Draw();
 
 }
 
