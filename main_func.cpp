@@ -1,0 +1,35 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <numeric>
+#include <algorithm> 
+#include <iterator>
+#include <list>
+
+#include "tools.h"
+
+
+using namespace std;
+
+void main_func (){
+
+    vector <TH1F*> histos;
+
+    list <string> names ={"co_1", "co_2", "na_1"};
+    for(list<string>::const_iterator i = names.begin(); i != names.end(); ++i){
+        histos=make_histo("data/wave0_" + *i + ".txt", *i);
+        TCanvas *c_charge = new TCanvas(&(*i + "_charge")[0] , &(*i + "_charge")[0]);
+        histos[0]->Draw();
+        TCanvas *c_amp = new TCanvas(&(*i + "_amp")[0], &(*i + "_amp")[0]);
+        histos[1]->Draw();
+
+        c_charge->SaveAs(&("plots/" + *i + "_charge.png")[0]);
+        c_amp->SaveAs(&("plots/" + *i + "_amp.png")[0]);
+    }
+}
+
+// execute with:
+// $ root -l
+// $ .L tools.cpp
+// $ .x main_func.cpp
