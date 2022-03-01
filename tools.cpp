@@ -1,6 +1,20 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <numeric>
+#include <algorithm> 
+#include <iterator>
+#include <list>
+#include <TCanvas.h>
+#include <TH1F.h>
+
 #include "tools.h"
 
-auto make_histo(string path,string name){
+
+using namespace std;
+
+vector <TH1F*> make_histo(string path,string name){
     ifstream myfile;
     myfile.open(path, ios::in | ios::out);  
     vector <float> t(1030);
@@ -41,7 +55,7 @@ auto make_histo(string path,string name){
     vector <float> amp (v.size());
     float h, min;
 
-    for (int i=0; i<v.size(); i++){
+    for (long unsigned int i=0; i<v.size(); i++){
         h = 0;
         for (int j=0; j<200; j++){
             h += v[i][j] / 200;
@@ -52,7 +66,7 @@ auto make_histo(string path,string name){
         min =*min_element(v[i].begin(), v[i].end());
         amp[i]=abs(h-min);
     }
-    for (int i=0; i< charge.size(); i++){
+    for (long unsigned int i=0; i< charge.size(); i++){
         histo_charge->Fill(charge[i]);
         histo_amp->Fill(amp[i]);
     }

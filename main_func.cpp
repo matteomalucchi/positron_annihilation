@@ -6,14 +6,18 @@
 #include <algorithm> 
 #include <iterator>
 #include <list>
+#include <stdio.h>
+
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TROOT.h>
 
 #include "tools.h"
-
 
 using namespace std;
 
 void main_func (){
-
+    gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
 
     list <string> names ={"co_1", "co_2", "na_1"};
@@ -29,7 +33,22 @@ void main_func (){
     }
 }
 
+int main() {
+    main_func();
+}
+
+
+
 // execute with:
 // $ root -l
 // $ .L tools.cpp
 // $ .x main_func.cpp
+
+
+// execute with:
+// $ root -l
+// $.L tools.cpp+
+// $ root -l tools_cpp.so main_func.cpp
+
+// $ g++ -Wall -Wextra -Werror -pedantic -std=c++14 main_func.cpp tools.cpp  `root-config --glibs --cflags` -o someExecutable
+// ./ someExecutable
