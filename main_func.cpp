@@ -52,5 +52,5 @@ int main() {
 // $.L tools.cpp+
 // $ root -l tools_cpp.so main_func.cpp
 
-// $ g++ -Wall -Wextra -Werror -pedantic -std=c++14 main_func.cpp tools.cpp  `root-config --glibs --cflags` -o someExecutable
+// $ g++ -Wall -Wextra -Werror -pedantic -std=c++14 main_func.cpp tools.cpp  `root-config --glibs --cflags` -o main_func
 // ./ someExecutable

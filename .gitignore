@@ -33,3 +33,9 @@
 
 # Directories
 data/
+documentation/
+
+
+#
+*.pcm
+*.pdf
