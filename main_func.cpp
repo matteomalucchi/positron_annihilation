@@ -21,7 +21,7 @@ void main_func (){
     vector <TH1F*> histos;
 
     //list <string> names ={"pmt1_co_100", "pmt2_co_100", "pmt1_na_100", "pmt2_na_100", "pmt1_cs_100", "pmt2_cs_100"};
-    list <string> names ={"cs_2"};
+    list <string> names ={"pmt2_cs_100"};
     for(list<string>::const_iterator i = names.begin(); i != names.end(); ++i){
         histos=make_histo("data/" + *i + ".txt", *i);
         TCanvas *c_charge = new TCanvas(&(*i + "_charge")[0] , &(*i + "_charge")[0]);
