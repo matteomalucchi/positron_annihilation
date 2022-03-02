@@ -20,7 +20,7 @@ vector <TH1F*> make_histo(string path,string name){
     vector <float> t(1030);
     vector <vector<float>> v;
     vector <TH1F*> histos;
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 800, 200000, 400000);
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 800, 0, 200000);
     TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 800, 0, 15000);
     iota(begin(t), end(t), 0);
 
