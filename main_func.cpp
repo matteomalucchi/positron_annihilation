@@ -20,8 +20,21 @@ void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
 
-    //list <string> names ={"pmt1_co_100", "pmt2_co_100", "pmt1_na_100", "pmt2_na_100", "pmt1_cs_100", "pmt2_cs_100"};
-    list <string> names ={"pmt2_cs_100"};
+    list <string> names ={"pmt1_co_100", 
+                        "pmt2_co_100",
+                        "pmt1_na_100", 
+                        "pmt2_na_100", 
+                        "pmt1_cs_100", 
+                        "pmt2_cs_100", 
+                        "pmt1_bkg_100", 
+                        "pmt2_bkg_100", 
+                        "pmt1_null", 
+                        "pmt2_null", 
+                        "wave0_co_1", 
+                        "wave0_co_2", 
+                        "wave0_na_1"};
+                        
+    //list <string> names ={"pmt2_cs_100"};
     for(list<string>::const_iterator i = names.begin(); i != names.end(); ++i){
         histos=make_histo("data/" + *i + ".txt", *i);
         TCanvas *c_charge = new TCanvas(&(*i + "_charge")[0] , &(*i + "_charge")[0]);
