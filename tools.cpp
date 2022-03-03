@@ -73,6 +73,12 @@ vector <TH1F*> make_histo(string path,string name){
     histos.push_back(histo_charge);
     histos.push_back(histo_amp);
 
+    TCanvas *c1 = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
+    TGraph* gr = new TGraph(t.size(), &t[0], &v[1][0]);
+    gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
+    gr->Draw("AP*");
+    c1->SaveAs(&("waveform/" + name + "_wave.png")[0]);
+
     return histos;
 }
 

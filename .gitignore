@@ -39,3 +39,4 @@ documentation/
 #
 *.pcm
 *.pdf
+*.code-workspace
