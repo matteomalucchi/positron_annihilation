@@ -8,6 +8,7 @@
 #include <list>
 #include <TCanvas.h>
 #include <TH1F.h>
+#include <TGraph.h>
 
 #include "tools.h"
 
@@ -70,15 +71,25 @@ vector <TH1F*> make_histo(string path,string name){
         histo_charge->Fill(charge[i]);
         histo_amp->Fill(amp[i]);
     }
+    histo_charge->SetName(&(name + "_charge")[0]);
+    histo_amp->SetName(&(name + "_amp")[0]);
     histos.push_back(histo_charge);
     histos.push_back(histo_amp);
 
-    TCanvas *c1 = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
+    TCanvas *wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
     TGraph* gr = new TGraph(t.size(), &t[0], &v[1][0]);
     gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
     gr->Draw("AP*");
-    c1->SaveAs(&("waveform/" + name + "_wave.png")[0]);
+    wave->SaveAs(&("waveform/" + name + "_wave.png")[0]);
 
+    TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
+    histo_charge->Draw();
+    c_charge->SaveAs(&("plots/" + name + "_charge.png")[0]);
+
+    TCanvas *c_amp = new TCanvas(&(name + "_amp")[0], &(name + "_amp")[0]);
+    histo_amp->Draw();
+    c_amp->SaveAs(&("plots/" + name + "_amp.png")[0]);
+    
     return histos;
 }
 
