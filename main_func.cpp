@@ -13,41 +13,43 @@
 #include <TH1F.h>
 #include <TROOT.h>
 #include <TFile.h>
+#include <TStopwatch.h>
 
 #include "tools.h"
 
 using namespace std;
 
 void main_func (){
-    gROOT->SetBatch(kFALSE);
+    gROOT->SetBatch(kTRUE);
     vector <TH1F*> histos;
-    TH1F* histo_temp;
-    TFile *f= new TFile("histograms.root", "RECREATE");
-    list <string> names ={"pmt1_co_100", 
-                        "pmt2_co_100",
-                        "pmt1_na_100", 
-                        "pmt2_na_100", 
-                        "pmt1_cs_100", 
-                        "pmt2_cs_100", 
-                        "pmt1_bkg_100", 
-                        "pmt2_bkg_100", 
+    TFile *outfile= new TFile("histograms.root", "RECREATE");
+    list <string> names ={"coincidence_pmt1",
+                        "coincidence_pmt2",
+                        "pmt1_NA_e6_100_690",
+                        "pmt2_NA_e6_100_851",
+                        "pmt1_co_100_690", 
+                        "pmt2_co_100_851",
+                        "pmt1_na_100_690", 
+                        "pmt2_na_100_851", 
+                        "pmt1_cs_100_690", 
+                        "pmt2_cs_100_851",
+                        //"pmt1_bkg_100", 
+                        "pmt2_bkg_100_851", 
                         "pmt1_null", 
-                        "pmt2_null", 
-                        /*"wave0_co_1", 
-                        "wave0_co_2",
-                        "wave0_na_1"*/};
+                        "pmt2_null"};
                         
     for(list<string>::const_iterator name = names.begin(); name != names.end(); ++name){
+        TStopwatch time;
+        time.Start();
         cout << "Processing: " << *name << endl; 
         histos=make_histo("data/" + *name + ".txt", *name);
-
-        histo_temp=histos[0];
-        histo_temp->Write();
-        histo_temp=histos[1];
-        histo_temp->Write();
+        histos[0]->Write();
+        histos[1]->Write();
+        time.Stop();
+        time.Print();
     }
-    getchar();
-    f->Close();
+    //getchar();
+    outfile->Close();
 }
 
 int main() {
