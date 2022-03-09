@@ -16,6 +16,6 @@ void fit_lin(){
     gr->Fit("linear");
     linear->Draw("SAME");
     gStyle->SetOptFit(111);
-    c_fit_lin->SaveAs("linear_fit.png");
+    c_fit_lin->SaveAs("images/linear_fit.png");
 }
 

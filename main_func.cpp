@@ -22,9 +22,17 @@ using namespace std;
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms_coincidence.root", "RECREATE");
-    list <string> names ={"coincidence_pmt1_ext",
-                        "coincidence_pmt2_ext"/*,
+    TFile *outfile= new TFile("histograms/histograms_NA_700_run2.root", "RECREATE");
+    list <string> names ={"pmt1_NA_e6_700_or_run2",
+                        "pmt2_NA_e6_700_or_run2"
+                        /*"coincidence_pmt1_ext_run2",
+                        "coincidence_pmt2_ext_run2",
+                        "pmt1_NA_e6_700_or",
+                        "pmt2_NA_e6_700_or"
+                        "coincidence_pmt1_ext",
+                        "coincidence_pmt2_ext",
+                        "coincidence_pmt1"
+                        "coincidence_pmt2"
                         "pmt1_NA_e6_100_690",
                         "pmt2_NA_e6_100_851",
                         "pmt1_co_100_690", 
@@ -33,7 +41,7 @@ void main_func (){
                         "pmt2_na_100_851", 
                         "pmt1_cs_100_690", 
                         "pmt2_cs_100_851",
-                        //"pmt1_bkg_100", 
+                        "pmt1_bkg_100_690", 
                         "pmt2_bkg_100_851", 
                         "pmt1_null", 
                         "pmt2_null"*/};

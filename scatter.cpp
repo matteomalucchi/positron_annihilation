@@ -76,7 +76,7 @@ void scatter(){
     TGraph* gr = new TGraph(charge[0].size(),&charge[0][0],&charge[1][0]);
     gr->SetMarkerStyle(1);
     gr->Draw("AP");
-    c_scatter->SaveAs("scatter_plot_ext.png");
+    c_scatter->SaveAs("images/scatter_plot_ext.png");
 }
 
 

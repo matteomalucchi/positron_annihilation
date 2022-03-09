@@ -53,14 +53,18 @@ vector <TH1F*> make_histo(string path,string name){
     
     vector <float> charge (v.size());
     vector <float> amp (v.size());
-    float h, min, charge_max=FLT_MIN, amp_max=FLT_MIN, charge_min=FLT_MAX, amp_min=FLT_MAX;
-
+    float h, min,min_idx,min_h,  charge_max=FLT_MIN, amp_max=FLT_MIN, charge_min=FLT_MAX, amp_min=FLT_MAX;
+    vector <float> idx_strange;
     for (long unsigned int i=0; i<v.size(); i++){
         h = 0;
-        for (int j=0; j<200; j++){
+        for (int j=0; j<100; j++){
             h += v[i][j] / 200;
+            if (v[i][j]<14600){
+                cout << "valore piccolo: "<< v[i][j] <<endl;
+                idx_strange.push_back(i);
+            }
         }
-        for (int j=400; j<900; j++){
+        for (int j=0; j<1000; j++){
             charge[i] += h-v[i][j];
         }
         min =*min_element(v[i].begin(), v[i].end());
@@ -68,24 +72,24 @@ vector <TH1F*> make_histo(string path,string name){
         charge_max = (charge[i]>charge_max) ? charge[i] : charge_max;
         amp_max = (amp[i]>amp_max) ? amp[i] : amp_max;
         charge_min = (charge[i]<charge_min) ? charge[i] : charge_min;
-        amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;        
+        if (charge[i]<-400000){
+            min_idx=i;
+            min_h=h;
+        }
+        amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, -1000, static_cast<int>(charge_max));
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, static_cast<int>(amp_max));
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, static_cast<int>(charge_min), static_cast<int>(charge_max));
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400,  static_cast<int>(amp_min), static_cast<int>(amp_max));
     for (long unsigned int i=0; i< charge.size(); i++){
-        histo_charge->Fill(charge[i]);
-        histo_amp->Fill(amp[i]);
+        if (find(idx_strange.begin(), idx_strange.end(), i)== idx_strange.end()){
+            histo_charge->Fill(charge[i]);
+            histo_amp->Fill(amp[i]);
+        }
     }
     histo_charge->SetName(&(name + "_charge")[0]);
     histo_amp->SetName(&(name + "_amp")[0]);
     histos.push_back(histo_charge);
     histos.push_back(histo_amp);
-
-    TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
-    TGraph* gr = new TGraph(t.size(), &t[0], &v[1][0]);
-    gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
-    gr->Draw("AP*");
-    c_wave->SaveAs(&("waveform/" + name + "_wave.png")[0]);
 
     TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
     histo_charge->Draw();
@@ -94,7 +98,16 @@ vector <TH1F*> make_histo(string path,string name){
     TCanvas *c_amp = new TCanvas(&(name + "_amp")[0], &(name + "_amp")[0]);
     histo_amp->Draw();
     c_amp->SaveAs(&("plots/" + name + "_amp.png")[0]);
-    
+
+    cout << "charge min "<<charge_min <<endl;
+        cout << "charge min h "<<min_h <<endl;
+
+    TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
+    TGraph* gr = new TGraph(t.size(), &t[0], &v[min_idx][0]);
+    gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
+    gr->Draw("AP*");
+    c_wave->SaveAs(&("waveform/" + name + "_wave.png")[0]);
+
     return histos;
 }
 
