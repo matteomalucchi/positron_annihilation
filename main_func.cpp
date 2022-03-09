@@ -20,11 +20,11 @@
 using namespace std;
 
 void main_func (){
-    gROOT->SetBatch(kTRUE);
+    gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms.root", "RECREATE");
-    list <string> names ={"coincidence_pmt1",
-                        "coincidence_pmt2",
+    TFile *outfile= new TFile("histograms_coincidence.root", "RECREATE");
+    list <string> names ={"coincidence_pmt1_ext",
+                        "coincidence_pmt2_ext"/*,
                         "pmt1_NA_e6_100_690",
                         "pmt2_NA_e6_100_851",
                         "pmt1_co_100_690", 
@@ -36,7 +36,7 @@ void main_func (){
                         //"pmt1_bkg_100", 
                         "pmt2_bkg_100_851", 
                         "pmt1_null", 
-                        "pmt2_null"};
+                        "pmt2_null"*/};
                         
     for(list<string>::const_iterator name = names.begin(); name != names.end(); ++name){
         TStopwatch time;
