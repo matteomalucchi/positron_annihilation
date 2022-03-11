@@ -33,20 +33,20 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
         histo->Draw("SAME");
         gStyle->SetOptFit(111111);
         fit_params.push_back(gaus1->GetParameter(1));
-        fit_params.push_back(gaus1->GetParameter(2));
+        fit_params.push_back(gaus1->GetParError(1));
         fit_params.push_back(gaus2->GetParameter(1));
-        fit_params.push_back(gaus2->GetParameter(2));
+        fit_params.push_back(gaus2->GetParError(1));
         i +=4;
     }
     return fit_params;
 }
-/*
-void fit_lin(vector<vector<float>> fit_params){
-    double x[4]={0.18, 0.66, 1.17, 1.33};
-    double y[4]={0.31, 1.01, 1.75, 1.98};
-    double y_err[4] = {0.07, 0.03, 0.04, 0.04};
 
-    TCanvas *c_fit_lin = new TCanvas("linear fit", "linear fit");
+void fit_lin(string name_pmt, string type, vector<float> fit_params){
+    double x[4]={0.18, 0.66, 1.17, 1.33};
+    double y[4]={fit_params[4], fit_params[6], fit_params[0], fit_params[2]};
+    double y_err[4] = {fit_params[5], fit_params[7], fit_params[1], fit_params[3]};
+
+    TCanvas *c_fit_lin = new TCanvas(&("images/" + name_pmt + type + "_calibration")[0], &("images/" + name_pmt + type + "_calibration")[0]);
     TGraphErrors* gr = new TGraphErrors(4,x,y,nullptr,y_err);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
@@ -57,15 +57,20 @@ void fit_lin(vector<vector<float>> fit_params){
     gr->Fit("linear");
     linear->Draw("SAME");
     gStyle->SetOptFit(111);
-    c_fit_lin->SaveAs("images/linear_fit.png");
+    c_fit_lin->SaveAs(&("images/" + name_pmt + type + "_calibration.png")[0]);
 }
-*/
+
 void calibration(){
+    // ordine del vector:
+    // primo è per charge e secondo è per ampiezza
+    // prima i 4 punti del co e poi i 4 del cs (e poi i 4 del NA)
     map<string, vector<vector<float>>> pmts{
         {"pmt1",{{165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000},
+            {2300, 2350, 2350, 2800, 300, 600, 1150, 1600}}}
+        /*{"pmt2",{{165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000},
             {165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000}}},
-        {"pmt2",{{165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000},
-            {165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000}}}
+        {"pmt3",{{165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000},
+            {165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000}}}*/
     };
     
     TFile *f = new TFile("histograms/histograms_calibration.root");
@@ -75,8 +80,15 @@ void calibration(){
         const auto name_pmt = pmt.first;
         const auto ranges = pmt.second;        
         vector<float> fit_charge=fit_gaus(f, name_pmt, "_charge", ranges[0]);
-        cout << fit_charge[0]<< endl;
-        //fit_lin(fit_params);
+        for (int i=0; i<fit_charge.size(); i++){
+        cout << fit_charge[i]<< endl;            
+        }
+        vector<float> fit_amp=fit_gaus(f, name_pmt, "_amp", ranges[1]);
+        //cout << fit_amp[0]<< endl;
+        fit_lin(name_pmt, "_charge", fit_charge);
+        fit_lin(name_pmt, "_amp", fit_amp);
     }
 
 }
+
+// aggiungi funzione che converte picco NA da digit a ev e propaga errore
