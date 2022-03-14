@@ -19,9 +19,9 @@
 
 using namespace std;
 
-vector <TH1F*> make_histo(string path,string name){
+vector <TH1F*> make_histo(string name){
     ifstream myfile;
-    myfile.open(path, ios::in | ios::out);  
+    myfile.open("data/" + name + "txt", ios::in | ios::out);  
     vector <float> t(1030);
     vector <vector<float>> v;
     vector <TH1F*> histos;
@@ -82,8 +82,8 @@ vector <TH1F*> make_histo(string path,string name){
         }
         amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, static_cast<int>(charge_max));
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, static_cast<int>(amp_max));
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, static_cast<int>(charge_min), static_cast<int>(charge_max));
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, static_cast<int>(amp_min), static_cast<int>(amp_max));
     for (long unsigned int i=0; i< charge.size(); i++){
         if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
             histo_charge->Fill(charge[i]);
@@ -108,7 +108,8 @@ vector <TH1F*> make_histo(string path,string name){
     TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
     TGraph* gr = new TGraph(t.size(), &t[0], &v[min_idx][0]);
     gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
-    gr->Draw("AP*");
+    gr->SetMarkerStyle(21);
+    gr->Draw("AP");
     c_wave->SaveAs(&("waveform/" + name + "_wave.png")[0]);
 
     return histos;
@@ -117,8 +118,8 @@ vector <TH1F*> make_histo(string path,string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_calibration.root", "RECREATE");
-    list <string> names ={/*"pmt1_NA_e6_100_or_run1",
+    TFile *outfile= new TFile("histograms/histograms.root", "RECREATE");
+    list <string> names ={"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
                         "pmt2_NA_e6_700_or_run2",
@@ -127,29 +128,31 @@ void main_func (){
                         "pmt1_NA_e6_ext_run1",
                         "pmt2_NA_e6_ext_run1",
                         "pmt1_NA_e6_ext_run2",
-                        "pmt2_NA_e6_ext_run2",*/
+                        "pmt2_NA_e6_ext_run2",
+                        "pmt1_NA_e6_ext_run3",
+                        "pmt3_NA_e6_ext_run3",
                         "pmt1_NA_e6_100",
                         "pmt2_NA_e6_100",
                         "pmt3_NA_e6_100",
                         "pmt1_co_100", 
                         "pmt2_co_100",
                         "pmt3_co_100",
-                        //"pmt1_na_100", 
-                        //"pmt2_na_100", 
+                        "pmt1_na_100", 
+                        "pmt2_na_100", 
                         "pmt1_cs_100", 
                         "pmt2_cs_100",
-                        "pmt3_cs_100",/*
+                        "pmt3_cs_100",
                         "pmt1_bkg_100", 
                         "pmt2_bkg_100", 
                         "pmt1_null", 
-                        "pmt2_null"*/};
+                        "pmt2_null"};
     TStopwatch time_tot;
     time_tot.Start();                
     for(list<string>::const_iterator name = names.begin(); name != names.end(); ++name){
         TStopwatch time;
         time.Start();
         cout << "Processing: " << *name << endl; 
-        histos=make_histo("data/" + *name + ".txt", *name);
+        histos=make_histo(*name);
         histos[0]->Write();
         histos[1]->Write();
         time.Stop();

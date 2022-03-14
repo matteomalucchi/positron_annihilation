@@ -33,15 +33,19 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
         gaus2->SetParameters(1500, abs(range[i+2]+range[i+3])/2, abs(range[i+3]-range[i+2]));
         histo->Fit("gaus1","R", "SAME");
         gaus1->Draw("SAME");
+        gStyle->SetOptFit(1111);
         histo->Fit("gaus2","R", "SAME"); 
         gaus2->Draw("SAME");
         histo->Draw("SAME");
-        gStyle->SetOptFit(111111);
+        gStyle->SetOptFit(1111);
+
         gaus_params.push_back(gaus1->GetParameter(1));
-        gaus_params.push_back(gaus1->GetParError(1));
+        gaus_params.push_back(gaus1->GetParError(1)*10);
         gaus_params.push_back(gaus2->GetParameter(1));
-        gaus_params.push_back(gaus2->GetParError(1));
+        gaus_params.push_back(gaus2->GetParError(1)*10);
         i +=4;
+        c->SaveAs(&("calibration/" + *sample + type + "_calibration.png")[0]);
+
     }
     return gaus_params;
 }
@@ -55,7 +59,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
     cout << "__________________________ Linear fit: " << name_pmt << type << " __________________________"<<endl; 
     cout << endl;
 
-    TCanvas *c_fit_lin = new TCanvas(&("images/" + name_pmt + type + "_calibration")[0], &("images/" + name_pmt + type + "_calibration")[0]);
+    TCanvas *c_fit_lin = new TCanvas(&(name_pmt + type + "_calibration")[0], &( name_pmt + type + "_calibration")[0]);
     TGraphErrors* gr = new TGraphErrors(4,x,y,nullptr,y_err);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
@@ -66,7 +70,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
     gr->Fit("linear");
     linear->Draw("SAME");
     gStyle->SetOptFit(111);
-    c_fit_lin->SaveAs(&("images/" + name_pmt + type + "_calibration.png")[0]);
+    c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration.png")[0]);
 
     vector<double> cal_factor{linear->GetParameter(1),linear->GetParError(1)};
     return cal_factor;
@@ -87,8 +91,8 @@ auto peak_energy(string name_pmt, string type, vector<double> cal_factor, vector
     energy.insert(energy.end(), x.begin(), x.end());
     energy.insert(energy.end(), y.begin(), y.end());
 
-    string peak1 = "energy peak " + name_pmt + " " + type + " = " + to_string(energy[0]) + "+-" + to_string(energy[1]);
-    string peak2 = "energy peak " + name_pmt + " " + type + " = " + to_string(energy[2]) + "+-" + to_string(energy[3]);
+    string peak1 = "energy peak " + name_pmt + " " + type + " = " + to_string(energy[0]) + "+-" + to_string(energy[1]) + "\n";
+    string peak2 = "energy peak " + name_pmt + " " + type + " = " + to_string(energy[2]) + "+-" + to_string(energy[3])+ "\n";
     vector <string> energy_string;
     energy_string.push_back(peak1);
     energy_string.push_back(peak2);
@@ -111,7 +115,7 @@ void calibration(){
         /*{"pmt3",{{28000,33000,33000,38000,22000, 40000, 90000, 120000},
             {}}}*/
     };
-    
+    ofstream out_file("calibration/peak_energy.txt");
     TFile *f = new TFile("histograms/histograms_calibration.root");
 
     vector <string> energy;
@@ -136,8 +140,10 @@ void calibration(){
     }
     cout << endl;
     for (int i=0; i<energy.size(); i++){
-        cout << energy[i]<< endl;            
+        cout << energy[i];
+        out_file << energy[i];
     }
+
 
 }
 
