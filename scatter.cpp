@@ -59,7 +59,7 @@ tuple<vector<float>,vector<float>, vector<long unsigned int>>  charge_amp(string
         u=0;
         for (int j=0; j<100; j++){
             h += v[i][j] / 100;
-            if (v[i][j]<14600 && u==0){
+            if (v[i][j]<14500 && u==0){
                 //cout << "valore piccolo: "<< i <<endl;
                 idx_strange.push_back(i);
                 u++;
@@ -78,7 +78,7 @@ tuple<vector<float>,vector<float>, vector<long unsigned int>>  charge_amp(string
             vector <float> t(1030);
             iota(begin(t), end(t), 0);
             TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
-            TGraph* gr = new TGraph(t.size(), &t[0], &v[idx_strange[idx_strange.size()-1]][0]);
+            TGraph* gr = new TGraph(t.size(), &t[0], &v[0][0]);
             gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
             gr->SetMarkerStyle(21);
             gr->Draw("AP");
@@ -94,12 +94,12 @@ tuple<vector<float>,vector<float>, vector<long unsigned int>>  charge_amp(string
 
 void scatter(){
     map <string, string> pair_names ={
-        {"pmt1_NA_e6_ext_run1","pmt2_NA_e6_ext_run1"},
-        {"pmt1_NA_e6_ext_run2","pmt2_NA_e6_ext_run2"},
-        {"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
-        {"pmt1_NA_e6_100_or_run1", "pmt2_NA_e6_100_or_run1"},
-        {"pmt1_NA_e6_700_or_run2", "pmt2_NA_e6_700_or_run2"},
-        {"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"}
+        //{"pmt1_NA_e6_ext_run1","pmt2_NA_e6_ext_run1"},
+        {"pmt1_NA_e6_ext_run2","pmt2_NA_e6_ext_run2"}
+        //{"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
+        //{"pmt1_NA_e6_100_or_run1", "pmt2_NA_e6_100_or_run1"},
+        //{"pmt1_NA_e6_700_or_run2", "pmt2_NA_e6_700_or_run2"},
+        //{"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"}
     };
 
     for (const auto &pair_name : pair_names){  
@@ -116,19 +116,19 @@ void scatter(){
         tie(charge_a, amp_a, idx_strange_a) = charge_amp(name_a);
         tie(charge_b, amp_b, idx_strange_b) = charge_amp(name_b); 
         
-        cout <<"tot = " <<charge_a.size() <<endl;
+        cout <<"tot charge= " <<charge_a.size() <<endl;
         int q=0;
         for (long unsigned int i=0; i< charge_a.size(); i++){
-            if ((find(idx_strange_a.begin(), idx_strange_a.end(), i) != idx_strange_a.end()) || (find(idx_strange_b.begin(), idx_strange_b.end(), i) != idx_strange_b.end())){
-            //if(charge_a[i]<-10000 || charge_b[i]<-10000){
-                cout << charge_a[i] << "   " << charge_b[i] <<endl;
+            //if ((find(idx_strange_a.begin(), idx_strange_a.end(), i) == idx_strange_a.end()) || (find(idx_strange_b.begin(), idx_strange_b.end(), i) == idx_strange_b.end())){
+            if(charge_a[i]<-10000 || charge_b[i]<-10000){
+                //cout << charge_a[i] << "   " << charge_b[i] <<endl;
                 charge_a.erase(charge_a.begin()+i);
                 charge_b.erase(charge_b.begin()+i);    
                 q++;            
             }
         }
         cout << "erased = " << q <<endl;
-        cout << charge_a.size() << "   " << charge_b.size() <<endl;
+        cout << "remaining charge =" << charge_a.size() << "   " << charge_b.size() <<endl;
         
 
 
@@ -144,8 +144,8 @@ void scatter(){
 
             } 
         }
-        float picco_a_med=getAverage(picco_a);
-        float picco_b_med=getAverage(picco_b);
+        float picco_a_med=accumulate(picco_a.begin(), picco_a.begin(), 0)/picco_a.size();
+        float picco_b_med=accumulate(picco_b.begin(), picco_b.begin(), 0)/picco_b.size();
         float cov_camp=0;
 
         for(int n=0; n<picco_a.size() ; n++){
@@ -153,8 +153,6 @@ void scatter(){
         }
 
         cout<<cov_camp<<endl;
-
-
 
 
         TCanvas *c_scatter_charge = new TCanvas(&("scatter_" + name + "_charge")[0], &("scatter_" + name + "_charge")[0]);

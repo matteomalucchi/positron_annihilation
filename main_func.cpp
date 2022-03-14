@@ -79,8 +79,8 @@ vector <TH1F*> make_histo(string name){
         charge_min = (charge[i]<charge_min) ? charge[i] : charge_min;
         amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 2600, -1000, static_cast<int>(charge_max));
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 2800, -1000, static_cast<int>(amp_max));
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 2600, static_cast<int>(charge_min), static_cast<int>(charge_max));
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 2800, static_cast<int>(amp_min), static_cast<int>(amp_max));
     for (long unsigned int i=0; i< charge.size(); i++){
         if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
             histo_charge->Fill(charge[i]);
