@@ -74,11 +74,11 @@ tuple<vector<float>,vector<float>, vector<long unsigned int>>  charge_amp(string
         charge.push_back(s);
         amp.push_back(h-min); 
 
-        if (s<0 && a==0){
+        if (a==0){
             vector <float> t(1030);
             iota(begin(t), end(t), 0);
             TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
-            TGraph* gr = new TGraph(t.size(), &t[0], &v[i][0]);
+            TGraph* gr = new TGraph(t.size(), &t[0], &v[idx_strange[idx_strange.size()-1]][0]);
             gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
             gr->SetMarkerStyle(21);
             gr->Draw("AP");
@@ -119,8 +119,8 @@ void scatter(){
         cout <<"tot = " <<charge_a.size() <<endl;
         int q=0;
         for (long unsigned int i=0; i< charge_a.size(); i++){
-            //if ((find(idx_strange_a.begin(), idx_strange_a.end(), i) != idx_strange_a.end()) || (find(idx_strange_b.begin(), idx_strange_b.end(), i) != idx_strange_b.end())){
-            if(charge_a[i]<-10000 || charge_b[i]<-10000){
+            if ((find(idx_strange_a.begin(), idx_strange_a.end(), i) != idx_strange_a.end()) || (find(idx_strange_b.begin(), idx_strange_b.end(), i) != idx_strange_b.end())){
+            //if(charge_a[i]<-10000 || charge_b[i]<-10000){
                 cout << charge_a[i] << "   " << charge_b[i] <<endl;
                 charge_a.erase(charge_a.begin()+i);
                 charge_b.erase(charge_b.begin()+i);    
