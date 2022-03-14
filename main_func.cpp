@@ -21,7 +21,7 @@ using namespace std;
 
 vector <TH1F*> make_histo(string name){
     ifstream myfile;
-    myfile.open("data/" + name + "txt", ios::in | ios::out);  
+    myfile.open("data/" + name + ".txt", ios::in | ios::out);  
     vector <float> t(1030);
     vector <vector<float>> v;
     vector <TH1F*> histos;
@@ -56,16 +56,17 @@ vector <TH1F*> make_histo(string name){
     
     vector <float> charge (v.size());
     vector <float> amp (v.size());
-    float h, min,min_idx,min_h,  charge_max=FLT_MIN, amp_max=FLT_MIN, charge_min=FLT_MAX, amp_min=FLT_MAX;
+    float h, u, min,min_idx,min_h,  charge_max=FLT_MIN, amp_max=FLT_MIN, charge_min=FLT_MAX, amp_min=FLT_MAX;
     vector <float> idx_strange;
     for (long unsigned int i=0; i<v.size(); i++){
         h = 0;
+        u=0;
         for (int j=0; j<100; j++){
             h += v[i][j] / 100;
-            if (v[i][j]<14600){
+            if (v[i][j]<14600&& u==0){
                 //cout << "valore piccolo: "<< v[i][j] <<endl;
                 idx_strange.push_back(i);
-                break;
+                u++;
             }
         }
         for (int j=0; j<1000; j++){
@@ -76,14 +77,10 @@ vector <TH1F*> make_histo(string name){
         charge_max = (charge[i]>charge_max) ? charge[i] : charge_max;
         amp_max = (amp[i]>amp_max) ? amp[i] : amp_max;
         charge_min = (charge[i]<charge_min) ? charge[i] : charge_min;
-        if (charge[i]<-400000){
-            min_idx=i;
-            min_h=h;
-        }
         amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, static_cast<int>(charge_min), static_cast<int>(charge_max));
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, static_cast<int>(amp_min), static_cast<int>(amp_max));
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 2600, -1000, static_cast<int>(charge_max));
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 2800, -1000, static_cast<int>(amp_max));
     for (long unsigned int i=0; i< charge.size(); i++){
         if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
             histo_charge->Fill(charge[i]);
@@ -106,7 +103,7 @@ vector <TH1F*> make_histo(string name){
     cout << "numero di idx_strange  "<<idx_strange.size() <<endl;
 
     TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
-    TGraph* gr = new TGraph(t.size(), &t[0], &v[min_idx][0]);
+    TGraph* gr = new TGraph(t.size(), &t[0], &v[0][0]);
     gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
     gr->SetMarkerStyle(21);
     gr->Draw("AP");
@@ -118,8 +115,8 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms.root", "RECREATE");
-    list <string> names ={"pmt1_NA_e6_100_or_run1",
+    TFile *outfile= new TFile("histograms/histograms_pmt1_NA.root", "RECREATE");
+    list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
                         "pmt2_NA_e6_700_or_run2",
@@ -130,9 +127,9 @@ void main_func (){
                         "pmt1_NA_e6_ext_run2",
                         "pmt2_NA_e6_ext_run2",
                         "pmt1_NA_e6_ext_run3",
-                        "pmt3_NA_e6_ext_run3",
-                        "pmt1_NA_e6_100",
-                        "pmt2_NA_e6_100",
+                        "pmt3_NA_e6_ext_run3",*/
+                        "pmt1_NA_e6_100"
+                        /*"pmt2_NA_e6_100",
                         "pmt3_NA_e6_100",
                         "pmt1_co_100", 
                         "pmt2_co_100",
@@ -145,7 +142,7 @@ void main_func (){
                         "pmt1_bkg_100", 
                         "pmt2_bkg_100", 
                         "pmt1_null", 
-                        "pmt2_null"};
+                        "pmt2_null"*/};
     TStopwatch time_tot;
     time_tot.Start();                
     for(list<string>::const_iterator name = names.begin(); name != names.end(); ++name){
@@ -158,7 +155,7 @@ void main_func (){
         time.Stop();
         time.Print();
     }
-    //getchar();
+    getchar();
     outfile->Close();
     time_tot.Stop();
     time_tot.Print();
