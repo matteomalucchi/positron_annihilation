@@ -131,6 +131,32 @@ void scatter(){
         cout << charge_a.size() << "   " << charge_b.size() <<endl;
         
 
+
+        // Covarianza Campione
+
+        vector <float> picco_a,picco_b;
+        for (long unsigned int n=0 ; n<charge_a.size() ; n++){
+
+            if(charge_a[n]<80000 && charge_a[n]>73000 && charge_b[n]<74000 && charge_b[n]>65000){ // Intervalli tarati su intervalli di picco A dei pmt1 e pmt2 in ext_run2
+
+                picco_a.push_back(charge_a[n]);
+                picco_b.push_back(charge_b[n]);
+
+            } 
+        }
+        float picco_a_med=getAverage(picco_a);
+        float picco_b_med=getAverage(picco_b);
+        float cov_camp=0;
+
+        for(int n=0; n<picco_a.size() ; n++){
+            cov_camp+=(picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med);
+        }
+
+        cout<<cov_camp<<endl;
+
+
+
+
         TCanvas *c_scatter_charge = new TCanvas(&("scatter_" + name + "_charge")[0], &("scatter_" + name + "_charge")[0]);
         TGraph* gr_charge = new TGraph(min(charge_a.size(), charge_b.size()),&charge_a[0],&charge_b[0]);
         gr_charge->SetMarkerStyle(1);
