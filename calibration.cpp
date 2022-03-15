@@ -40,9 +40,11 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
         gStyle->SetOptFit(1111);
 
         gaus_params.push_back(gaus1->GetParameter(1));
-        gaus_params.push_back(gaus1->GetParError(1)*10);
+        gaus_params.push_back(gaus1->GetParameter(2));
+        //gaus_params.push_back(gaus1->GetParError(1));
         gaus_params.push_back(gaus2->GetParameter(1));
-        gaus_params.push_back(gaus2->GetParError(1)*10);
+        gaus_params.push_back(gaus2->GetParameter(2));
+        //gaus_params.push_back(gaus2->GetParError(1));
         i +=4;
         c->SaveAs(&("calibration/" + *sample + type + "_calibration.png")[0]);
 
@@ -115,7 +117,7 @@ void calibration(){
         /*{"pmt3",{{28000,33000,33000,38000,22000, 40000, 90000, 120000},
             {}}}*/
     };
-    ofstream out_file("calibration/peak_energy.txt");
+    ofstream out_file("calibration/peak_energy_high.txt");
     TFile *f = new TFile("histograms/histograms_calibration.root");
 
     vector <string> energy;
