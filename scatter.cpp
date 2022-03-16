@@ -202,13 +202,23 @@ void scatter(){
         }
         float picco_a_med=accumulate(picco_a.begin(), picco_a.end(), 0)/picco_a.size();
         float picco_b_med=accumulate(picco_b.begin(), picco_b.end(), 0)/picco_b.size();
-        float cov_camp=0;
 
+        cout<<"Media pmt1= "<<picco_a_med<<endl;
+        cout<<"Media pmt2= "<<picco_b_med<<endl;
+
+
+        float cov_camp=0;
+        int negatives=0;
         for(int n=0; n<picco_a.size() ; n++){
             cov_camp+=(picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med)/picco_a.size();
+            if ((picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med) < 0){
+                negatives++;
+            } 
         }
 
-        cout<<cov_camp<<endl;
+        cout<<"Dimensione campione= "<<picco_a.size()<<endl;
+        cout<<"Negatives = "<<negatives<<endl;
+        cout<<"Covarianza campione= "<<cov_camp<<endl;
 
 
         TCanvas *c_scatter_charge = new TCanvas(&("scatter_" + name + "_charge")[0], &("scatter_" + name + "_charge")[0]);
