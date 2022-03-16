@@ -14,9 +14,8 @@
 #include <TH1F.h>
 #include <TGraph.h>
 
-#include "tools.h"
-
 using namespace std;
+
 vector<vector<float>>  charge_amp(string name){
     cout << "Processing: " << name << endl; 
     ifstream myfile;     
@@ -101,12 +100,12 @@ vector<vector<float>>  charge_amp(string name){
 
 void scatter(){
     map <string, string> pair_names ={
-        /*{"pmt1_NA_e6_ext_run1","pmt2_NA_e6_ext_run1"},
-        {"pmt1_NA_e6_ext_run2","pmt2_NA_e6_ext_run2"},
-        {"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
-        {"pmt1_NA_e6_100_or_run1", "pmt2_NA_e6_100_or_run1"},
-        {"pmt1_NA_e6_700_or_run2", "pmt2_NA_e6_700_or_run2"},*/
-        {"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"}
+        //{"pmt1_NA_e6_ext_run1","pmt2_NA_e6_ext_run1"},
+        {"pmt1_NA_e6_ext_run2","pmt2_NA_e6_ext_run2"}
+        //{"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
+        /*{"pmt1_NA_e6_100_or_run1", "pmt2_NA_e6_100_or_run1"},
+        {"pmt1_NA_e6_700_or_run2", "pmt2_NA_e6_700_or_run2"},
+        {"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"}*/
     };
 
     for (const auto &pair_name : pair_names){  
@@ -206,7 +205,7 @@ void scatter(){
         float cov_camp=0;
 
         for(int n=0; n<picco_a.size() ; n++){
-            cov_camp+=(picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med);
+            cov_camp+=(picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med)/picco_a.size();
         }
 
         cout<<cov_camp<<endl;

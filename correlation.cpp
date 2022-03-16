@@ -72,6 +72,8 @@ vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}
             if (charge[i] > 40000) {
                 num_events++;
                 if (charge[i]> 73000 && charge[i]< 79000) idx_range.push_back(i);
+                //if (charge[i]> 100000 && charge[i]< 200000) idx_range.push_back(i);
+
             }
         }      
         if (name.find("pmt2_NA_e6_100")<name.length()){
@@ -94,7 +96,7 @@ vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}
 void correlation (){
     gROOT->SetBatch(kFALSE);
     vector<vector<float>> idx_ranges;
-    ofstream out_file("correlation_prob.txt");
+    ofstream out_file("correlation_prob_1a2a.txt");
 
     list <string> names ={
                         //"pmt1_NA_e6_100",

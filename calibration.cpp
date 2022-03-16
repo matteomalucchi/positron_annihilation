@@ -40,13 +40,13 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
         gStyle->SetOptFit(1111);
 
         gaus_params.push_back(gaus1->GetParameter(1));
-        gaus_params.push_back(gaus1->GetParameter(2));
-        //gaus_params.push_back(gaus1->GetParError(1));
+        //gaus_params.push_back(gaus1->GetParameter(2));
+        gaus_params.push_back(gaus1->GetParError(1));
         gaus_params.push_back(gaus2->GetParameter(1));
-        gaus_params.push_back(gaus2->GetParameter(2));
-        //gaus_params.push_back(gaus2->GetParError(1));
+        //gaus_params.push_back(gaus2->GetParameter(2));
+        gaus_params.push_back(gaus2->GetParError(1));
         i +=4;
-        c->SaveAs(&("calibration/" + *sample + type + "_calibration.png")[0]);
+        c->SaveAs(&("calibration/" + *sample + type + "_calibration_low.png")[0]);
 
     }
     return gaus_params;
@@ -72,7 +72,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
     gr->Fit("linear");
     linear->Draw("SAME");
     gStyle->SetOptFit(111);
-    c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration.png")[0]);
+    c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration_low.png")[0]);
 
     vector<double> cal_factor{linear->GetParameter(1),linear->GetParError(1)};
     return cal_factor;
@@ -80,7 +80,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
 
 auto division(vector<double> cal_factor, float peak, float peak_err){
     vector<float> p;
-    p.push_back(peak/cal_factor[0]);
+    p.push_back((peak-off_set)/cal_factor[0]);
     float e = sqrt(pow(peak_err/cal_factor[0], 2) + pow(peak*cal_factor[1]/(cal_factor[0]*cal_factor[0]), 2));
     p.push_back(e);
     return p;
@@ -117,7 +117,7 @@ void calibration(){
         /*{"pmt3",{{28000,33000,33000,38000,22000, 40000, 90000, 120000},
             {}}}*/
     };
-    ofstream out_file("calibration/peak_energy_high.txt");
+    ofstream out_file("calibration/peak_energy_low.txt");
     TFile *f = new TFile("histograms/histograms_calibration.root");
 
     vector <string> energy;
