@@ -68,28 +68,31 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
     gr->SetMarkerStyle(1);
     gr->Draw("APE");
     TF1 *   linear  = new TF1("linear","[0]+[1]*x", 0, 1.4);
-    linear->SetParNames ("x_0 constant","Conversion factor");
+    linear->SetParNames ("Off-set","Calibration factor");
     gr->Fit("linear");
     linear->Draw("SAME");
     gStyle->SetOptFit(111);
     c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration_low.png")[0]);
-
+    
+    vector<double> off_set{linear->GetParameter(0),linear->GetParError(0)};
     vector<double> cal_factor{linear->GetParameter(1),linear->GetParError(1)};
-    return cal_factor;
+    vector<vector<double>> lin_params{off_set, cal_factor};
+
+    return lin_params;
 }
 
-auto division(vector<double> cal_factor, float peak, float peak_err){
+auto division(vector<double> off_set, vector<double> cal_factor, float peak, float peak_err){
     vector<float> p;
-    p.push_back((peak-off_set)/cal_factor[0]);
-    float e = sqrt(pow(peak_err/cal_factor[0], 2) + pow(peak*cal_factor[1]/(cal_factor[0]*cal_factor[0]), 2));
+    p.push_back((peak-off_set[0])/cal_factor[0]);
+    float e = sqrt(pow(peak_err/cal_factor[0], 2) +pow(off_set[1]/cal_factor[0], 2) +pow((peak-off_set[0])*cal_factor[1]/(cal_factor[0]*cal_factor[0]), 2));
     p.push_back(e);
     return p;
 }
 
-auto peak_energy(string name_pmt, string type, vector<double> cal_factor, vector<float> gaus_params){
+auto peak_energy(string name_pmt, string type, vector<vector<double>> cal_params, vector<float> gaus_params){
     vector<float> energy;
-    vector<float> x(division(cal_factor, gaus_params[8], gaus_params[9]));    
-    vector<float> y(division(cal_factor, gaus_params[10], gaus_params[11]));
+    vector<float> x(division(cal_params[0], cal_params[1], gaus_params[8], gaus_params[9]));    
+    vector<float> y(division(cal_params[0], cal_params[1], gaus_params[10], gaus_params[11]));
     energy.insert(energy.end(), x.begin(), x.end());
     energy.insert(energy.end(), y.begin(), y.end());
 

@@ -25,7 +25,7 @@ vector<vector<float>>  charge_amp(string name){
         string tp;
         vector <float> w;
         int k=0, m, j=0, f=0;
-        while(getline(myfile, tp)/* && f<100000000*/){ //read data from file object and put it into string.
+        while(getline(myfile, tp) && f<5000000){ //read data from file object and put it into string.
             if (isalpha(tp[0]) == 0) {
                 if (k>0) {
                     k=0;
@@ -192,12 +192,16 @@ void scatter(){
         // Covarianza Campione
 
         vector <float> picco_a,picco_b;
+        int a=0;
         for (long unsigned int n=0 ; n<charge_a_def.size() ; n++){
 
             if(charge_a_def[n]<80000 && charge_a_def[n]>73000 && charge_b_def[n]<74000 && charge_b_def[n]>65000){ // Intervalli tarati su intervalli di picco A dei pmt1 e pmt2 in ext_run2
-
                 picco_a.push_back(charge_a_def[n]);
                 picco_b.push_back(charge_b_def[n]);
+                //if (a==0) {
+                    //cout << picco_a[picco_a.size()-1] <<"  " << picco_b[picco_b.size()-1] << endl;
+                 //   a++;}
+
             } 
         }
         float picco_a_med=accumulate(picco_a.begin(), picco_a.end(), 0)/picco_a.size();
@@ -211,6 +215,7 @@ void scatter(){
         int negatives=0;
         for(int n=0; n<picco_a.size() ; n++){
             cov_camp+=(picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med)/picco_a.size();
+            cout <<(picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med)/picco_a.size()<<endl;
             if ((picco_a[n]-picco_a_med)*(picco_b[n]-picco_b_med) < 0){
                 negatives++;
             } 
