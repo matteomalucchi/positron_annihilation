@@ -21,19 +21,19 @@ void draw_same(){
     map <string, string> pair_names ={
         //{"pmt1_NA_e6_ext_run1_charge","pmt1_NA_e6_ext_run2_charge"},
         //{"pmt2_NA_e6_ext_run1_charge","pmt2_NA_e6_ext_run2_charge"},
-        {"pmt1_NA_e6_100_run1_charge", "pmt1_NA_e6_100_run2_charge"},
-        {"pmt2_NA_e6_100_run1_charge", "pmt2_NA_e6_100_run2_charge"}
+        //{"pmt1_NA_e6_100_run1_charge", "pmt1_NA_e6_100_run2_charge"},
+        {"pmt1_NA+cs+co_e6_100_charge", "pmt1_NA+cs_e6_100_charge"}
     };
 
     for (const auto &pair_name : pair_names){  
         const auto name_a = pair_name.first;
         const auto name_b = pair_name.second;
-/*
-        string name = name_a.substr(5, name_a.size()-1);
+
+        string name = name_a.substr(0, 13);
         string run_a = name_a.substr(14, 18);
         string run_b = name_b.substr(14, 18);
-*/
-        TFile *f = new TFile("histograms/histograms_NA_run12.root");
+
+        TFile *f = new TFile("histograms/histograms.root");
 
         TH1F *histo_a = nullptr;
         TH1F *histo_b = nullptr;

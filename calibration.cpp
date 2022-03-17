@@ -8,12 +8,13 @@
 
 using namespace std;
 
-vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> range){
+vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> range, TFile *outfile){
 
     list <string> samples{
         name_pmt + "_co_100",
         name_pmt + "_cs_100", 
-        name_pmt + "_NA_e6_100"
+        name_pmt + "_NA_e6_100_run2",
+        //name_pmt + "_NA_e6_ext_run2"
     };
 
     vector<float> gaus_params;
@@ -48,12 +49,15 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
         gaus_params.push_back(gaus2->GetParError(1));
         i +=4;
         c->SaveAs(&("calibration/" + *sample + type + "_calibration_low.png")[0]);
+        outfile->cd();
+        c->Write();
+
 
     }
     return gaus_params;
 }
 
-auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
+auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * outfile){
     float x[4]={0.18, 0.66, 1.17, 1.33};
     float y[sizeof(x)/sizeof(x[0])]={gaus_params[4], gaus_params[6], gaus_params[0], gaus_params[2]};
     float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[5], gaus_params[7], gaus_params[1], gaus_params[3]};
@@ -80,14 +84,11 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
     gStyle->SetStatX(0.5);
     gr->SetMarkerStyle(1);
     gr->Draw("APE");
-    TF1 *   linear  = new TF1("linear","[0]+[1]*x", -0.1, 1.4);
+    TF1 *   linear  = new TF1("linear","[0]+[1]*x", -1, 1.4);
     linear->SetParNames ("Off-set","Calibration factor");
     gr->Fit("linear");
     linear->Draw("SAME");
     gStyle->SetOptFit(111);
-
-
-
 
     pad2->cd();
     float diff[sizeof(x)/sizeof(x[0])];
@@ -106,7 +107,9 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params){
     zero->Draw("SAME");
     c_fit_lin->cd();
     c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration_low.png")[0]);
-    
+    outfile->cd();
+    c_fit_lin->Write();
+
     vector<double> off_set{linear->GetParameter(0),linear->GetParError(0)};
     vector<double> cal_factor{linear->GetParameter(1),linear->GetParError(1)};
     vector<vector<double>> lin_params{off_set, cal_factor};
@@ -134,8 +137,7 @@ auto peak_energy(string name_pmt, string type, vector<vector<double>> cal_params
     vector <string> energy_string;
     energy_string.push_back(peak1);
     energy_string.push_back(peak2);
-    //cout<< "energy peak "<< name_pmt <<" "<< type << " = " << energy[0] <<"+-" << energy[1] <<endl;
-    //cout<< "energy peak "<< name_pmt <<" "<< type << " = " << energy[2] <<"+-" << energy[3] <<endl;
+
     return energy_string;
 
 }
@@ -144,17 +146,30 @@ auto peak_energy(string name_pmt, string type, vector<vector<double>> cal_params
 void calibration(){
     // ordine del vector:
     // primo è per charge e secondo è per ampiezza
-    // prima i 4 punti del co e poi i 4 del cs (e poi i 4 del NA)
+    // prima i 4 punti del co, poi i 4 del cs e poi i 4 del NA
     map<string, vector<vector<float>>> pmts{
-        {"pmt1",{{165000, 185000, 185000, 210000, 26000, 37000, 93000, 113000, 65000, 90000, 175000, 210000},
-            {2050, 2350, 2350, 2800, 300, 600, 1150, 1600, 850, 1300, 2200, 2700}}},
-        {"pmt2",{{150000, 172000, 172000, 196000, 20000, 37000, 80000, 110000, 60000,90000, 165000, 200000},
-            {1900, 2300, 2300, 2800, 250, 600, 1050, 1600, 800, 1200, 2100, 2600}}}
+        {"pmt1",{{170000, 180000, 192000, 204000,
+                 26000, 35000, 97000, 106000,
+                 65000, 90000, 175000, 210000,
+                 //72000, 80000, 182000, 192000
+                 },
+                {2100, 2350, 2350, 2600,
+                 370, 500, 1230, 1400, 
+                 850, 1300, 2200, 2700,
+                 //900,1100, 2250, 2450
+                 }}},
+        /*{"pmt2",{{150000, 172000, 172000, 196000, 
+                 20000, 37000, 80000, 110000, 
+                 60000,90000, 165000, 200000},
+                {1900, 2300, 2300, 2800, 
+                 250, 600, 1050, 1600,
+                 800, 1200, 2100, 2600}}}*/
         /*{"pmt3",{{28000,33000,33000,38000,22000, 40000, 90000, 120000},
             {}}}*/
     };
     ofstream out_file("calibration/peak_energy_low.txt");
-    TFile *f = new TFile("histograms/histograms_calibration.root");
+    TFile *outfile= new TFile("calibration/calibration_plots.root", "RECREATE");
+    TFile *f = new TFile("histograms/histograms.root");
 
     vector <string> energy;
 
@@ -166,10 +181,10 @@ void calibration(){
         cout << "========================= Analyzing: " << name_pmt << " ========================="<<endl;    
         cout << endl;
 
-        vector<float> gaus_charge=fit_gaus(f, name_pmt, "_charge", ranges[0]);
-        vector<float> gaus_amp=fit_gaus(f, name_pmt, "_amp", ranges[1]);
-        auto cal_charge = fit_lin(name_pmt, "_charge", gaus_charge);
-        auto cal_amp = fit_lin(name_pmt, "_amp", gaus_amp);
+        vector<float> gaus_charge=fit_gaus(f, name_pmt, "_charge", ranges[0], outfile);
+        vector<float> gaus_amp=fit_gaus(f, name_pmt, "_amp", ranges[1], outfile);
+        auto cal_charge = fit_lin(name_pmt, "_charge", gaus_charge, outfile);
+        auto cal_amp = fit_lin(name_pmt, "_amp", gaus_amp, outfile);
         vector<string> x= peak_energy(name_pmt, "_charge", cal_charge, gaus_charge);
         vector<string> y= peak_energy(name_pmt, "_amp", cal_amp, gaus_amp);
         energy.insert(energy.end(), x.begin(), x.end());
@@ -181,6 +196,8 @@ void calibration(){
         cout << energy[i];
         out_file << energy[i];
     }
+    outfile->Close();
+
 
 
 }
