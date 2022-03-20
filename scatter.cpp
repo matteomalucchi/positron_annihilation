@@ -8,7 +8,6 @@
 #include <list>
 #include <float.h>
 #include <tuple>
-//#include<bits/stdc++.h>
 
 #include <TCanvas.h>
 #include <TH1F.h>

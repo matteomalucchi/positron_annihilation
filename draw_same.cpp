@@ -22,7 +22,7 @@ void draw_same(){
         //{"pmt1_NA_e6_ext_run1_charge","pmt1_NA_e6_ext_run2_charge"},
         //{"pmt2_NA_e6_ext_run1_charge","pmt2_NA_e6_ext_run2_charge"},
         //{"pmt1_NA_e6_100_run1_charge", "pmt1_NA_e6_100_run2_charge"},
-        {"pmt1_NA+cs+co_e6_100_charge", "pmt1_NA+cs_e6_100_charge"}
+        {"pmt1_NA_cs_co_e6_500_run2_charge", "pmt1_NA_cs_e6_500_run2_charge"}
     };
 
     for (const auto &pair_name : pair_names){  
@@ -42,10 +42,10 @@ void draw_same(){
         f->GetObject(&(name_b)[0], histo_b);
 
         TCanvas *c= new TCanvas(&(name_a)[0], &(name_a)[0]);
-        histo_a->SetLineColor(1);
-        histo_b->SetLineColor(4);
-        histo_a->Draw();
-        histo_b->Draw("SAME");
+        histo_a->SetLineColor(kRed);
+        histo_b->SetLineColor(kBlue);
+        histo_b->Draw();
+        histo_a->Draw("SAME");
     }
 
 

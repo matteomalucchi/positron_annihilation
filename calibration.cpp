@@ -95,10 +95,11 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
     float diff_err[sizeof(x)/sizeof(x[0])];
     for (Int_t i=0;i<sizeof(x)/sizeof(x[0]);i++) {
         diff[i] =y[i]-linear->Eval(x[i]);
-        diff_err[i]=diff[i]/y_err[i];
+        diff_norm[i]=diff[i]/y_err[i];
     }  
-
-    TGraphErrors* gr2 = new TGraphErrors(4,x,diff_err,nullptr,y_err);
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1,1};
+    
+    TGraphErrors* gr2 = new TGraphErrors(4,x,diff_norm,nullptr,one_array);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr2->SetMarkerStyle(1);
