@@ -171,7 +171,7 @@ void scatter(){
         // Fit di scatter per trovare coefficiente di correlazione quando si trovano vicino al picco    
 
         TCanvas *c_fit_lin = new TCanvas(&("scatter_" + name + "_charge_correlationfit")[0], &("scatter_" + name + "_charge_correlationfit")[0]);
-        TGraphErrors* gr = new TGraphErrors(picco_a.size(),picco_a,picco_b,nullptr,nullptr);
+        TGraphErrors* gr = new TGraphErrors(picco_a.size(),&picco_a[0],&picco_b[0],nullptr,nullptr);
         gStyle->SetStatY(0.9);
         gStyle->SetStatX(0.5);
         gr->SetMarkerStyle(1);
