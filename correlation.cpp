@@ -27,7 +27,8 @@ vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}
     if (myfile.is_open()){
         string tp;
         vector <float> w;
-        int k=0, m, j=0;
+        int k=0, m, j=0, bgn=0;
+        long int time_bgn=0, time_end=0;
         while(getline(myfile, tp)){ //read data from file object and put it into string.
             if (isalpha(tp[0]) == 0) {
                 if (k>0) {
@@ -37,6 +38,14 @@ vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}
                 m = stof(tp);
                 w.push_back(m);
                 j++;
+            }
+            if (tp.find("Time")<tp.length()){
+                if (bgn==0) {
+                    time_bgn=stof(tp.substr(20,tp.size()-1));
+                    cout << time_bgn <<endl;
+                    bgn++;
+                }
+                time_end=stof(tp.substr(20,tp.size()-1));
             }
             else {
                 if (j>0) {
@@ -49,6 +58,8 @@ vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}
         //non prendo l'ultimo evento perchè è incompleto
         myfile.close(); //close the file object.
     }    
+
+    cout << time_end <<endl;
     
     vector <float> charge (v.size());
     vector <float> amp (v.size());
@@ -109,6 +120,8 @@ void correlation (){
         cout << "Processing: " << *name << endl; 
         idx_ranges.push_back(find_idx_range("data/" + *name + ".txt", *name));
         float a =  (idx_ranges.back().size()-1)/idx_ranges.back().back();
+        cout<< "Frequenza temporale generale: "<< idx_ranges.back().back()/(time_end-time_bgn)*8*pow(10,-9) <<endl;
+        cout<< "Frequenza temporale nel picco: "<<  (idx_ranges.back().size()-1)/(time_end-time_bgn)*8*pow(10,-9) <<endl;
         cout << a <<endl;
         cout << idx_ranges.back().back() <<endl;
         string prob= *name + " = " + to_string(a) + "\n";
