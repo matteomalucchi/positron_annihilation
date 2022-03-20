@@ -149,6 +149,67 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     return gaus_params;
 }
 
+auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * outfile){
+    float x[4]={0.66, 1.17, 1.33, 1.27};
+    float y[sizeof(x)/sizeof(x[0])]={gaus_params[4], gaus_params[6], gaus_params[0], gaus_params[2]};
+    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[5], gaus_params[7], gaus_params[1], gaus_params[3]};
+
+    cout << endl;
+    cout << "__________________________ Linear fit: " << name_pmt << type << " __________________________"<<endl; 
+    cout << endl;
+    gStyle->SetOptStat(0);
+
+    TCanvas *c_fit_lin = new TCanvas(&(name_pmt + type + "_calibration")[0], &( name_pmt + type + "_calibration")[0]);
+    TPad *pad1 = new TPad("pad1","pad1",0,0.33,1,1);
+    TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.33);
+    pad1->SetBottomMargin(0.00001);
+    pad1->SetBorderMode(0);
+    pad2->SetTopMargin(0.00001);
+    pad2->SetBottomMargin(0.1);
+    pad2->SetBorderMode(0);
+    pad1->Draw();
+    pad2->Draw();
+    pad1->cd();
+
+    TGraphErrors* gr = new TGraphErrors(4,x,y,nullptr,y_err);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatX(0.5);
+    gr->SetMarkerStyle(1);
+    gr->Draw("APE");
+    TF1 *   linear  = new TF1("linear","[0]+[1]*x", -1, 1.4);
+    linear->SetParNames ("Off-set","Calibration factor");
+    gr->Fit("linear");
+    linear->Draw("SAME");
+    gStyle->SetOptFit(111);
+
+    pad2->cd();
+    float diff[sizeof(x)/sizeof(x[0])];
+    float diff_err[sizeof(x)/sizeof(x[0])];
+    for (Int_t i=0;i<sizeof(x)/sizeof(x[0]);i++) {
+        diff[i] =y[i]-linear->Eval(x[i]);
+        diff_norm[i]=diff[i]/y_err[i];
+    }  
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1,1};
+    
+    TGraphErrors* gr2 = new TGraphErrors(4,x,diff_norm,nullptr,one_array);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatX(0.5);
+    gr2->SetMarkerStyle(1);
+    TF1 *   zero  = new TF1("zero","0*x", -0.1, 1.4);
+    gr2->Draw("APE");
+    zero->Draw("SAME");
+    c_fit_lin->cd();
+    c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration_low.png")[0]);
+    outfile->cd();
+    c_fit_lin->Write();
+
+    vector<double> off_set{linear->GetParameter(0),linear->GetParError(0)};
+    vector<double> cal_factor{linear->GetParameter(1),linear->GetParError(1)};
+    vector<vector<double>> lin_params{off_set, cal_factor};
+
+    return lin_params;
+}
+
 void real_time_calibration(){
     TFile *f = new TFile("histograms/histograms_RealTimeCalibration.root");
     TFile *outfile= new TFile("real_time_calibration/histograms_RealTimeCalibration_clear.root", "RECREATE");
@@ -210,14 +271,10 @@ void real_time_calibration(){
         histos[0]->Draw("SAME");
         c_all->SaveAs(&("real_time_calibration/"+name_b + type +"_all.png")[0]);
 
+        vector<float> gaus_params;
 
-
-        fit_gaus(histo_sub, ranges, name_b, type);
-        
-
-
-
-
+        gaus_params=fit_gaus(histo_sub, ranges, name_b, type);
+        auto cal_params = fit_lin(name_pmt, type, gaus_params, outfile);
 
         histo_a->Write();
         histo_b->Write();
@@ -225,8 +282,6 @@ void real_time_calibration(){
         //histos[1]->Write();
         histo_sub->Write();
         c_all->Write();
-
-
 
     }
 
