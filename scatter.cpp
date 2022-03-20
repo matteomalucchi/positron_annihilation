@@ -130,7 +130,7 @@ void scatter(){
 
 
         // Covarianza Campione
-/*
+
         vector <float> picco_a,picco_b;
         int a=0;
         for (long unsigned int n=0 ; n<charge_a_def.size() ; n++){
@@ -144,7 +144,7 @@ void scatter(){
 
             } 
         }
-        float picco_a_med=accumulate(picco_a.begin(), picco_a.end(), 0)/picco_a.size();
+   /*     float picco_a_med=accumulate(picco_a.begin(), picco_a.end(), 0)/picco_a.size();
         float picco_b_med=accumulate(picco_b.begin(), picco_b.end(), 0)/picco_b.size();
 
         cout<<"Media pmt1= "<<picco_a_med<<endl;
@@ -165,6 +165,26 @@ void scatter(){
         cout<<"Negatives = "<<negatives<<endl;
         cout<<"Covarianza campione= "<<cov_camp<<endl;
 */
+
+
+
+        // Fit di scatter per trovare coefficiente di correlazione quando si trovano vicino al picco    
+
+        TCanvas *c_fit_lin = new TCanvas(&("scatter_" + name + "_charge_correlationfit")[0], &("scatter_" + name + "_charge_correlationfit")[0]);
+        TGraphErrors* gr = new TGraphErrors(picco_a.size(),picco_a,picco_b,nullptr,nullptr);
+        gStyle->SetStatY(0.9);
+        gStyle->SetStatX(0.5);
+        gr->SetMarkerStyle(1);
+        gr->Draw("APE");
+        TF1 *   linear  = new TF1("linear","[0]+[1]*x", -1, 1.4);
+        linear->SetParNames ("Off-set","Correlation factor");
+        gr->Fit("linear");
+        linear->Draw("SAME");
+        gStyle->SetOptFit(111);
+
+
+
+
 
         TCanvas *c_scatter_charge = new TCanvas(&("scatter_" + name + "_charge")[0], &("scatter_" + name + "_charge")[0]);
         TGraph* gr_charge = new TGraph(min(charge_a_def.size(), charge_b_def.size()),&charge_a_def[0],&charge_b_def[0]);
