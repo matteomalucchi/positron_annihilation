@@ -79,8 +79,8 @@ vector <TH1F*> make_histo(string name){
         charge_min = (charge[i]<charge_min) ? charge[i] : charge_min;
         amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, -1000, static_cast<int>(charge_max)-150000);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, static_cast<int>(amp_max)-4500);
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, -1000, /*static_cast<int>(charge_max)-150000*/ 250000);
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, /*static_cast<int>(amp_max)-4500*/ 3500);
     for (long unsigned int i=0; i< charge.size(); i++){
         if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
             histo_charge->Fill(charge[i]);
@@ -115,8 +115,8 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms.root", "RECREATE");
-    list <string> names ={"pmt1_NA_e6_100_or_run1",
+    TFile *outfile= new TFile("histograms/histograms_RealTimeCalibration.root", "RECREATE"/* "UPDATE"*/);
+    list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
                         "pmt2_NA_e6_700_or_run2",
@@ -148,17 +148,23 @@ void main_func (){
                         "pmt2_bkg_100", 
                         "pmt1_null", 
                         "pmt2_null",
-                        "pmt1_NA+cs_e6_100", 
-                        "pmt2_NA+cs_e6_100",
-                        "pmt3_NA+cs_e6_30",
-                        "pmt1_NA+cs2_e6_ext",
-                        "pmt2_NA+cs2_e6_ext",
-                        "pmt1_NA+cs1_e6_ext_solo",
-                        "pmt1_NA+cs+co_e6_100",
-                        "pmt2_NA+cs+co_e6_100",
-                        "pmt3_NA+cs+co_e6_30", 
-                        "pmt2_NA+cs1+co1_e6_ext", 
-                        "pmt1_NA+cs1+co1_e6_ext"};
+                        "pmt1_NA+cs2_e6_ext_run1",
+                        "pmt2_NA+cs2_e6_ext_run1",
+                        "pmt1_NA+cs1_e6_ext_solo_run1",
+                        "pmt2_NA+cs1+co1_e6_ext_run1", 
+                        "pmt1_NA+cs1+co1_e6_ext_run1", */
+                        "pmt1_NA+cs_e6_100_run1", 
+                        "pmt2_NA+cs_e6_100_run1",
+                        "pmt3_NA+cs_e6_30_run1",
+                        "pmt1_NA+cs+co_e6_100_run1",
+                        "pmt2_NA+cs+co_e6_100_run1",
+                        "pmt3_NA+cs+co_e6_30_run1", 
+                        "pmt1_NA+cs_e6_500_run2", 
+                        "pmt2_NA+cs_e6_500_run2",
+                        "pmt3_NA+cs_e6_100_run2",
+                        "pmt1_NA+cs+co_e6_500_run2", 
+                        "pmt2_NA+cs+co_e6_500_run2",
+                        "pmt3_NA+cs+co_e6_100_run2"};
 
     TStopwatch time_tot;
     time_tot.Start();                
