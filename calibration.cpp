@@ -92,7 +92,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
 
     pad2->cd();
     float diff[sizeof(x)/sizeof(x[0])];
-    float diff_err[sizeof(x)/sizeof(x[0])];
+    float diff_norm[sizeof(x)/sizeof(x[0])];
     for (Int_t i=0;i<sizeof(x)/sizeof(x[0]);i++) {
         diff[i] =y[i]-linear->Eval(x[i]);
         diff_norm[i]=diff[i]/y_err[i];
@@ -198,8 +198,5 @@ void calibration(){
         out_file << energy[i];
     }
     outfile->Close();
-
-
-
 }
 

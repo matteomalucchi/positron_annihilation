@@ -1,0 +1,2 @@
+energy peak pmt1_e6_100_run1 _charge = 0.506788+-0.020805
+energy peak pmt1_e6_500_run2 _charge = 0.507408+-0.020840

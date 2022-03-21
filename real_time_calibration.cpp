@@ -77,21 +77,22 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max, float
         amp[i]=h-min;
     }
     TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, 250000);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, 3500);
+    //TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, 3500);
     for (long unsigned int i=0; i< charge.size(); i++){
         if ((find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()) && charge[i]> charge_min && charge[i]<charge_max){
             histo_charge->Fill(charge[i]+peak/100);
-            histo_amp->Fill(amp[i]);
+            //histo_amp->Fill(amp[i]);
         }
     }
     histo_charge->Scale(1/y_rescale);
 
     histo_charge->SetName(&(name + "_charge")[0]);
-    histo_amp->SetName(&(name + "_amp")[0]);
+    //histo_amp->SetName(&(name + "_amp")[0]);
     histos.push_back(histo_charge);
-    histos.push_back(histo_amp);
+    //histos.push_back(histo_amp);
 
     TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
+    histo_charge->SetLineColor(kGreen);
     histo_charge->Draw();
     c_charge->SaveAs(&("real_time_calibration/" + name + "_charge.png")[0]);
 /*
@@ -99,12 +100,15 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max, float
     histo_amp->Draw();
     c_amp->SaveAs(&("real_time_calibration/" + name + "_amp.png")[0]);*/
 
-    //cout << "numero di idx_strange  "<<idx_strange.size() <<endl;
 
     return histos;
 }
 
 vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, string type){
+    
+    cout << endl;
+    cout << "__________________________ Gaussian fit: " << name << type << " __________________________"<<endl; 
+    cout << endl;
 
     TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[0], ranges[1]);
     TF1 *gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[2], ranges[3]);
@@ -116,7 +120,7 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gaus3->SetParameters(100, abs(ranges[7]+ranges[8])/2, abs(ranges[7]-ranges[8]));
     gaus4->SetParameters(100, abs(ranges[9]+ranges[10])/2, abs(ranges[9]-ranges[10]));
 
-    TCanvas *c_sub = new TCanvas(&(name_b + type +"_sub")[0] ,&(name_b + type +"_sub")[0]);
+    TCanvas *c_sub = new TCanvas(&(name + type +"_sub")[0] ,&(name + type +"_sub")[0]);
 
     histo_sub->Fit("gaus1","R", "SAME");
     gaus1->Draw("SAME");
@@ -132,7 +136,7 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gStyle->SetOptFit(1111);
     histo_sub->Draw("SAME");
 
-    c_sub->SaveAs(&("real_time_calibration/"+name_b + type +"_sub.png")[0]);
+    c_sub->SaveAs(&("real_time_calibration/"+name + type +"_sub.png")[0]);
     c_sub->Write();
 
     vector<float> gaus_params;
@@ -149,17 +153,18 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     return gaus_params;
 }
 
-auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * outfile){
-    float x[4]={0.66, 1.17, 1.33, 1.27};
-    float y[sizeof(x)/sizeof(x[0])]={gaus_params[4], gaus_params[6], gaus_params[0], gaus_params[2]};
-    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[5], gaus_params[7], gaus_params[1], gaus_params[3]};
+auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * outfile){
+    float x[3]={0.66, 1.17, 1.33};
+    float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4], gaus_params[6]};
+    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
+    //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5], gaus_params[7]};
 
     cout << endl;
-    cout << "__________________________ Linear fit: " << name_pmt << type << " __________________________"<<endl; 
+    cout << "__________________________ Linear fit: " << name_final << type << " __________________________"<<endl; 
     cout << endl;
     gStyle->SetOptStat(0);
 
-    TCanvas *c_fit_lin = new TCanvas(&(name_pmt + type + "_calibration")[0], &( name_pmt + type + "_calibration")[0]);
+    TCanvas *c_fit_lin = new TCanvas(&(name_final + type + "_linear")[0], &( name_final + type + "_linear")[0]);
     TPad *pad1 = new TPad("pad1","pad1",0,0.33,1,1);
     TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.33);
     pad1->SetBottomMargin(0.00001);
@@ -171,12 +176,12 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
     pad2->Draw();
     pad1->cd();
 
-    TGraphErrors* gr = new TGraphErrors(4,x,y,nullptr,y_err);
+    TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,nullptr,y_err);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr->SetMarkerStyle(1);
     gr->Draw("APE");
-    TF1 *   linear  = new TF1("linear","[0]+[1]*x", -1, 1.4);
+    TF1 *   linear  = new TF1("linear","[0]+[1]*x", 0, 1.4);
     linear->SetParNames ("Off-set","Calibration factor");
     gr->Fit("linear");
     linear->Draw("SAME");
@@ -184,22 +189,22 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
 
     pad2->cd();
     float diff[sizeof(x)/sizeof(x[0])];
-    float diff_err[sizeof(x)/sizeof(x[0])];
+    float diff_norm[sizeof(x)/sizeof(x[0])];
     for (Int_t i=0;i<sizeof(x)/sizeof(x[0]);i++) {
         diff[i] =y[i]-linear->Eval(x[i]);
         diff_norm[i]=diff[i]/y_err[i];
     }  
-    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1,1};
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1};
     
-    TGraphErrors* gr2 = new TGraphErrors(4,x,diff_norm,nullptr,one_array);
+    TGraphErrors* gr2 = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,diff_norm,nullptr,one_array);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr2->SetMarkerStyle(1);
-    TF1 *   zero  = new TF1("zero","0*x", -0.1, 1.4);
+    TF1 *   zero  = new TF1("zero","0*x", 0, 1.4);
     gr2->Draw("APE");
     zero->Draw("SAME");
     c_fit_lin->cd();
-    c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration_low.png")[0]);
+    c_fit_lin->SaveAs(&("real_time_calibration/" + name_final + type + "_fit_lin.png")[0]);
     outfile->cd();
     c_fit_lin->Write();
 
@@ -210,15 +215,44 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
     return lin_params;
 }
 
+auto division(vector<double> off_set, vector<double> cal_factor, float peak, float peak_err){
+    vector<float> p;
+    p.push_back((peak-off_set[0])/cal_factor[0]);
+    float e = sqrt(pow(peak_err/cal_factor[0], 2) +pow(off_set[1]/cal_factor[0], 2) +pow((peak-off_set[0])*cal_factor[1]/(cal_factor[0]*cal_factor[0]), 2));
+    p.push_back(e);
+    return p;
+}
+
+auto peak_energy(string name_final, string type, vector<vector<double>> lin_params, vector<float> gaus_params){
+    vector<float> energy;
+    vector<float> x(division(lin_params[0], lin_params[1], gaus_params[0], /* gaus_params[1]*/gaus_params[0]/100));    
+    //vector<float> y(division(lin_params[0], lin_params[1], gaus_params[10], gaus_params[11]));
+    energy.insert(energy.end(), x.begin(), x.end());
+    //energy.insert(energy.end(), y.begin(), y.end());
+
+    string peak1 = "energy peak " + name_final + " " + type + " = " + to_string(energy[0]) + "+-" + to_string(energy[1]) + "\n";
+    //string peak2 = "energy peak " + name_final + " " + type + " = " + to_string(energy[2]) + "+-" + to_string(energy[3])+ "\n";
+    vector <string> energy_string;
+    energy_string.push_back(peak1);
+    //energy_string.push_back(peak2);
+
+    return energy_string;
+
+}
+
+
 void real_time_calibration(){
     TFile *f = new TFile("histograms/histograms_RealTimeCalibration.root");
-    TFile *outfile= new TFile("real_time_calibration/histograms_RealTimeCalibration_clear.root", "RECREATE");
+    TFile *outfile= new TFile("real_time_calibration/histograms_RealTimeCalibration_fit.root", "RECREATE");
+    ofstream out_file("real_time_calibration/peak_energy.txt");
 
     // primi due sono picco NA, poi picco cs, poi range da sottrare del cs e poi la posizione del picco del cs da sottrare
     // poi il range del primo picco co e poi del secondo picco co
     map <vector<string>, vector<float>> pair_names ={ 
         {{"pmt1_NA_cs_e6_500_run2", "pmt1_NA_cs_co_e6_500_run2"}, 
-            {78000, 85000, 100000, 108000, 150000, 210000, 195000, 176000, 187000, 200000, 212000}}
+            {78000, 85000, 100000, 108000, 150000, 210000, 195000, 176000, 187000, 200000, 212000}}, 
+            {{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
+            {78000-2000, 85000-2000, 100000-2000, 108000-2000, 150000-2000, 210000-2000, 195000-2000, 176000-2000, 187000-2000, 200000-2000, 212000-2000}}
 
         /*{"pmt1_NA+cs_e6_100_run1", 
                         "pmt2_NA+cs_e6_100_run1",
@@ -232,18 +266,34 @@ void real_time_calibration(){
                         "pmt2_NA+cs+co_e6_500_run2",
                         "pmt3_NA+cs+co_e6_100_run2"*/};
     
-    vector <TH1F*> histos;
+    vector <string> energy;
 
     string type= "_charge";
+
     for (const auto &pair_name : pair_names){  
         const auto name_a = pair_name.first[0];
         const auto name_b = pair_name.first[1];
         const auto ranges = pair_name.second;
+        vector <TH1F*> histos;
         
+        string pmt = name_a.substr(0, 4);
+        string final = name_a.substr(10, name_a.size()-1);
+        string name_final = pmt+final;
+
+
         TH1F *histo_a = nullptr;
         f->GetObject(&(name_a + type)[0], histo_a);
         TH1F *histo_b = nullptr;
         f->GetObject(&(name_b + type)[0], histo_b);
+        TCanvas *c_a = new TCanvas(&(name_a)[0] ,&(name_a)[0]);
+        histo_a->SetLineColor(kBlack);
+        histo_a->Draw();
+        c_a->SaveAs(&("real_time_calibration/"+name_a+".png")[0]);
+
+        TCanvas *c_b = new TCanvas(&(name_b)[0] ,&(name_b)[0]);
+        histo_b->SetLineColor(kRed);
+        histo_b->Draw();
+        c_b->SaveAs(&("real_time_calibration/"+name_b+".png")[0]);
 
         float int_NA_a=histo_a->Integral(histo_a->FindFixBin(ranges[0]),histo_a->FindFixBin(ranges[1]));
         float int_NA_b=histo_b->Integral(histo_b->FindFixBin(ranges[0]),histo_b->FindFixBin(ranges[1]));
@@ -259,32 +309,33 @@ void real_time_calibration(){
         histos=make_histo(name_a, ranges[4], ranges[5], y_rescale, ranges[6]);
 
         TH1F *histo_sub = (TH1F*)histo_b->Clone("histo_sub");
-        histo_sub->Add(histos[0], -1);
-        TCanvas *c_all = new TCanvas(&(name_b + type +"_all")[0] ,&(name_b + type +"_all")[0]);
-        histo_sub->SetName(&(name_b + type +"_all")[0]);
-        histo_b->SetLineColor(kRed);
-        histo_sub->SetLineColor(kBlue);
-        histos[0]->SetLineColor(kGreen);
 
+        histo_sub->Add(histos[0], -1);
+        TCanvas *c_all = new TCanvas(&(name_final + type +"_all")[0] ,&(name_final + type +"_all")[0]);
+        histo_sub->SetName(&(name_final + type +"_all")[0]);
+        histo_sub->SetLineColor(kBlue);
         histo_sub->Draw();
         histo_b->Draw("SAME");
         histos[0]->Draw("SAME");
-        c_all->SaveAs(&("real_time_calibration/"+name_b + type +"_all.png")[0]);
-
-        vector<float> gaus_params;
-
-        gaus_params=fit_gaus(histo_sub, ranges, name_b, type);
-        auto cal_params = fit_lin(name_pmt, type, gaus_params, outfile);
-
+        c_all->SaveAs(&("real_time_calibration/"+name_final + type +"_all.png")[0]);
+        
         histo_a->Write();
         histo_b->Write();
         histos[0]->Write();
-        //histos[1]->Write();
-        histo_sub->Write();
         c_all->Write();
 
-    }
+        vector<float> gaus_params;
+        gaus_params=fit_gaus(histo_sub, ranges, name_final, type);
+        auto lin_params = fit_lin(name_final, type, gaus_params, outfile);
 
+        vector<string> x= peak_energy(name_final, type, lin_params, gaus_params);
+        energy.insert(energy.end(), x.begin(), x.end());
+    }
+    cout << endl;
+    for (int i=0; i<energy.size(); i++){
+        cout << energy[i];
+        out_file << energy[i];
+    }
     getchar();
     outfile->Close();
 

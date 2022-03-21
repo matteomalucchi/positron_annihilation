@@ -30,7 +30,7 @@ vector<float> find_idx_range(string path,string name, int &time_bgn, int &time_e
         vector <float> w;
         int k=0, j=0, bgn=0, b=0;
         float m;
-        while(getline(myfile, tp)){ //read data from file object and put it into string.
+        while(getline(myfile, tp) /*&& b<1000000*/){ //read data from file object and put it into string.
            // cout <<b <<endl;
             b++;
             if (isalpha(tp[0]) == 0) {
@@ -42,31 +42,32 @@ vector<float> find_idx_range(string path,string name, int &time_bgn, int &time_e
                 w.push_back(m);
                 j++;
             }
-            if (tp.find("Time")<tp.length()){
-                if (bgn==0) {
-                    time_bgn=stoi(tp.substr(20,tp.size()-1));
-                    cout << "begin  "<<time_bgn <<endl;
-                    bgn++;
-                }
-                if (v.size()< ){
-                    time_end=stoi(tp.substr(20,tp.size()-1));
-
-                }
-
-            }
-            else {
+            if (isalpha(tp[0]) != 0)  {
                 if (j>0) {
                     j=0;
                     v.push_back(w);
                 }                
                 k++;
             }
+            if (tp.find("Time")<tp.length()){
+                if (bgn==0) {
+                    time_bgn=stoi(tp.substr(20,tp.size()-1));
+                    cout << "begin  "<<time_bgn <<endl;
+                    bgn++;
+                }
+                if (v.size()>127000){
+                    cout << tp << endl;
+                    time_end=stoi(tp.substr(20,tp.size()-1));
+                    cout <<"end "<< time_end <<endl;
+                    cout << v.size()<<endl;
+                }
+            }
+
         }
-        cout <<"end "<< time_end <<endl;
         //non prendo l'ultimo evento perchè è incompleto
         myfile.close(); //close the file object.
     }    
-    cout<< "size" <<v.size()<< endl;
+    cout<< "size    " <<v.size()<< endl;
 
     
     vector <float> charge (v.size());
@@ -74,7 +75,7 @@ vector<float> find_idx_range(string path,string name, int &time_bgn, int &time_e
     float h;
     vector <float> idx_range;
 
-    /*for (int i=0; i<v.size();i++){
+    for (int i=0; i<v.size();i++){
         h = 0;
         for (int j=0; j<100; j++){
             h += v[i][j] / 100;
@@ -88,7 +89,7 @@ vector<float> find_idx_range(string path,string name, int &time_bgn, int &time_e
         if (name.find("pmt2")<name.length()){
             if (charge[i]> 64000 && charge[i]< 75000) idx_range.push_back(i);
         }
-    }*/
+    }
     return idx_range;
 }
 
@@ -107,6 +108,9 @@ void correlation_frequency (){
         cout << "Processing: " << *name << endl; 
         idx_ranges.push_back(find_idx_range("data/" + *name + ".txt", *name, time_b, time_e));
     }
+    cout << time_b << endl;
+    cout << time_e << endl;
+
     int max_i =max(*max_element(idx_ranges[0].begin(), idx_ranges[0].end()),
                    *max_element(idx_ranges[1].begin(), idx_ranges[1].end()));
     int num=0;
