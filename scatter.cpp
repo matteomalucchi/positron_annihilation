@@ -85,7 +85,7 @@ void scatter(){
     map <string, string> pair_names ={
         {"pmt1_NA_e6_ext_run1","pmt2_NA_e6_ext_run1"},
         {"pmt1_NA_e6_ext_run2","pmt2_NA_e6_ext_run2"},
-        {"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
+        //{"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
         {"pmt1_NA_e6_100_or_run1", "pmt2_NA_e6_100_or_run1"},
         {"pmt1_NA_e6_700_or_run2", "pmt2_NA_e6_700_or_run2"},
         {"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"}
@@ -181,7 +181,8 @@ void scatter(){
         gr->Fit("linear");
         linear->Draw("SAME");
         gStyle->SetOptFit(111);
-
+        c_fit_lin->SaveAs(&("scatter/scatter_linear" + name +"_charge"+ ".png")[0]);
+        c_fit_lin->Write();
 
 
 

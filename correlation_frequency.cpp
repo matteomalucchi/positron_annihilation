@@ -20,7 +20,7 @@
 
 using namespace std;
 
-vector<float> find_idx_range(string path,string name, int &time_bgn, int &time_end){
+vector<float> find_idx_range(string path,string name, long int &time_bgn, long int &time_end){
     ifstream myfile;
     myfile.open(path, ios::in | ios::out);  
     vector <vector<float>> v;
@@ -51,15 +51,12 @@ vector<float> find_idx_range(string path,string name, int &time_bgn, int &time_e
             }
             if (tp.find("Time")<tp.length()){
                 if (bgn==0) {
-                    time_bgn=stoi(tp.substr(20,tp.size()-1));
+                    time_bgn=stol(tp.substr(20,tp.size()-1));
                     cout << "begin  "<<time_bgn <<endl;
                     bgn++;
                 }
                 if (v.size()>127000){
-                    cout << tp << endl;
-                    time_end=stoi(tp.substr(20,tp.size()-1));
-                    cout <<"end "<< time_end <<endl;
-                    cout << v.size()<<endl;
+                    time_end=stol(tp.substr(20,tp.size()-1));
                 }
             }
 
@@ -67,7 +64,7 @@ vector<float> find_idx_range(string path,string name, int &time_bgn, int &time_e
         //non prendo l'ultimo evento perchè è incompleto
         myfile.close(); //close the file object.
     }    
-    cout<< "size    " <<v.size()<< endl;
+    cout <<"end "<< time_end <<endl;
 
     
     vector <float> charge (v.size());
@@ -103,7 +100,7 @@ void correlation_frequency (){
                         "pmt2_NA_e6_100_or_run1"
                         };
 
-    int time_b, time_e;
+    long int time_b, time_e;
     for(list<string>::const_iterator name = names.begin(); name != names.end(); ++name){
         cout << "Processing: " << *name << endl; 
         idx_ranges.push_back(find_idx_range("data/" + *name + ".txt", *name, time_b, time_e));
@@ -113,15 +110,29 @@ void correlation_frequency (){
 
     int max_i =max(*max_element(idx_ranges[0].begin(), idx_ranges[0].end()),
                    *max_element(idx_ranges[1].begin(), idx_ranges[1].end()));
-    int num=0;
+    int coincidenze=0;
     for (int i=0; i<=max_i; i++){
         if  ((find(idx_ranges[0].begin(), idx_ranges[0].end(), i) != idx_ranges[0].end())
             && (find(idx_ranges[1].begin(), idx_ranges[1].end(), i) != idx_ranges[1].end())){
-            num++;
+            coincidenze++;
         }
     }
-    cout << num<< endl;
+    cout << coincidenze << endl;
     cout <<idx_ranges[0].size()<<endl;
     cout <<idx_ranges[1].size()<<endl;
+
+    double time_tot= (time_e - time_b)*8*pow(10,-9);
+    cout << time_tot << endl;
+
+    double freq_a=idx_ranges[0].size()/time_tot;
+    double freq_b=idx_ranges[1].size()/time_tot;
+
+    double coinc_casuali= freq_a*freq_b*2*pow(10,-9)*time_tot;
+    cout << freq_a <<endl;
+    cout << freq_b <<endl;
+    cout << coinc_casuali <<endl;
+
+
+
 
 }

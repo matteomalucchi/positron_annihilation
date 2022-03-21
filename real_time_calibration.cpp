@@ -316,6 +316,7 @@ void real_time_calibration(){
         histo_sub->SetLineColor(kBlue);
         histo_sub->Draw();
         histo_b->Draw("SAME");
+        histo_a->Draw("SAME");
         histos[0]->Draw("SAME");
         c_all->SaveAs(&("real_time_calibration/"+name_final + type +"_all.png")[0]);
         
