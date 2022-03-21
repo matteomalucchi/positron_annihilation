@@ -176,7 +176,7 @@ void scatter(){
         gStyle->SetStatX(0.5);
         gr->SetMarkerStyle(1);
         gr->Draw("APE");
-        TF1 *   linear  = new TF1("linear","[0]+[1]*x", -1, 1.4);
+        TF1 *   linear  = new TF1("linear","[0]+[1]*x", option="W",-1, 1.4);
         linear->SetParNames ("Off-set","Correlation factor");
         gr->Fit("linear");
         linear->Draw("SAME");
