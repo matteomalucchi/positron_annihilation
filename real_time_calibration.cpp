@@ -104,6 +104,35 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max, float
     return histos;
 }
 
+vector<float> fit_gaus_NAb (TH1F* histo, vector<float> ranges, string name, string type){
+    
+    cout << endl;
+    cout << "__________________________ Gaussian fit: " << name << type << " __________________________"<<endl; 
+    cout << endl;
+
+    TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[6], ranges[7]);
+
+    gaus1->SetParameters(700, abs(ranges[6]+ranges[7])/2, abs(ranges[6]-ranges[7]));
+
+
+    TCanvas *c_NAb = new TCanvas(&(name + type +"_NAb")[0] ,&(name + type +"_NAb")[0]);
+
+    histo->Fit("gaus1","R", "SAME");
+    gaus1->Draw("SAME");
+    gStyle->SetOptFit(1111);
+    histo->Draw("SAME");
+
+    c_NAb->SaveAs(&("real_time_calibration/"+name + type +"_NAb.png")[0]);
+    c_NAb->Write();
+
+    vector<float> gaus_params;
+
+    gaus_params.push_back(gaus1->GetParameter(1));
+    gaus_params.push_back(gaus1->GetParError(1));
+
+    return gaus_params;
+}
+
 vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, string type){
     
     cout << endl;
@@ -112,13 +141,13 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
 
     TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[0], ranges[1]);
     TF1 *gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[2], ranges[3]);
-    TF1 *gaus3 = new TF1("gaus3","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[7], ranges[8]);
-    TF1 *gaus4 = new TF1("gaus4","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[9], ranges[10]);
+    TF1 *gaus3 = new TF1("gaus3","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[8], ranges[9]);
+    TF1 *gaus4 = new TF1("gaus4","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[10], ranges[11]);
 
     gaus1->SetParameters(700, abs(ranges[0]+ranges[1])/2, abs(ranges[0]-ranges[1]));
     gaus2->SetParameters(1000, abs(ranges[2]+ranges[3])/2, abs(ranges[2]-ranges[3]));
-    gaus3->SetParameters(100, abs(ranges[7]+ranges[8])/2, abs(ranges[7]-ranges[8]));
-    gaus4->SetParameters(100, abs(ranges[9]+ranges[10])/2, abs(ranges[9]-ranges[10]));
+    gaus3->SetParameters(100, abs(ranges[8]+ranges[9])/2, abs(ranges[8]-ranges[9]));
+    gaus4->SetParameters(100, abs(ranges[10]+ranges[11])/2, abs(ranges[10]-ranges[11]));
 
     TCanvas *c_sub = new TCanvas(&(name + type +"_sub")[0] ,&(name + type +"_sub")[0]);
 
@@ -153,11 +182,11 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     return gaus_params;
 }
 
-auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * outfile){
-    float x[3]={0.66, 1.17, 1.33};
-    float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4], gaus_params[6]};
-    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
-    //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5], gaus_params[7]};
+auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * outfile, vector<float> gaus_param_NAb){
+    float x[4]={0.66, 1.17, 1.27, 1.33};
+    float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4],gaus_param_NAb[0],  gaus_params[6]};
+    //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
+    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5],gaus_param_NAb[1], gaus_params[7]};
 
     cout << endl;
     cout << "__________________________ Linear fit: " << name_final << type << " __________________________"<<endl; 
@@ -194,7 +223,7 @@ auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * 
         diff[i] =y[i]-linear->Eval(x[i]);
         diff_norm[i]=diff[i]/y_err[i];
     }  
-    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1};
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1,1};
     
     TGraphErrors* gr2 = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,diff_norm,nullptr,one_array);
     gStyle->SetStatY(0.9);
@@ -225,7 +254,7 @@ auto division(vector<double> off_set, vector<double> cal_factor, float peak, flo
 
 auto peak_energy(string name_final, string type, vector<vector<double>> lin_params, vector<float> gaus_params){
     vector<float> energy;
-    vector<float> x(division(lin_params[0], lin_params[1], gaus_params[0], /* gaus_params[1]*/gaus_params[0]/100));    
+    vector<float> x(division(lin_params[0], lin_params[1], gaus_params[0], gaus_params[1]/*gaus_params[0]/100)*/));    
     //vector<float> y(division(lin_params[0], lin_params[1], gaus_params[10], gaus_params[11]));
     energy.insert(energy.end(), x.begin(), x.end());
     //energy.insert(energy.end(), y.begin(), y.end());
@@ -246,13 +275,22 @@ void real_time_calibration(){
     TFile *outfile= new TFile("real_time_calibration/histograms_RealTimeCalibration_fit.root", "RECREATE");
     ofstream out_file("real_time_calibration/peak_energy.txt");
 
-    // primi due sono picco NA, poi picco cs, poi range da sottrare del cs e poi la posizione del picco del cs da sottrare
-    // poi il range del primo picco co e poi del secondo picco co
+    // primi due sono picco NA| poi picco cs| poi range da sottrare del cs |e poi il range del picco b del na da sottrarre|
+    // poi il range del primo picco co |e poi del secondo picco co | picco del na da sottrarre
     map <vector<string>, vector<float>> pair_names ={ 
         {{"pmt1_NA_cs_e6_500_run2", "pmt1_NA_cs_co_e6_500_run2"}, 
-            {78000, 85000, 100000, 108000, 150000, 210000, 195000, 176000, 187000, 200000, 212000}}, 
-            {{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
+            {78000, 85000, 100000, 108000, 150000, 210000, 190000, 204000, 176000, 187000, 200000, 212000, 195000}}, 
+        /*{{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
             {78000-2000, 85000-2000, 100000-2000, 108000-2000, 150000-2000, 210000-2000, 195000-2000, 176000-2000, 187000-2000, 200000-2000, 212000-2000}}
+        {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
+            {69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 177000, 157000, 167000, 182000, 190000}},
+        {{"pmt2_NA_cs_e6_500_run2", "pmt2_NA_cs_co_e6_500_run2"}, 
+            {70000, 76000, 89000, 98000, 150000, 190000, 177000, 160000, 168000, 182000, 190000}}
+        {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
+            {69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 177000, 157000, 167000, 182000, 190000}},
+        {{"pmt2_NA_cs_e6_500_run2", "pmt2_NA_cs_co_e6_500_run2"}, 
+            {70000, 76000, 89000, 98000, 150000, 190000, 177000, 160000, 168000, 182000, 190000}}*/
+
 
         /*{"pmt1_NA+cs_e6_100_run1", 
                         "pmt2_NA+cs_e6_100_run1",
@@ -280,6 +318,7 @@ void real_time_calibration(){
         string final = name_a.substr(10, name_a.size()-1);
         string name_final = pmt+final;
 
+        cout << "Processing: " << name_final << endl; 
 
         TH1F *histo_a = nullptr;
         f->GetObject(&(name_a + type)[0], histo_a);
@@ -304,9 +343,13 @@ void real_time_calibration(){
         cout<< int_cs_a/int_cs_b << endl;
 
         float y_rescale = (int_NA_a/int_NA_b + int_cs_a/int_cs_b )/2;
+        
+        auto gaus_param_NAb=fit_gaus_NAb(histo_a, ranges, name_final, type);
 
-        cout << "Processing: " << name_a << endl; 
-        histos=make_histo(name_a, ranges[4], ranges[5], y_rescale, ranges[6]);
+        histos=make_histo(name_a, ranges[4], ranges[5], y_rescale, gaus_param_NAb[0]);
+
+        auto gaus_param_NAb_clear=fit_gaus_NAb(histos[0], ranges, name_final, type);
+
 
         TH1F *histo_sub = (TH1F*)histo_b->Clone("histo_sub");
 
@@ -327,7 +370,7 @@ void real_time_calibration(){
 
         vector<float> gaus_params;
         gaus_params=fit_gaus(histo_sub, ranges, name_final, type);
-        auto lin_params = fit_lin(name_final, type, gaus_params, outfile);
+        auto lin_params = fit_lin(name_final, type, gaus_params, outfile, gaus_param_NAb_clear);
 
         vector<string> x= peak_energy(name_final, type, lin_params, gaus_params);
         energy.insert(energy.end(), x.begin(), x.end());
