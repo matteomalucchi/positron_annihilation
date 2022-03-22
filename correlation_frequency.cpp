@@ -120,13 +120,14 @@ void correlation_frequency (){
     out_file << "numero coincidenze:    "<< coincidenze << "\n";
     cout << coincidenze << endl;
 
-    cout <<idx_ranges[0].size()<<endl;
-    out_file << "numero eventi nel picco pmt1:    "<<idx_ranges[0].size() << "\n";
-    cout <<idx_ranges[1].size()<<endl;
-    out_file << "numero eventi nel picco pmt2:    "<<idx_ranges[1].size() << "\n";
-
-
     double n_a= idx_ranges[0].size(), n_b= idx_ranges[1].size() ;
+
+    cout <<n_a<<endl;
+    out_file << "numero eventi nel picco pmt1:    "<<n_a << "\n";
+    cout <<n_b<<endl;
+    out_file << "numero eventi nel picco pmt2:    "<<n_b << "\n";
+
+
 
     cout <<n_a<<endl;
     cout <<n_b<<endl;
