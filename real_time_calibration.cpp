@@ -286,13 +286,47 @@ auto mass_graph(vector<float> energy, string name_final, string type,  TFile * o
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr->SetMarkerStyle(1);
-    gr->GetXaxis()->SetLimits(0, 1);
+    gr->GetXaxis()->SetLimits(0.5, 0.512);
     gr->GetXaxis()->SetTitle("Energy [MeV]");
     gr->GetXaxis()->SetTitleSize(0.15);
     gr->Draw("APE");
     auto line=new TLine(0.511, 0, 0.511, 7);
     line->SetLineColor(2);
     line->Draw("SAME");
+
+    float weights[sizeof(x)/sizeof(x[0])];
+
+    for(int k=0; k<sizeof(x)/sizeof(x[0]),k++){
+
+        weights[k]=1/(x_err[k]*x_err[k]);
+    }
+
+    float m_ave=0;
+    float weights_sum=0;
+
+    for(int k=0; k<sizeof(x)/sizeof(x[0]),k++){
+
+        weights_sum+=weights[k];
+    }
+
+    for(int k=0; k<sizeof(x)/sizeof(x[0]),k++){
+
+        m_ave+=x[k]*weights[k]/weights_sum;
+    }
+
+    float m_ave_err=sqrt(1/weights_sum);
+
+    auto meanlinesx=new TLine(m_ave-m_ave_err, 1, m_ave-m_ave_err, 6);
+    meanlinesx->SetLineColor(4);
+    meanlinesx->Draw("SAME");
+
+    auto meanlinedx=new TLine(m_ave+m_ave_err, 1, m_ave+m_ave_err, 6);
+    meanlinedx->SetLineColor(4);
+    meanlinedx->Draw("SAME");
+
+
+
+
     c_mass->SaveAs(&("real_time_calibration/" + name_final + type + "_mass.png")[0]);
     outfile->cd();
     c_mass->Write();
