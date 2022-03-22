@@ -125,12 +125,21 @@ void correlation_frequency (){
     cout <<idx_ranges[1].size()<<endl;
     out_file << "numero eventi nel picco pmt2:    "<<idx_ranges[1].size() << "\n";
 
+
+    double n_a= idx_ranges[0].size(), n_b= idx_ranges[1].size() ;
+
+    cout <<n_a<<endl;
+    cout <<n_b<<endl;
+
     double time_tot= (time_e - time_b)*8*pow(10,-9);
     cout << time_tot << endl;
     out_file << "tempo totale:    "<< time_tot << "\n";
 
     double freq_a=idx_ranges[0].size()/time_tot;
     double freq_b=idx_ranges[1].size()/time_tot;
+    double freq_a=n_a/time_tot;
+    double freq_b=n_b/time_tot;
+
     double coinc_casuali= freq_a*freq_b*2*pow(10,-9)*time_tot;
 
     cout << freq_a <<endl;
@@ -140,6 +149,9 @@ void correlation_frequency (){
     out_file << "freq pmt2 nel picco:    "<< freq_b << "\n";
     out_file << "coincidenze casuali stimate:    "<< coinc_casuali << "\n";
 
+
+    cout << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*2*pow(10,-9)/time_tot <<endl;
+    cout << "coincidenze= "<<coincidenze<<" pm "<< sqrt(coincidenze) << endl;
 
 
 
