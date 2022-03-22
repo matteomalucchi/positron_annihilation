@@ -1,0 +1,12 @@
+energy peak name_charge = 0.504547+-0.000899
+energy peak name_charge = 0.000899+-0.505708
+energy peak name_charge = 0.505708+-0.000709
+energy peak name_charge = 0.000709+-0.507319
+energy peak name_charge = 0.507319+-0.000855
+energy peak name_charge = 0.000855+-0.505188
+energy peak name_charge = 0.505188+-0.000702
+energy peak name_charge = 0.000702+-0.507069
+energy peak name_charge = 0.507069+-0.000861
+energy peak name_charge = 0.000861+-0.506376
+energy peak name_charge = 0.506376+-0.001269
+energy peak name_charge = 0.001269+-17859828629202353239621632.000000

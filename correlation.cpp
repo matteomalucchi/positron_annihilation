@@ -19,7 +19,7 @@
 
 using namespace std;
 
-vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}, int &time_bgn, int &time_end){
+vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}){
     ifstream myfile;
     myfile.open(path, ios::in | ios::out);  
     vector <vector<float>> v;
@@ -38,14 +38,6 @@ vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}
                 w.push_back(m);
                 j++;
             }
-            if (tp.find("Time")<tp.length()){
-                if (bgn==0) {
-                    time_bgn=stof(tp.substr(20,tp.size()-1));
-                    cout << time_bgn <<endl;
-                    bgn++;
-                }
-                time_end=stof(tp.substr(20,tp.size()-1));
-            }
             else {
                 if (j>0) {
                     j=0;
@@ -58,7 +50,6 @@ vector<float> find_idx_range(string path,string name, vector<float> idx_corr ={}
         myfile.close(); //close the file object.
     }    
 
-    cout << time_end <<endl;
     
     vector <float> charge (v.size());
     vector <float> amp (v.size());
@@ -116,27 +107,24 @@ void correlation (){
                         "pmt2_NA_e6_ext_run1"
                         };
 
-    int time_bgn=0, time_end=0;
     for(list<string>::const_iterator name = names.begin(); name != names.end(); ++name){
         cout << "Processing: " << *name << endl; 
-        idx_ranges.push_back(find_idx_range("data/" + *name + ".txt", *name, time_bgn, time_end));
+        idx_ranges.push_back(find_idx_range("data/" + *name + ".txt", *name));
         float a =  (idx_ranges.back().size()-1)/idx_ranges.back().back();
-        cout<< "Frequenza temporale generale: "<< idx_ranges.back().back()/(time_end-time_bgn)*8*pow(10,-9) <<endl;
-        cout<< "Frequenza temporale nel picco: "<<  (idx_ranges.back().size()-1)/(time_end-time_bgn)*8*pow(10,-9) <<endl;
         cout << a <<endl;
         cout << idx_ranges.back().back() <<endl;
-        string prob= *name + " = " + to_string(a) + "\n";
-        string events = "eventi considerati = " + to_string(idx_ranges.back().back()) + "\n\n";
+        string prob="prob singola picco:     "+ *name + " = " + to_string(a) + "\n";
+        string events = "eventi considerati:    " +*name+ " = "  to_string(idx_ranges.back().back()) + "\n\n";
         out_file<< prob;
         out_file << events;
     }
     cout << "Processing: final " << "pmt2_NA_e6_ext_run1" << endl;
-    idx_ranges.push_back(find_idx_range("data/pmt2_NA_e6_ext_run1.txt", "pmt2_NA_e6_ext_run1", idx_ranges[1], time_bgn, time_end));
+    idx_ranges.push_back(find_idx_range("data/pmt2_NA_e6_ext_run1.txt", "pmt2_NA_e6_ext_run1", idx_ranges[1]));
     float a =  (idx_ranges.back().size()-1)/idx_ranges.back().back();
     cout << a <<endl;
     cout << idx_ranges.back().back() <<endl;
     
-    string prob= "pmt2_NA_e6_ext_run1 = " + to_string(a) + "\n";
+    string prob= "prob condizionata picco 2 a picco 1 = " + to_string(a) + "\n";
     string events = "eventi considerati = " + to_string(idx_ranges.back().back()) + "\n\n";
     out_file<< prob;
     out_file << events;

@@ -76,11 +76,17 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max, float
         min =*min_element(v[i].begin(), v[i].end());
         amp[i]=h-min;
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, 250000);
+    int range_charge=250000;
+    int range_amp=3500; 
+    if (name.find("pmt3")<name.length()){
+        range_charge=50000;
+        range_amp=600;
+    }
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
     //TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, 3500);
     for (long unsigned int i=0; i< charge.size(); i++){
         if ((find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()) && charge[i]> charge_min && charge[i]<charge_max){
-            histo_charge->Fill(charge[i]+peak/100);
+            histo_charge->Fill(charge[i]/*+peak/100*/);
             //histo_amp->Fill(amp[i]);
         }
     }
@@ -93,11 +99,11 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max, float
 
     TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
     histo_charge->SetLineColor(3);
-    histo_charge->Draw();
+    histo_charge->Draw("HIST");
     c_charge->SaveAs(&("real_time_calibration/" + name + "_charge.png")[0]);
 /*
     TCanvas *c_amp = new TCanvas(&(name + "_amp")[0], &(name + "_amp")[0]);
-    histo_amp->Draw();
+    histo_amp->Draw("HIST");
     c_amp->SaveAs(&("real_time_calibration/" + name + "_amp.png")[0]);*/
 
     return histos;
@@ -111,15 +117,15 @@ vector<float> fit_gaus_NAb (TH1F* histo, vector<float> ranges, string name, stri
 
     TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[6], ranges[7]);
 
-    gaus1->SetParameters(700, abs(ranges[6]+ranges[7])/2, abs(ranges[6]-ranges[7]));
+    gaus1->SetParameters(200, abs(ranges[6]+ranges[7])/2, abs(ranges[6]-ranges[7]));
 
 
     TCanvas *c_NAb = new TCanvas(&(name + type +"_NAb_fit")[0] ,&(name + type +"_NAb_fit")[0]);
 
     histo->Fit("gaus1","R", "SAME");
+    histo->Draw("HIST");
     gaus1->Draw("SAME");
     gStyle->SetOptFit(1111);
-    histo->Draw("SAME");
 
     c_NAb->SaveAs(&("real_time_calibration/"+name + type +"_NAb_fit.png")[0]);
     c_NAb->Write();
@@ -149,7 +155,8 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gaus4->SetParameters(100, abs(ranges[10]+ranges[11])/2, abs(ranges[10]-ranges[11]));
 
     TCanvas *c_sub = new TCanvas(&(name + type +"_sub_fit")[0] ,&(name + type +"_sub_fit")[0]);
-
+    
+    histo_sub->Draw("HIST");
     histo_sub->Fit("gaus1","R", "SAME");
     gaus1->Draw("SAME");
     gStyle->SetOptFit(1111);
@@ -162,7 +169,6 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     histo_sub->Fit("gaus4","R", "SAME"); 
     gaus4->Draw("SAME");
     gStyle->SetOptFit(1111);
-    histo_sub->Draw("SAME");
 
     c_sub->SaveAs(&("real_time_calibration/"+name + type +"_sub_fit.png")[0]);
     c_sub->Write();
@@ -208,6 +214,11 @@ auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * 
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr->SetMarkerStyle(1);
+    gr->GetYaxis()->SetTitle("Peak [a.u.]");
+    gr->GetXaxis()->SetTitle("Energy [MeV]");
+    gr->GetXaxis()->SetTitleSize(0.15);
+    gr->GetXaxis()->SetLimits(0, 2);
+
     gr->Draw("APE");
     TF1 *   linear  = new TF1("linear","[0]+[1]*x", 0, 1.4);
     linear->SetParNames ("Off-set","Calibration factor");
@@ -228,6 +239,8 @@ auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * 
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr2->SetMarkerStyle(1);
+    gr2->GetXaxis()->SetLimits(0, 2);
+
     TF1 *   zero  = new TF1("zero","0*x", 0, 1.4);
     gr2->Draw("APE");
     zero->Draw("SAME");
@@ -257,29 +270,45 @@ auto peak_energy(string name_final, string type, vector<vector<double>> lin_para
     //vector<float> y(division(lin_params[0], lin_params[1], gaus_params[10], gaus_params[11]));
     energy.insert(energy.end(), x.begin(), x.end());
     //energy.insert(energy.end(), y.begin(), y.end());
-
-    string peak1 = "energy peak " + name_final + " " + type + " = " + to_string(energy[0]) + "+-" + to_string(energy[1]) + "\n";
-    //string peak2 = "energy peak " + name_final + " " + type + " = " + to_string(energy[2]) + "+-" + to_string(energy[3])+ "\n";
-    vector <string> energy_string;
-    energy_string.push_back(peak1);
-    //energy_string.push_back(peak2);
-
-    return energy_string;
-
+    return energy;
 }
 
+auto mass_graph(vector<float> energy, string name_final, string type,  TFile * outfile){
+
+    float x[6]={energy[0], energy[2], energy[4], energy[6], energy[8], energy[10]};
+    float y[sizeof(x)/sizeof(x[0])]={1, 2, 3, 4, 5, 6};
+    //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
+    float x_err[sizeof(x)/sizeof(x[0])] = {energy[1], energy[3], energy[5], energy[7], energy[9], energy[11]};
+
+    TCanvas *c_mass = new TCanvas(&(name_final + type + "_mass")[0], &( name_final + type + "_mass")[0]);
+
+    TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,x_err,nullptr);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatX(0.5);
+    gr->SetMarkerStyle(1);
+    gr->GetXaxis()->SetLimits(0, 1);
+    gr->GetXaxis()->SetTitle("Energy [MeV]");
+    gr->GetXaxis()->SetTitleSize(0.15);
+    gr->Draw("APE");
+    auto line=new TLine(0.511, 0, 0.511, 7);
+    line->SetLineColor(2);
+    line->Draw("SAME");
+    c_mass->SaveAs(&("real_time_calibration/" + name_final + type + "_mass.png")[0]);
+    outfile->cd();
+    c_mass->Write();
+}
 
 void real_time_calibration(){
     TFile *f = new TFile("histograms/histograms_RealTimeCalibration_rebin.root");
-    TFile *outfile= new TFile("real_time_calibration/plots_RealTimeCalibration_fit_low.root", "RECREATE");
-    ofstream out_file("real_time_calibration/peak_energy_low.txt");
+    TFile *outfile= new TFile("real_time_calibration/plots_RealTimeCalibration_fitNA_low.root", "RECREATE");
+    ofstream out_file("real_time_calibration/peak_energy_fitNa_low.txt");
 
-    // primi due sono picco NA| poi picco cs| poi range da sottrare del cs |e poi il range del picco b del na da sottrarre|
-    // poi il range del primo picco co |e poi del secondo picco co
+    // primi due sono picco NA(solo cs)| poi picco cs(solo cs)| poi range da sottrare del cs (solo cs)|e poi il range del picco b del NA da sottrarre(solo cs)|
+    // poi il range del primo picco co (cs+co)|e poi del secondo picco co(cs+co)
     map <vector<string>, vector<float>> pair_names ={ 
         {{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
             {78000-2000, 85000-2000, 100000-2000, 108000-2000, 150000-2000, 210000-2000, 190000-2000, 204000-2000, 176000-2000, 187000-2000, 200000-2000, 212000-2000}},   
-        /*{{"pmt1_NA_cs_e6_500_run2", "pmt1_NA_cs_co_e6_500_run2"}, 
+        {{"pmt1_NA_cs_e6_500_run2", "pmt1_NA_cs_co_e6_500_run2"}, 
             {78000, 85000, 100000, 108000, 150000, 210000, 190000, 204000, 176000, 187000, 200000, 212000}}, 
 
         {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
@@ -288,12 +317,12 @@ void real_time_calibration(){
             {70000, 76000, 89000, 98000, 150000, 190000, 172000, 182000, 160000, 168000, 182000, 190000}},
 
         {{"pmt3_NA_cs_e6_30_run1", "pmt3_NA_cs_co_e6_30_run1"}, 
-            {13000, 14700, 16700, 18800, 150000-9000, 210000-9000, 177000, 157000, 167000, 182000, 190000}},
+            {13200, 14600, 16800, 18600, 28000, 40000, 32000, 34600, 30000, 32000, 34200, 36000}},
         {{"pmt3_NA_cs_e6_100_run2", "pmt3_NA_cs_co_e6_100_run2"}, 
-            {70000, 76000, 89000, 98000, 150000, 190000, 177000, 160000, 168000, 182000, 190000}}*/
+            {13000, 14600, 16800, 18600, 26000, 40000, 31000, 34800, 29500, 31400, 33500, 36000}}
         };
     
-    vector <string> energy;
+    vector <float> energy;
 
     string type= "_charge";
 
@@ -313,14 +342,18 @@ void real_time_calibration(){
         f->GetObject(&(name_a + type)[0], histo_a);
         TH1F *histo_b = nullptr;
         f->GetObject(&(name_b + type)[0], histo_b);
+
         TCanvas *c_a = new TCanvas(&(name_a)[0] ,&(name_a)[0]);
         histo_a->SetLineColor(1);
-        histo_a->Draw();
-        c_a->SaveAs(&("real_time_calibration/"+name_a+".png")[0]);
+        histo_b->SetLineColor(7);
+        histo_a->Draw("HIST");
+        histo_b->Draw("HIST SAME");
+
+        c_a->SaveAs(&("real_time_calibration/"+name_final+"_cs_cs+co.png")[0]);
 
         TCanvas *c_b = new TCanvas(&(name_b)[0] ,&(name_b)[0]);
-        histo_b->SetLineColor(2);
-        histo_b->Draw();
+        histo_b->SetLineColor(7);
+        histo_b->Draw("HIST");
         c_b->SaveAs(&("real_time_calibration/"+name_b+".png")[0]);
 
         float int_NA_a=histo_a->Integral(histo_a->FindFixBin(ranges[0]),histo_a->FindFixBin(ranges[1]));
@@ -346,10 +379,10 @@ void real_time_calibration(){
         TCanvas *c_all = new TCanvas(&(name_final + type +"_all")[0] ,&(name_final + type +"_all")[0]);
         histo_sub->SetName(&(name_final + type +"_all")[0]);
         histo_sub->SetLineColor(4);
-        histo_sub->Draw();
-        histo_b->Draw("SAME");
-        histo_a->Draw("SAME");
-        histos[0]->Draw("SAME");
+        histo_sub->Draw("HIST");
+        histo_b->Draw("SAME HIST");
+        histo_a->Draw("SAME HIST");
+        histos[0]->Draw("SAME HIST");
         c_all->SaveAs(&("real_time_calibration/"+name_final + type +"_all.png")[0]);
         
         histo_a->Write();
@@ -361,13 +394,15 @@ void real_time_calibration(){
         gaus_params=fit_gaus(histo_sub, ranges, name_final, type);
         auto lin_params = fit_lin(name_final, type, gaus_params, outfile, gaus_param_NAb_clear);
 
-        vector<string> x= peak_energy(name_final, type, lin_params, gaus_params);
+        vector<float> x= peak_energy(name_final, type, lin_params, gaus_params);
         energy.insert(energy.end(), x.begin(), x.end());
     }
+    mass_graph(energy , "combined", type, outfile);
     cout << endl;
     for (int i=0; i<energy.size(); i++){
-        cout << energy[i];
-        out_file << energy[i];
+        string peak1 = "energy peak name"  + type + " = " + to_string(energy[0+i]) + "+-" + to_string(energy[1+i]) + "\n";
+        cout << peak1;
+        out_file << peak1;
     }
     getchar();
     outfile->Close();
