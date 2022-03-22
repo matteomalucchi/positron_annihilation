@@ -1,3 +1,4 @@
+stima combinata =   0.505936+-0.000341064
 energy peak name_charge = 0.504547+-0.000899
 energy peak name_charge = 0.000899+-0.505708
 energy peak name_charge = 0.505708+-0.000709
