@@ -1,1 +1,0 @@
-energy peak pmt1_e6_500_run2 _charge = 0.508026+-0.000636
