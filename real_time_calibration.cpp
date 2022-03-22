@@ -272,37 +272,27 @@ auto peak_energy(string name_final, string type, vector<vector<double>> lin_para
 
 void real_time_calibration(){
     TFile *f = new TFile("histograms/histograms_RealTimeCalibration.root");
-    TFile *outfile= new TFile("real_time_calibration/histograms_RealTimeCalibration_fit.root", "RECREATE");
-    ofstream out_file("real_time_calibration/peak_energy.txt");
+    TFile *outfile= new TFile("real_time_calibration/plots_RealTimeCalibration_fit_low.root", "RECREATE");
+    ofstream out_file("real_time_calibration/peak_energy_low.txt");
 
     // primi due sono picco NA| poi picco cs| poi range da sottrare del cs |e poi il range del picco b del na da sottrarre|
-    // poi il range del primo picco co |e poi del secondo picco co | picco del na da sottrarre
+    // poi il range del primo picco co |e poi del secondo picco co
     map <vector<string>, vector<float>> pair_names ={ 
+        {{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
+            {78000-2000, 85000-2000, 100000-2000, 108000-2000, 150000-2000, 210000-2000, 190000-2000, 204000-2000, 176000-2000, 187000-2000, 200000-2000, 212000-2000}},   
         {{"pmt1_NA_cs_e6_500_run2", "pmt1_NA_cs_co_e6_500_run2"}, 
-            {78000, 85000, 100000, 108000, 150000, 210000, 190000, 204000, 176000, 187000, 200000, 212000, 195000}}, 
-        /*{{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
-            {78000-2000, 85000-2000, 100000-2000, 108000-2000, 150000-2000, 210000-2000, 195000-2000, 176000-2000, 187000-2000, 200000-2000, 212000-2000}}
+            {78000, 85000, 100000, 108000, 150000, 210000, 190000, 204000, 176000, 187000, 200000, 212000}}, 
+
         {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
-            {69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 177000, 157000, 167000, 182000, 190000}},
+            {69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 172000, 182000, 157000, 167000, 182000, 190000}},
         {{"pmt2_NA_cs_e6_500_run2", "pmt2_NA_cs_co_e6_500_run2"}, 
+            {70000, 76000, 89000, 98000, 150000, 190000, 172000, 182000, 160000, 168000, 182000, 190000}},
+
+        {{"pmt3_NA_cs_e6_30_run1", "pmt3_NA_cs_co_e6_30_run1"}, 
+            {13000, 14700, 16700, 18800, 150000-9000, 210000-9000, 177000, 157000, 167000, 182000, 190000}},
+        {{"pmt3_NA_cs_e6_100_run2", "pmt3_NA_cs_co_e6_100_run2"}, 
             {70000, 76000, 89000, 98000, 150000, 190000, 177000, 160000, 168000, 182000, 190000}}
-        {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
-            {69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 177000, 157000, 167000, 182000, 190000}},
-        {{"pmt2_NA_cs_e6_500_run2", "pmt2_NA_cs_co_e6_500_run2"}, 
-            {70000, 76000, 89000, 98000, 150000, 190000, 177000, 160000, 168000, 182000, 190000}}*/
-
-
-        /*{"pmt1_NA+cs_e6_100_run1", 
-                        "pmt2_NA+cs_e6_100_run1",
-                        "pmt3_NA+cs_e6_30_run1",
-                        "pmt1_NA+cs+co_e6_100_run1",
-                        "pmt2_NA+cs+co_e6_100_run1",
-                        "pmt3_NA+cs+co_e6_30_run1", */
-
-                        /*"pmt2_NA+cs_e6_500_run2",
-                        "pmt3_NA+cs_e6_100_run2",
-                        "pmt2_NA+cs+co_e6_500_run2",
-                        "pmt3_NA+cs+co_e6_100_run2"*/};
+        };
     
     vector <string> energy;
 
