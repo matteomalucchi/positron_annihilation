@@ -79,10 +79,14 @@ vector <TH1F*> make_histo(string name){
         charge_min = (charge[i]<charge_min) ? charge[i] : charge_min;
         amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      
     }
-    // if pmt1 allora range_max = ....
-    
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, /*static_cast<int>(charge_max)-150000*/ 250000);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, /*static_cast<int>(amp_max)-4500*/ 3500);
+    int range_charge=250000;
+    int range_amp=3500; 
+    if (name.find("pmt3")<name.length()){
+        range_charge=50000;
+        range_amp=600;
+    }
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, range_amp);
     for (long unsigned int i=0; i< charge.size(); i++){
         if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
             histo_charge->Fill(charge[i]);
@@ -117,7 +121,7 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_RealTimeCalibration.root", "RECREATE"/* "UPDATE"*/);
+    TFile *outfile= new TFile("histograms/histograms_RealTimeCalibration_rebin.root", "RECREATE"/* "UPDATE"*/);
     list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",

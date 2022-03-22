@@ -92,14 +92,13 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max, float
     //histos.push_back(histo_amp);
 
     TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
-    histo_charge->SetLineColor(kGreen);
+    histo_charge->SetLineColor(3);
     histo_charge->Draw();
     c_charge->SaveAs(&("real_time_calibration/" + name + "_charge.png")[0]);
 /*
     TCanvas *c_amp = new TCanvas(&(name + "_amp")[0], &(name + "_amp")[0]);
     histo_amp->Draw();
     c_amp->SaveAs(&("real_time_calibration/" + name + "_amp.png")[0]);*/
-
 
     return histos;
 }
@@ -115,14 +114,14 @@ vector<float> fit_gaus_NAb (TH1F* histo, vector<float> ranges, string name, stri
     gaus1->SetParameters(700, abs(ranges[6]+ranges[7])/2, abs(ranges[6]-ranges[7]));
 
 
-    TCanvas *c_NAb = new TCanvas(&(name + type +"_NAb")[0] ,&(name + type +"_NAb")[0]);
+    TCanvas *c_NAb = new TCanvas(&(name + type +"_NAb_fit")[0] ,&(name + type +"_NAb_fit")[0]);
 
     histo->Fit("gaus1","R", "SAME");
     gaus1->Draw("SAME");
     gStyle->SetOptFit(1111);
     histo->Draw("SAME");
 
-    c_NAb->SaveAs(&("real_time_calibration/"+name + type +"_NAb.png")[0]);
+    c_NAb->SaveAs(&("real_time_calibration/"+name + type +"_NAb_fit.png")[0]);
     c_NAb->Write();
 
     vector<float> gaus_params;
@@ -149,7 +148,7 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gaus3->SetParameters(100, abs(ranges[8]+ranges[9])/2, abs(ranges[8]-ranges[9]));
     gaus4->SetParameters(100, abs(ranges[10]+ranges[11])/2, abs(ranges[10]-ranges[11]));
 
-    TCanvas *c_sub = new TCanvas(&(name + type +"_sub")[0] ,&(name + type +"_sub")[0]);
+    TCanvas *c_sub = new TCanvas(&(name + type +"_sub_fit")[0] ,&(name + type +"_sub_fit")[0]);
 
     histo_sub->Fit("gaus1","R", "SAME");
     gaus1->Draw("SAME");
@@ -165,7 +164,7 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gStyle->SetOptFit(1111);
     histo_sub->Draw("SAME");
 
-    c_sub->SaveAs(&("real_time_calibration/"+name + type +"_sub.png")[0]);
+    c_sub->SaveAs(&("real_time_calibration/"+name + type +"_sub_fit.png")[0]);
     c_sub->Write();
 
     vector<float> gaus_params;
@@ -193,7 +192,7 @@ auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * 
     cout << endl;
     gStyle->SetOptStat(0);
 
-    TCanvas *c_fit_lin = new TCanvas(&(name_final + type + "_linear")[0], &( name_final + type + "_linear")[0]);
+    TCanvas *c_fit_lin = new TCanvas(&(name_final + type + "_fit_lin")[0], &( name_final + type + "_fit_lin")[0]);
     TPad *pad1 = new TPad("pad1","pad1",0,0.33,1,1);
     TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.33);
     pad1->SetBottomMargin(0.00001);
@@ -271,7 +270,7 @@ auto peak_energy(string name_final, string type, vector<vector<double>> lin_para
 
 
 void real_time_calibration(){
-    TFile *f = new TFile("histograms/histograms_RealTimeCalibration.root");
+    TFile *f = new TFile("histograms/histograms_RealTimeCalibration_rebin.root");
     TFile *outfile= new TFile("real_time_calibration/plots_RealTimeCalibration_fit_low.root", "RECREATE");
     ofstream out_file("real_time_calibration/peak_energy_low.txt");
 
@@ -280,7 +279,7 @@ void real_time_calibration(){
     map <vector<string>, vector<float>> pair_names ={ 
         {{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
             {78000-2000, 85000-2000, 100000-2000, 108000-2000, 150000-2000, 210000-2000, 190000-2000, 204000-2000, 176000-2000, 187000-2000, 200000-2000, 212000-2000}},   
-        {{"pmt1_NA_cs_e6_500_run2", "pmt1_NA_cs_co_e6_500_run2"}, 
+        /*{{"pmt1_NA_cs_e6_500_run2", "pmt1_NA_cs_co_e6_500_run2"}, 
             {78000, 85000, 100000, 108000, 150000, 210000, 190000, 204000, 176000, 187000, 200000, 212000}}, 
 
         {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
@@ -291,7 +290,7 @@ void real_time_calibration(){
         {{"pmt3_NA_cs_e6_30_run1", "pmt3_NA_cs_co_e6_30_run1"}, 
             {13000, 14700, 16700, 18800, 150000-9000, 210000-9000, 177000, 157000, 167000, 182000, 190000}},
         {{"pmt3_NA_cs_e6_100_run2", "pmt3_NA_cs_co_e6_100_run2"}, 
-            {70000, 76000, 89000, 98000, 150000, 190000, 177000, 160000, 168000, 182000, 190000}}
+            {70000, 76000, 89000, 98000, 150000, 190000, 177000, 160000, 168000, 182000, 190000}}*/
         };
     
     vector <string> energy;
@@ -315,12 +314,12 @@ void real_time_calibration(){
         TH1F *histo_b = nullptr;
         f->GetObject(&(name_b + type)[0], histo_b);
         TCanvas *c_a = new TCanvas(&(name_a)[0] ,&(name_a)[0]);
-        histo_a->SetLineColor(kBlack);
+        histo_a->SetLineColor(1);
         histo_a->Draw();
         c_a->SaveAs(&("real_time_calibration/"+name_a+".png")[0]);
 
         TCanvas *c_b = new TCanvas(&(name_b)[0] ,&(name_b)[0]);
-        histo_b->SetLineColor(kRed);
+        histo_b->SetLineColor(2);
         histo_b->Draw();
         c_b->SaveAs(&("real_time_calibration/"+name_b+".png")[0]);
 
@@ -346,7 +345,7 @@ void real_time_calibration(){
         histo_sub->Add(histos[0], -1);
         TCanvas *c_all = new TCanvas(&(name_final + type +"_all")[0] ,&(name_final + type +"_all")[0]);
         histo_sub->SetName(&(name_final + type +"_all")[0]);
-        histo_sub->SetLineColor(kBlue);
+        histo_sub->SetLineColor(4);
         histo_sub->Draw();
         histo_b->Draw("SAME");
         histo_a->Draw("SAME");
