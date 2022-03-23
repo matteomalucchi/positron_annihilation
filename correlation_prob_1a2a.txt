@@ -1,12 +1,12 @@
-pmt2_NA_e6_100 = 0.257442
-eventi considerati = 105612.000000
+prob singola picco:     pmt2_NA_e6_100_run1 = 0.257442
+eventi considerati:    pmt2_NA_e6_100_run1 = 105612.000000
 
-pmt1_NA_e6_ext_run1 = 0.589337
-eventi considerati = 144610.000000
+prob singola picco:     pmt1_NA_e6_ext_run1 = 0.589337
+eventi considerati:    pmt1_NA_e6_ext_run1 = 144610.000000
 
-pmt2_NA_e6_ext_run1 = 0.418287
-eventi considerati = 149524.000000
+prob singola picco:     pmt2_NA_e6_ext_run1 = 0.418287
+eventi considerati:    pmt2_NA_e6_ext_run1 = 149524.000000
 
-pmt2_NA_e6_ext_run1 = 0.426822
+prob condizionata picco 2 a picco 1 = 0.426822
 eventi considerati = 80366.000000
 

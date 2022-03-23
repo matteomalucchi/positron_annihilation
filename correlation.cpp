@@ -101,8 +101,8 @@ void correlation (){
     ofstream out_file("correlation_prob_1a2a.txt");
 
     list <string> names ={
-                        //"pmt1_NA_e6_100",
-                        "pmt2_NA_e6_100",            
+                        //"pmt1_NA_e6_100_run1",
+                        "pmt2_NA_e6_100_run1",            
                         "pmt1_NA_e6_ext_run1",
                         "pmt2_NA_e6_ext_run1"
                         };
@@ -114,7 +114,7 @@ void correlation (){
         cout << a <<endl;
         cout << idx_ranges.back().back() <<endl;
         string prob="prob singola picco:     "+ *name + " = " + to_string(a) + "\n";
-        string events = "eventi considerati:    " +*name+ " = "  to_string(idx_ranges.back().back()) + "\n\n";
+        string events = "eventi considerati:    " +*name+ " = " + to_string(idx_ranges.back().back()) + "\n\n";
         out_file<< prob;
         out_file << events;
     }

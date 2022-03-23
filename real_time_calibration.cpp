@@ -18,6 +18,9 @@
 
 using namespace std;
 
+ofstream mass_e_file("real_time_calibration/peak_energy_low.txt");
+ofstream peak_NAb_file("real_time_calibration/peak_NAb_low.txt");
+ofstream chi_file("real_time_calibration/chi_square_low.txt");
 
 
 vector <TH1F*> make_histo(string name, float charge_min, float charge_max, float y_rescale, float peak){
@@ -134,7 +137,7 @@ vector<float> fit_gaus_NAb (TH1F* histo, vector<float> ranges, string name, stri
 
     gaus_params.push_back(gaus1->GetParameter(1));
     gaus_params.push_back(gaus1->GetParError(1));
-
+    chi_file<< name << "   chi2/ndof   "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
     return gaus_params;
 }
 
@@ -184,14 +187,20 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gaus_params.push_back(gaus4->GetParameter(1));
     gaus_params.push_back(gaus4->GetParError(1));
 
+    chi_file<< name << "   chi2/ndof   "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
+    chi_file<< name << "   chi2/ndof   "<< gaus2->GetChisquare() <<"/"<< gaus2->GetNDF() <<"\n";
+    chi_file<< name << "   chi2/ndof   "<< gaus3->GetChisquare() <<"/"<< gaus3->GetNDF() <<"\n";
+    chi_file<< name << "   chi2/ndof   "<< gaus4->GetChisquare() <<"/"<< gaus4->GetNDF() <<"\n";
+
+
     return gaus_params;
 }
 
 auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * outfile, vector<float> gaus_param_NAb){
-    float x[4]={0.66, 1.17, 1.27, 1.33};
-    float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4],gaus_param_NAb[0],  gaus_params[6]};
+    float x[3]={0.66, 1.17, /*1.27,*/ 1.33};
+    float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4]/*,gaus_param_NAb[0]*/,  gaus_params[6]};
     //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
-    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5],gaus_param_NAb[1], gaus_params[7]};
+    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5]/*,gaus_param_NAb[1]*/, gaus_params[7]};
 
     cout << endl;
     cout << "__________________________ Linear fit: " << name_final << type << " __________________________"<<endl; 
@@ -217,7 +226,7 @@ auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * 
     gr->GetYaxis()->SetTitle("Peak [a.u.]");
     gr->GetXaxis()->SetTitle("Energy [MeV]");
     gr->GetXaxis()->SetTitleSize(0.15);
-    gr->GetXaxis()->SetLimits(0, 2);
+    gr->GetXaxis()->SetLimits(0, 1.4);
 
     gr->Draw("APE");
     TF1 *   linear  = new TF1("linear","[0]+[1]*x", 0, 1.4);
@@ -233,13 +242,13 @@ auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * 
         diff[i] =y[i]-linear->Eval(x[i]);
         diff_norm[i]=diff[i]/y_err[i];
     }  
-    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1,1};
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1};
     
     TGraphErrors* gr2 = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,diff_norm,nullptr,one_array);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr2->SetMarkerStyle(1);
-    gr2->GetXaxis()->SetLimits(0, 2);
+    gr2->GetXaxis()->SetLimits(0, 1.4);
 
     TF1 *   zero  = new TF1("zero","0*x", 0, 1.4);
     gr2->Draw("APE");
@@ -290,13 +299,13 @@ auto mass_graph(vector<float> energy, string name_final, string type,  TFile * o
     gr->GetXaxis()->SetTitle("Energy [MeV]");
     gr->GetXaxis()->SetTitleSize(0.15);
     gr->Draw("APE");
-    auto line=new TLine(0.511, 0, 0.511, 7);
+    auto line=new TLine(0.511, 0.5, 0.511, 6.5);
     line->SetLineColor(2);
     line->Draw("SAME");
 
     float weights[sizeof(x)/sizeof(x[0])];
 
-    for(int k=0; k<sizeof(x)/sizeof(x[0]),k++){
+    for(int k=0; k<sizeof(x)/sizeof(x[0]);k++){
 
         weights[k]=1/(x_err[k]*x_err[k]);
     }
@@ -304,23 +313,25 @@ auto mass_graph(vector<float> energy, string name_final, string type,  TFile * o
     float m_ave=0;
     float weights_sum=0;
 
-    for(int k=0; k<sizeof(x)/sizeof(x[0]),k++){
+    for(int k=0; k<sizeof(x)/sizeof(x[0]);k++){
 
         weights_sum+=weights[k];
     }
 
-    for(int k=0; k<sizeof(x)/sizeof(x[0]),k++){
+    for(int k=0; k<sizeof(x)/sizeof(x[0]);k++){
 
         m_ave+=x[k]*weights[k]/weights_sum;
     }
 
     float m_ave_err=sqrt(1/weights_sum);
 
-    auto meanlinesx=new TLine(m_ave-m_ave_err, 1, m_ave-m_ave_err, 6);
+    mass_e_file << "stima combinata =   " << m_ave << "+-" <<m_ave_err << "\n";
+
+    auto meanlinesx=new TLine(m_ave-m_ave_err, 0.5, m_ave-m_ave_err, 6.5);
     meanlinesx->SetLineColor(4);
     meanlinesx->Draw("SAME");
 
-    auto meanlinedx=new TLine(m_ave+m_ave_err, 1, m_ave+m_ave_err, 6);
+    auto meanlinedx=new TLine(m_ave+m_ave_err, 0.5, m_ave+m_ave_err, 6.5);
     meanlinedx->SetLineColor(4);
     meanlinedx->Draw("SAME");
 
@@ -334,8 +345,8 @@ auto mass_graph(vector<float> energy, string name_final, string type,  TFile * o
 
 void real_time_calibration(){
     TFile *f = new TFile("histograms/histograms_RealTimeCalibration_rebin.root");
-    TFile *outfile= new TFile("real_time_calibration/plots_RealTimeCalibration_fitNA_low.root", "RECREATE");
-    ofstream out_file("real_time_calibration/peak_energy_fitNa_low.txt");
+    TFile *outfile= new TFile("real_time_calibration/plots_RealTimeCalibration_low.root", "RECREATE");
+
 
     // primi due sono picco NA(solo cs)| poi picco cs(solo cs)| poi range da sottrare del cs (solo cs)|e poi il range del picco b del NA da sottrarre(solo cs)|
     // poi il range del primo picco co (cs+co)|e poi del secondo picco co(cs+co)
@@ -357,6 +368,7 @@ void real_time_calibration(){
         };
     
     vector <float> energy;
+    vector <float> energy_piccoNAb;
 
     string type= "_charge";
 
@@ -430,14 +442,23 @@ void real_time_calibration(){
 
         vector<float> x= peak_energy(name_final, type, lin_params, gaus_params);
         energy.insert(energy.end(), x.begin(), x.end());
+
+        vector<float> y= peak_energy(name_final, type, lin_params, gaus_param_NAb_clear);
+        energy_piccoNAb.insert(energy_piccoNAb.end(), y.begin(), y.end());
+
+        chi_file<<"\n";
+
+        cout << endl;
+        string peak1 = "electron mass   "+ name_final  + type + " = " + to_string(x[0]) + "+-" + to_string(x[1]) + "\n";
+        cout << peak1;
+        mass_e_file << peak1;
+
+        cout << endl;
+        string peak2 = "energy peak NAb" + name_final + type + " = " + to_string(y[0]) + "+-" + to_string(y[1]) + "\n";
+        cout << peak2;
+        peak_NAb_file << peak2;
     }
     mass_graph(energy , "combined", type, outfile);
-    cout << endl;
-    for (int i=0; i<energy.size(); i++){
-        string peak1 = "energy peak name"  + type + " = " + to_string(energy[0+i]) + "+-" + to_string(energy[1+i]) + "\n";
-        cout << peak1;
-        out_file << peak1;
-    }
     getchar();
     outfile->Close();
 

@@ -32,7 +32,7 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
         TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",range[i+0],range[i+1]);
         TF1 *gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",range[i+2],range[i+3]);
         gaus1->SetParameters(1000, abs(range[i+0]+range[i+1])/2, abs(range[i+1]-range[i+0]));
-        gaus2->SetParameters(1500, abs(range[i+2]+range[i+3])/2, abs(range[i+3]-range[i+2]));
+        gaus2->SetParameters(1000, abs(range[i+2]+range[i+3])/2, abs(range[i+3]-range[i+2]));
         histo->Fit("gaus1","R", "SAME");
         gaus1->Draw("SAME");
         gStyle->SetOptFit(1111);
@@ -159,12 +159,12 @@ void calibration(){
                  850, 1300, 2200, 2700,
                  //900,1100, 2250, 2450
                  }}},
-        /*{"pmt2",{{150000, 172000, 172000, 196000, 
+        {"pmt2",{{150000, 172000, 172000, 196000, 
                  20000, 37000, 80000, 110000, 
                  60000,90000, 165000, 200000},
                 {1900, 2300, 2300, 2800, 
                  250, 600, 1050, 1600,
-                 800, 1200, 2100, 2600}}}*/
+                 800, 1200, 2100, 2600}}}
         /*{"pmt3",{{28000,33000,33000,38000,22000, 40000, 90000, 120000},
             {}}}*/
     };

@@ -74,10 +74,11 @@ vector <TH1F*> make_histo(string name){
         }
         min =*min_element(v[i].begin(), v[i].end());
         amp[i]=h-min;
+        /*
         charge_max = (charge[i]>charge_max) ? charge[i] : charge_max;
         amp_max = (amp[i]>amp_max) ? amp[i] : amp_max;
         charge_min = (charge[i]<charge_min) ? charge[i] : charge_min;
-        amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      
+        amp_min = (amp[i]<amp_min) ? amp[i] : amp_min;      */
     }
     int range_charge=250000;
     int range_amp=3500; 
@@ -121,7 +122,7 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_RealTimeCalibration_rebin.root", "RECREATE"/* "UPDATE"*/);
+    TFile *outfile= new TFile("histograms/histograms_triple.root", "RECREATE"/* "UPDATE"*/);
     list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
@@ -158,7 +159,7 @@ void main_func (){
                         "pmt2_NA_cs2_e6_ext_run1",
                         "pmt1_NA_cs1_e6_ext_solo_run1",
                         "pmt2_NA_cs1_co1_e6_ext_run1", 
-                        "pmt1_NA_cs1_co1_e6_ext_run1", */
+                        "pmt1_NA_cs1_co1_e6_ext_run1", 
                         "pmt1_NA_cs_e6_100_run1", 
                         "pmt2_NA_cs_e6_100_run1",
                         "pmt3_NA_cs_e6_30_run1",
@@ -170,7 +171,10 @@ void main_func (){
                         "pmt3_NA_cs_e6_100_run2",
                         "pmt1_NA_cs_co_e6_500_run2", 
                         "pmt2_NA_cs_co_e6_500_run2",
-                        "pmt3_NA_cs_co_e6_100_run2"};
+                        "pmt3_NA_cs_co_e6_100_run2",*/
+                        "pmt1_NA_e6_ext_triple_run1",
+                        "pmt2_NA_e6_ext_triple_run1",
+                        "pmt3_NA_e6_ext_triple_run1",};
 
     TStopwatch time_tot;
     time_tot.Start();                

@@ -5,3 +5,5 @@ tempo totale:    21.8344
 freq pmt1 nel picco:    1097.81
 freq pmt2 nel picco:    606.062
 coincidenze casuali stimate:    0.0290546
+coincidenze casuali attese= 0.0290546 pm 0.00031466
+coincidenze= 3559 pm 59.6574
