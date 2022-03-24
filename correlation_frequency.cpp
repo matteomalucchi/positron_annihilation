@@ -55,9 +55,8 @@ vector<float> find_idx_range(string path,string name, long int &time_bgn, long i
                     cout << "begin  "<<time_bgn <<endl;
                     bgn++;
                 }
-                if (v.size()>127000){
-                    time_end=stol(tp.substr(20,tp.size()-1));
-                }
+                time_end=stol(tp.substr(20,tp.size()-1));
+                
             }
 
         }

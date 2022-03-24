@@ -61,15 +61,15 @@ vector <TH1F*> make_histo(string name){
     for (long unsigned int i=0; i<v.size(); i++){
         h = 0;
         u=0;
-        for (int j=0; j<100; j++){
-            h += v[i][j] / 100;
+        for (int j=0; j<20; j++){
+            h += v[i][j] / 20;
             if (v[i][j]<14600 && u==0){
                 //cout << "valore piccolo: "<< v[i][j] <<endl;
                 idx_strange.push_back(i);
                 u++;
             }
         }
-        for (int j=0; j<1000; j++){
+        for (int j=300; j<950; j++){
             charge[i] += h-v[i][j];
         }
         min =*min_element(v[i].begin(), v[i].end());
@@ -108,22 +108,24 @@ vector <TH1F*> make_histo(string name){
     c_amp->SaveAs(&("plots/" + name + "_amp.png")[0]);
 
     cout << "numero di idx_strange  "<<idx_strange.size() <<endl;
-
-    TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
-    TGraph* gr = new TGraph(t.size(), &t[0], &v[0][0]);
-    gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
-    gr->SetMarkerStyle(21);
-    gr->Draw("AP");
-    c_wave->SaveAs(&("waveform/" + name + "_wave.png")[0]);
-
+    //for (long unsigned int i=0; i< idx_strange.size(); i++){
+    if (idx_strange.size()>0){
+        TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
+        TGraph* gr = new TGraph(t.size(), &t[0], &v[idx_strange[0]][0]);
+        gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
+        gr->SetMarkerStyle(21);
+        gr->Draw("AP");
+        c_wave->SaveAs(&("waveform/" + name + "_wave_"+1+".png")[0]);
+    }
+    //}
     return histos;
 }
 
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_triple.root", "RECREATE"/* "UPDATE"*/);
-    list <string> names ={/*"pmt1_NA_e6_100_or_run1",
+    TFile *outfile= new TFile("histograms/histograms_new_ranges.root", "RECREATE"/* "UPDATE"*/);
+    list <string> names ={"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
                         "pmt2_NA_e6_700_or_run2",
@@ -171,10 +173,13 @@ void main_func (){
                         "pmt3_NA_cs_e6_100_run2",
                         "pmt1_NA_cs_co_e6_500_run2", 
                         "pmt2_NA_cs_co_e6_500_run2",
-                        "pmt3_NA_cs_co_e6_100_run2",*/
-                        "pmt1_NA_e6_ext_triple_run1",
-                        "pmt2_NA_e6_ext_triple_run1",
-                        "pmt3_NA_e6_ext_triple_run1",};
+                        "pmt3_NA_cs_co_e6_100_run2",
+                        "pmt1_NA_e6_ext_triple_90deg_run1",
+                        "pmt2_NA_e6_ext_triple_90deg_run1",
+                        "pmt3_NA_e6_ext_triple_90deg_run1",
+                        "pmt1_NA_l1_ext_triple_close_run2",
+                        "pmt2_NA_l1_ext_triple_close_run2",
+                        "pmt3_NA_l1_ext_triple_close_run2",};
 
     TStopwatch time_tot;
     time_tot.Start();                
