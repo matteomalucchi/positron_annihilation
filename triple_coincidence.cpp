@@ -57,6 +57,8 @@ vector<vector<float>> energy_time(string name){
     vector <float> time (v.size());
     float h, u,r, min;
     vector <float> idx_strange;
+    vector <float> mask_strange(v.size(), 0.0);
+
     for (long unsigned int i=0; i<v.size(); i++){
         h = 0;
         u=0;
@@ -65,6 +67,7 @@ vector<vector<float>> energy_time(string name){
             h += v[i][j] / 20;
             if (v[i][j]<14600 && u==0){
                 idx_strange.push_back(i);
+                mask_strange[i]=1;
                 u++;
             }
         }
@@ -83,6 +86,7 @@ vector<vector<float>> energy_time(string name){
     vecs.push_back(amp);
     vecs.push_back(time);
     vecs.push_back(idx_strange);
+    vecs.push_back(mask_strange);
 
     return vecs;
 
@@ -124,56 +128,78 @@ vector <TH1F*> make_histo(string name, vector<float> charge, vector<float> amp, 
 */
 void triple_coincidence (){
     gROOT->SetBatch(kFALSE);
+    gROOT->ProcessLine("#include <vector>");
     vector <vector<TH1F*>> histos;
-    vector <TH1F*> histo_pmt3_12;
-    vector<vector <vector<float>>> infos;
+    vector <vector<float>> infos;
+    infos.reserve(3);
+    //gInterpreter->GenerateDictionary("vector<vector<float>>", "vector");
 
-    TFile *outfile= new TFile("histograms/histograms_triple_coincidence.root", "RECREATE"/* "UPDATE"*/);
+    //TFile *outfile= new TFile("histograms/histograms_triple_coincidence.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
-        //{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
+        {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
     };
+    vector <TH1F*> histo_pmt3_12(1);
+    float charge, amp, time, idx_strange, mask_strange;
 
-    TStopwatch time_tot;
-    time_tot.Start();                
+             
+    // loop over various runs
     for(int i=0;i<names.size();i++){
-        TFile *tree_file= new TFile("triple/prova.root", "RECREATE"/* "UPDATE"*/);
+        string run = names[i][0].substr(names[i][0].size()-4, names[i][0].size()-1);
+        TFile *tree_file= new TFile(&("triple/tree_" + run+".root")[0], "RECREATE"/* "UPDATE"*/);
 
-        TStopwatch time;
-        time.Start();
-        for (int j=0; j<names[i].size(); j++){
+        // loop over various pmt
+        for (int j=0; j<names[0].size(); j++){
+            string pmt_name = names[i][j].substr(0,4);
+            TTree *tree= new TTree(&(pmt_name )[0], &(pmt_name )[0]);
 
-            infos.push_back(energy_time(names[i][j]));
-            //make_tree(infos, tree_file);
+            // each pmt has a branch
+            tree->Branch("charge", &charge, "charge/F");
+            tree->Branch("amp", &amp, "amp/F");
+            tree->Branch("time", &time, "time/F");
+            tree->Branch("idx_strange", &idx_strange, "idx_strange/F");
+            tree->Branch("mask_strange", &mask_strange, "mask_strange/F");
 
+            infos= energy_time(names[i][j]);
+            for (int m=0; m < infos[0].size(); m++){
+                charge=infos[0][m];
+                amp=infos[1][m];
+                time=infos[2][m];
+                idx_strange=infos[3][m];
+                mask_strange=infos[4][m];
 
-            time.Stop();
-            time.Print();
+                tree->Fill();
+            }
+        tree_file->cd();
+        tree->Write();
         }
+        tree_file->Close();
 
-        for (int i=0; i< infos[0][0].size(); i++){
-            if ((find(infos[0][3].begin(), infos[0][3].end(), i) != infos[0][3].end())
-                || (find(infos[1][3].begin(), infos[1][3].end(), i) != infos[1][3].end())
-                || (find(infos[2][3].begin(), infos[2][3].end(), i) != infos[2][3].end())){
+/*
+        for (int p=0; p< infos[0][0].size(); p++){
+            if ((find(infos[0][3].begin(), infos[0][3].end(), p) != infos[0][3].end())
+                || (find(infos[1][3].begin(), infos[1][3].end(), p) != infos[1][3].end())
+                || (find(infos[2][3].begin(), infos[2][3].end(), p) != infos[2][3].end())){
                     for (int j=0; j<3; j++){
                         for (int k=0; k<3; k++){
-                            infos[j][k].erase(infos[j][k].begin()+i);
+                            cout << infos[j][k].size()<<endl;
+                            infos[j][k].erase(infos[j][k].begin()+p);
+                            cout << infos[j][k].size()<<endl;
                         }
                     }
             }
         }
+*/
 
+
+/*
         for (int n=0 ; n<infos[0][0].size(); n++){
-            if(infos[0][0][n]<83000 && infos[0][0][n]>75000 && infos[0][0][n]<83000 && infos[0][0][n]>75000){ // Intervalli tarati su intervalli di picco A dei pmt1 e pmt2 in ext_run2
-                picco_a.push_back(charge_a_def[n]);
-                picco_b.push_back(charge_b_def[n]);
-                //if (a==0) {
-                    //cout << picco_a[picco_a.size()-1] <<"  " << picco_b[picco_b.size()-1] << endl;
-                 //   a++;}
-
+            if(infos[0][0][n]<83000 && infos[0][0][n]>75000 && infos[1][0][n]<74000 && infos[1][0][n]>64000){ // Intervalli tarati su intervalli di picco A dei pmt1 e pmt2 in ext_run2
+                histo_pmt3_12[i]->Fill(infos[2][0][n]);
             } 
         }
-
+        histo_pmt3_12[i]->Draw();
+*/
 
         //make_histo(names[i][j], infos.back()[0],infos.back()[1], infos.back()[2]);
 
@@ -181,8 +207,7 @@ void triple_coincidence (){
 
     }
     //getchar();
-    outfile->Close();
-    time_tot.Stop();
-    time_tot.Print();
+   // outfile->Close();
+
 }
 
