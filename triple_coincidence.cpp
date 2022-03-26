@@ -81,6 +81,7 @@ vector<vector<float>> energy_time(string name){
         min =*min_element(v[i].begin()+300, v[i].end()-80);
         amp[i]=h-min;
     }
+    cout <<idx_strange.size() <<endl;
     vector<vector<float>> vecs;
     vecs.push_back(charge);
     vecs.push_back(amp);
@@ -128,12 +129,12 @@ vector <TH1F*> make_histo(string name, vector<float> charge, vector<float> amp, 
 */
 void triple_coincidence (){
     gROOT->SetBatch(kFALSE);
-    gROOT->ProcessLine("#include <vector>");
+    //gROOT->ProcessLine("#include <vector>");
     vector <vector<TH1F*>> histos;
     vector <vector<float>> infos;
     infos.reserve(3);
     //gInterpreter->GenerateDictionary("vector<vector<float>>", "vector");
-    TFile *tree_file= new TFile("triple/tree_file.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_file.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("histograms/histograms_triple_coincidence.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
@@ -151,14 +152,17 @@ void triple_coincidence (){
         // loop over various pmt
         for (int j=0; j<names[0].size(); j++){
             string pmt_name = names[i][j].substr(0,4);
-            TTree *tree= new TTree(&(run +"_"+ pmt_name )[0], &(run +"_"+ pmt_name )[0]);
-
+            //TTree *tree= new TTree(&(run +"_"+ pmt_name )[0], &(run +"_"+ pmt_name )[0]);
+            TNtuple *ntuple= new TNtuple(&(run +"_"+ pmt_name )[0], &(run +"_"+ pmt_name )[0], "charge:amp:time:mask_strange");
+          
+/*
             // each pmt has a branch
             tree->Branch("charge", &charge, "charge/F");
             tree->Branch("amp", &amp, "amp/F");
             tree->Branch("time", &time, "time/F");
             tree->Branch("idx_strange", &idx_strange, "idx_strange/F");
             tree->Branch("mask_strange", &mask_strange, "mask_strange/F");
+*/
 
             infos= energy_time(names[i][j]);
             for (int m=0; m < infos[0].size(); m++){
@@ -167,12 +171,14 @@ void triple_coincidence (){
                 time=infos[2][m];
                 idx_strange=infos[3][m];
                 mask_strange=infos[4][m];
-
-                tree->Fill();
+                /*tree->Fill();*/
+                ntuple->Fill(charge, amp, time, mask_strange/*infos[0][m], infos[1][m], infos[2][m], infos[3][m], infos[4][m]*/);
             }
         tree_file->cd();
-        tree->Write();
+        //tree->Write();
+        ntuple->Write();
         }
+
     }
     tree_file->Close();
 
