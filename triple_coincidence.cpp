@@ -57,7 +57,7 @@ vector<vector<float>> energy_time(string name){
     vector <float> time (v.size());
     float h, u,r, min;
     vector <float> idx_strange;
-    vector <float> mask_strange(v.size(), 0.0);
+    vector <float> mask_strange(v.size(), 1.0);
 
     for (long unsigned int i=0; i<v.size(); i++){
         h = 0;
@@ -67,7 +67,7 @@ vector<vector<float>> energy_time(string name){
             h += v[i][j] / 20;
             if (v[i][j]<14600 && u==0){
                 idx_strange.push_back(i);
-                mask_strange[i]=1;
+                mask_strange[i]=0;
                 u++;
             }
         }
@@ -133,6 +133,7 @@ void triple_coincidence (){
     vector <vector<float>> infos;
     infos.reserve(3);
     //gInterpreter->GenerateDictionary("vector<vector<float>>", "vector");
+    TFile *tree_file= new TFile("triple/tree_file.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("histograms/histograms_triple_coincidence.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
@@ -146,12 +147,11 @@ void triple_coincidence (){
     // loop over various runs
     for(int i=0;i<names.size();i++){
         string run = names[i][0].substr(names[i][0].size()-4, names[i][0].size()-1);
-        TFile *tree_file= new TFile(&("triple/tree_" + run+".root")[0], "RECREATE"/* "UPDATE"*/);
-
+        cout << run << endl;
         // loop over various pmt
         for (int j=0; j<names[0].size(); j++){
             string pmt_name = names[i][j].substr(0,4);
-            TTree *tree= new TTree(&(pmt_name )[0], &(pmt_name )[0]);
+            TTree *tree= new TTree(&(run +"_"+ pmt_name )[0], &(run +"_"+ pmt_name )[0]);
 
             // each pmt has a branch
             tree->Branch("charge", &charge, "charge/F");
@@ -173,7 +173,8 @@ void triple_coincidence (){
         tree_file->cd();
         tree->Write();
         }
-        tree_file->Close();
+    }
+    tree_file->Close();
 
 /*
         for (int p=0; p< infos[0][0].size(); p++){
@@ -205,7 +206,7 @@ void triple_coincidence (){
 
 
 
-    }
+    
     //getchar();
    // outfile->Close();
 
