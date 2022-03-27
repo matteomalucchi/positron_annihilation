@@ -70,63 +70,31 @@ vector<vector<float>> energy_time(string name){
                 mask_strange[i]=0;
                 u++;
             }
-        }
+        } 
+        min =*min_element(v[i].begin()+300, v[i].end()-80);
+        auto bin_min = find(v[i].begin()+300, v[i].end()-80, min);
+        amp[i]=h-min;
+        int bin_mez=0;
+        float diff=1000;
+        float tmez=0;
+
         for (int j=300; j<950; j++){
             charge[i] += h-v[i][j];
-            if(v[i][j]<14600 && r==0){
-                time[i]=j;
-                r++;
-            }
-        }
-
         // Algoritmo per ottenere time continuo
-        /*
-
-      if(min7<Thr7 && min5<Thr5){
-        Int_t binmez7=0;
-        Int_t binmez5=0;
-        Double_t diff7=100;
-        Double_t diff5=100;
-        Double_t tmez5=0;
-        Double_t tmez7=0;
-        for(Int_t ibin=10; ibin<1010; ibin++) {
-            if(abs(w7[ibin]-min7/2-ped7/2)<diff7 && ibin<binmin7){
-                binmez7=ibin;
-                diff7=abs(w7[ibin]-min7/2-ped7/2);
-            }
-            if(abs(w5[ibin]-min5/2-ped5/2)<diff5 && ibin<binmin5){
-                binmez5=ibin;
-                diff5=abs(w5[ibin]-min5/2-ped5/2);
-            }
+            if(abs(v[i][j]-min/2-h/2)<diff && j<bin_min-v[i].begin()){
+                bin_mez=j;
+                diff=abs(v[i][j]-min/2-h/2);
+                }
         }
-
-
-        Double_t TT5[5],WW5[5];
-        for(Int_t i=0;i<5;i++){
-            TT5[i] = i*0.25;
-            WW5[i] = w5[binmez5-2+i];
-            }
-        TGraph* gr5 = new TGraph(5,TT5,WW5);
-        gr5->Fit("pol1");
-        tmez5=(min5/2+ped5/2)/(gr5->GetFunction("pol1")->GetParameter(1))-(gr5->GetFunction("pol1")->GetParameter(0))/(gr5->GetFunction("pol1")->GetParameter(1));
-        tmez5=tmez5+t5[binmez5-2];
-
-        Double_t TT7[5],WW7[5];
-        for(Int_t i=0;i<5;i++){
-            TT7[i] = i*0.25;
-            WW7[i] = w7[binmez7-2+i];
-            }
-        TGraph* gr7 = new TGraph(5,TT7,WW7);
-        gr7->Fit("pol1");
-        tmez7=(min7/2+ped7/2)/(gr7->GetFunction("pol1")->GetParameter(1))-(gr7->GetFunction("pol1")->GetParameter(0))/(gr7->GetFunction("pol1")->GetParameter(1));
-        tmez7=tmez7+t7[binmez7-2];
-        deltaT57->Fill(tmez7-tmez5);
-        if(abs(tmez7-tmez5)<0.05) cout<<jentry<<"JJHH"<<endl;
-      }
-*/
-
-        min =*min_element(v[i].begin()+300, v[i].end()-80);
-        amp[i]=h-min;
+        float TT[5],VV[5];
+        for(int k=0;k<5;k++){
+            TT[k] = k;
+            VV[k] = v[i][bin_mez-2+k];
+        }
+        TGraph* gr_fit = new TGraph(5, TT,VV);
+        gr_fit->Fit("pol1", "Q");
+        tmez=(min/2 + h/2 - gr_fit->GetFunction("pol1")->GetParameter(0))/(gr_fit->GetFunction("pol1")->GetParameter(1));
+        time[i]=tmez+t[bin_mez-2];
     }
     cout <<idx_strange.size() <<endl;
     vector<vector<float>> vecs;
@@ -208,7 +176,6 @@ void triple_coincidence (){
         }
     }
 
-///////////////////////////////////////////////////////////////////////
     for(int j=0; j<ntuples.size();j++){
         for (int m=0; m < infos[3*j][0].size(); m++){
 
@@ -252,12 +219,11 @@ void triple_coincidence (){
     //getchar();
    // outfile->Close();
 
-///////////////////////////////////////////////////////////////////////
     tree_file->cd();
-    ntuple1->Write();
-    ntuple2->Write();
-    ntuple3->Write();
-///////////////////////////////////////////////////////////////////////
+    for(int j=0; j<ntuples.size();j++){
+        ntuples[j]->Write();
+    }
+
     tree_file->Close();
 }
 
