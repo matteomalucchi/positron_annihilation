@@ -148,7 +148,7 @@ void triple_coincidence (){
     TNtuple *ntuple2= new TNtuple("run2", "run2", "charge1:amp1:time1:mask_strange1:charge2:amp2:time2:mask_strange2:charge3:amp3:time3:mask_strange3");
     TNtuple *ntuple3= new TNtuple("run3", "run3", "charge1:amp1:time1:mask_strange1:charge2:amp2:time2:mask_strange2:charge3:amp3:time3:mask_strange3");
 ///////////////////////////////////////////////////////////////////////
-             
+    vector<TNtuple*> ntuples{ntuple1, ntuple2, ntuple3};
     // loop over various runs
     for(int i=0;i<names.size();i++){
         string run = names[i][0].substr(names[i][0].size()-4, names[i][0].size()-1);
@@ -162,27 +162,16 @@ void triple_coincidence (){
     }
 
 ///////////////////////////////////////////////////////////////////////
-    for (int m=0; m < infos[0][0].size(); m++){
+    for(int j=0; j<ntuples.size();j++){
+        for (int m=0; m < infos[3*j][0].size(); m++){
 
-        ntuple1->Fill(infos[0][0][m],infos[0][1][m],infos[0][2][m],infos[0][3][m],
-                    infos[1][0][m],infos[1][1][m],infos[1][2][m],infos[1][3][m],
-                    infos[2][0][m],infos[2][1][m],infos[2][2][m],infos[2][3][m]);
+            ntuples[j]->Fill(infos[3*j+0][0][m],infos[3*j+0][1][m],infos[3*j+0][2][m],infos[3*j+0][3][m],
+                        infos[3*j+1][0][m],infos[3*j+1][1][m],infos[3*j+1][2][m],infos[3*j+1][3][m],
+                        infos[3*j+2][0][m],infos[3*j+2][1][m],infos[3*j+2][2][m],infos[3*j+2][3][m]);
+        }
     }
-    for (int m=0; m < infos[3+0][0].size(); m++){
-
-        ntuple2->Fill(infos[3+0][0][m],infos[3+0][1][m],infos[3+0][2][m],infos[3+0][3][m],
-                    infos[3+1][0][m],infos[3+1][1][m],infos[3+1][2][m],infos[3+1][3][m],
-                    infos[3+2][0][m],infos[3+2][1][m],infos[3+2][2][m],infos[3+2][3][m]);
-    }
-    for (int m=0; m < infos[6+0][0].size(); m++){
-
-        ntuple3->Fill(infos[6+0][0][m],infos[6+0][1][m],infos[6+0][2][m],infos[6+0][3][m],
-                    infos[6+1][0][m],infos[6+1][1][m],infos[6+1][2][m],infos[6+1][3][m],
-                    infos[6+2][0][m],infos[6+2][1][m],infos[6+2][2][m],infos[6+2][3][m]);
-    }
-
             
-
+/*
         for (int p=0; p< infos[0][0].size(); p++){
             if ((find(infos[0][3].begin(), infos[0][3].end(), p) != infos[0][3].end())
                 || (find(infos[1][3].begin(), infos[1][3].end(), p) != infos[1][3].end())
@@ -196,7 +185,7 @@ void triple_coincidence (){
                     }
             }
         }
-
+*/
 
 
 /*
