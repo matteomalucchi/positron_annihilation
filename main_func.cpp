@@ -124,8 +124,8 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_new_ranges.root", "RECREATE"/* "UPDATE"*/);
-    list <string> names ={"pmt1_NA_e6_100_or_run1",
+    TFile *outfile= new TFile("histograms/histograms_triple.root", "RECREATE"/* "UPDATE"*/);
+    list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
                         "pmt2_NA_e6_700_or_run2",
@@ -173,13 +173,16 @@ void main_func (){
                         "pmt3_NA_cs_e6_100_run2",
                         "pmt1_NA_cs_co_e6_500_run2", 
                         "pmt2_NA_cs_co_e6_500_run2",
-                        "pmt3_NA_cs_co_e6_100_run2",
+                        "pmt3_NA_cs_co_e6_100_run2",*/
                         "pmt1_NA_e6_ext_triple_90deg_run1",
                         "pmt2_NA_e6_ext_triple_90deg_run1",
                         "pmt3_NA_e6_ext_triple_90deg_run1",
                         "pmt1_NA_l1_ext_triple_close_run2",
                         "pmt2_NA_l1_ext_triple_close_run2",
-                        "pmt3_NA_l1_ext_triple_close_run2",};
+                        "pmt3_NA_l1_ext_triple_close_run2",
+                        "pmt1_NA_l1_ext_triple_close_run3",
+                        "pmt2_NA_l1_ext_triple_close_run3",
+                        "pmt3_NA_l1_ext_triple_close_run3",};
 
     TStopwatch time_tot;
     time_tot.Start();                

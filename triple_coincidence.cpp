@@ -86,8 +86,8 @@ vector<vector<float>> energy_time(string name){
     vecs.push_back(charge);
     vecs.push_back(amp);
     vecs.push_back(time);
-    vecs.push_back(idx_strange);
     vecs.push_back(mask_strange);
+    vecs.push_back(idx_strange);
 
     return vecs;
 
@@ -131,95 +131,58 @@ void triple_coincidence (){
     gROOT->SetBatch(kFALSE);
     //gROOT->ProcessLine("#include <vector>");
     vector <vector<TH1F*>> histos;
-    vector <vector<float>> infos;
+    vector<vector <vector<float>>> infos;
     infos.reserve(3);
     //gInterpreter->GenerateDictionary("vector<vector<float>>", "vector");
-    TFile *tree_file= new TFile("triple/tree_together_file.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/new_ntuple_together_file.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("histograms/histograms_triple_coincidence.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
         {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
+        {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
     };
     vector <TH1F*> histo_pmt3_12(1);
-
+///////////////////////////////////////////////////////////////////////
+    TNtuple *ntuple1= new TNtuple("run1", "run1", "charge1:amp1:time1:mask_strange1:charge2:amp2:time2:mask_strange2:charge3:amp3:time3:mask_strange3");
+    TNtuple *ntuple2= new TNtuple("run2", "run2", "charge1:amp1:time1:mask_strange1:charge2:amp2:time2:mask_strange2:charge3:amp3:time3:mask_strange3");
+    TNtuple *ntuple3= new TNtuple("run3", "run3", "charge1:amp1:time1:mask_strange1:charge2:amp2:time2:mask_strange2:charge3:amp3:time3:mask_strange3");
+///////////////////////////////////////////////////////////////////////
              
     // loop over various runs
     for(int i=0;i<names.size();i++){
         string run = names[i][0].substr(names[i][0].size()-4, names[i][0].size()-1);
         cout << run << endl;
-        //TNtuple *ntuple= new TNtuple(&(run)[0], &(run)[0], "charge:amp:time:mask_strange");
-        TTree *tree= new TTree(&(run)[0], &(run )[0]);
 
         // loop over various pmt
         for (int j=0; j<names[0].size(); j++){
             string pmt_name = names[i][j].substr(0,4);
-            //TTree *tree= new TTree(&(run +"_"+ pmt_name )[0], &(run +"_"+ pmt_name )[0]);
-            //TNtuple *ntuple= new TNtuple(&(run +"_"+ pmt_name )[0], &(run +"_"+ pmt_name )[0], "charge:amp:time:mask_strange");
+            infos.push_back(energy_time(names[i][j]));
+        }
+    }
 
-            infos= energy_time(names[i][j]);
-            cout<< infos[0].size() <<endl;
+///////////////////////////////////////////////////////////////////////
+    for (int m=0; m < infos[0][0].size(); m++){
 
-            // each pmt has a branch
-            if (pmt_name=="pmt1"){
-                float charge1=0, amp1=0, time1=0, idx_strange1=0, mask_strange1=0;
-                tree->Branch(&(pmt_name+"_charge")[0], &charge1);
-                tree->Branch(&(pmt_name+"_amp")[0], &amp1);
-                tree->Branch(&(pmt_name+"_time")[0], &time1);
-                tree->Branch(&(pmt_name+"_mask_strange")[0], &mask_strange1);
-                for (int m=0; m < infos[0].size(); m++){
-                    charge1=infos[0][m];
-                    amp1=infos[1][m];
-                    time1=infos[2][m];
-                    //idx_strange=infos[3][m];
-                    mask_strange1=infos[4][m];
-                    tree->Fill();
-                    //ntuple->Fill(charge, amp, time, mask_strange);
-                }
-            }
-            else if (pmt_name=="pmt2"){
-                float charge2=0, amp2=0, time2=0, idx_strange2=0, mask_strange2=0;
-                tree->Branch(&(pmt_name+"_charge")[0], &charge2);
-                tree->Branch(&(pmt_name+"_amp")[0], &amp2);
-                tree->Branch(&(pmt_name+"_time")[0], &time2);
-                tree->Branch(&(pmt_name+"_mask_strange")[0], &mask_strange2);
-                for (int m=0; m < infos[0].size(); m++){
-                    charge2=infos[0][m];
-                    amp2=infos[1][m];
-                    time2=infos[2][m];
-                    //idx_strange=infos[3][m];
-                    mask_strange2=infos[4][m];
-                    tree->Fill();
-                    //ntuple->Fill(charge, amp, time, mask_strange);
-            }            }
-            else if (pmt_name=="pmt3"){
-                float charge3=0, amp3=0, time3=0, idx_strange3=0, mask_strange3=0;
-                tree->Branch(&(pmt_name+"_charge")[0], &charge3);
-                tree->Branch(&(pmt_name+"_amp")[0], &amp3);
-                tree->Branch(&(pmt_name+"_time")[0], &time3);
-                tree->Branch(&(pmt_name+"_mask_strange")[0], &mask_strange3);
-                for (int m=0; m < infos[0].size(); m++){
-                    charge3=infos[0][m];
-                    amp3=infos[1][m];
-                    time3=infos[2][m];
-                    //idx_strange=infos[3][m];
-                    mask_strange3=infos[4][m];
-                    tree->Fill();
-                    //ntuple->Fill(charge, amp, time, mask_strange);
-                }            
-            }
+        ntuple1->Fill(infos[0][0][m],infos[0][1][m],infos[0][2][m],infos[0][3][m],
+                    infos[1][0][m],infos[1][1][m],infos[1][2][m],infos[1][3][m],
+                    infos[2][0][m],infos[2][1][m],infos[2][2][m],infos[2][3][m]);
+    }
+    for (int m=0; m < infos[3+0][0].size(); m++){
+
+        ntuple2->Fill(infos[3+0][0][m],infos[3+0][1][m],infos[3+0][2][m],infos[3+0][3][m],
+                    infos[3+1][0][m],infos[3+1][1][m],infos[3+1][2][m],infos[3+1][3][m],
+                    infos[3+2][0][m],infos[3+2][1][m],infos[3+2][2][m],infos[3+2][3][m]);
+    }
+    for (int m=0; m < infos[6+0][0].size(); m++){
+
+        ntuple3->Fill(infos[6+0][0][m],infos[6+0][1][m],infos[6+0][2][m],infos[6+0][3][m],
+                    infos[6+1][0][m],infos[6+1][1][m],infos[6+1][2][m],infos[6+1][3][m],
+                    infos[6+2][0][m],infos[6+2][1][m],infos[6+2][2][m],infos[6+2][3][m]);
+    }
+
             
 
-        //ntuple->Write();
-        }
-        tree_file->cd();
-
-        tree->Write();
-
-    }
-    tree_file->Close();
-
-/*
         for (int p=0; p< infos[0][0].size(); p++){
             if ((find(infos[0][3].begin(), infos[0][3].end(), p) != infos[0][3].end())
                 || (find(infos[1][3].begin(), infos[1][3].end(), p) != infos[1][3].end())
@@ -233,7 +196,7 @@ void triple_coincidence (){
                     }
             }
         }
-*/
+
 
 
 /*
@@ -253,5 +216,12 @@ void triple_coincidence (){
     //getchar();
    // outfile->Close();
 
+///////////////////////////////////////////////////////////////////////
+    tree_file->cd();
+    ntuple1->Write();
+    ntuple2->Write();
+    ntuple3->Write();
+///////////////////////////////////////////////////////////////////////
+    tree_file->Close();
 }
 
