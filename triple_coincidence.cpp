@@ -96,15 +96,14 @@ vector<vector<float>> energy_time(string name){
         tmez=(min/2 + h/2 - gr_fit->GetFunction("pol1")->GetParameter(0))/(gr_fit->GetFunction("pol1")->GetParameter(1));
         time[i]=tmez+t[bin_mez-2];
     }
-    //for (int i=0; i<50; i++){
-    if (name.find("run3") != string::npos){
+ /*   if (name.find("run3") != string::npos){
         TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
         TGraph* gr = new TGraph(t.size(), &t[0], &v[32157][0]);
         gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
         gr->SetMarkerStyle(21);
         gr->Draw("AP");
         c_wave->SaveAs(&("triple/" + name + "_wave.png")[0]);
-    }
+    }*/
     //cout <<idx_strange.size() <<endl;
     vector<vector<float>> vecs;
     vecs.push_back(charge);
@@ -153,16 +152,16 @@ vector <TH1F*> make_histo(string name, vector<float> charge, vector<float> amp, 
 */
 void triple_coincidence (){
     gROOT->SetBatch(kFALSE);
+    ROOT::EnableImplicitMT();
     vector <vector<TH1F*>> histos;
     vector<vector <vector<float>>> infos;
-    infos.reserve(3);
     TFile *tree_file= new TFile("triple/ntuple_together_file.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("histograms/histograms_triple_coincidence.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
-        //{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
+        {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         //{"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
-        {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
+        //{"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
     };
     vector <TH1F*> histo_pmt3_12(1);
     vector<TNtuple*> ntuples;
@@ -174,6 +173,42 @@ void triple_coincidence (){
             infos.push_back(energy_time(names[i][j]));
         }
     }
+    cout <<infos[0][0].size()<<endl;
+    int u=0;
+    for (int k=0;k<names.size();k++){
+        for (int p=0; p< infos[k*3][0].size(); p++){
+            if (infos[k*3][3][p]==0 || infos[k*3+1][3][p]==0 || infos[k*3+2][3][p]==0){
+                for (int t=0; t<3;t++){
+                    for(int j=0; j<4; j++){
+                        //cout << infos[t+k][j].size()<<endl;
+                        infos[t+k][j].erase(infos[t+k][j].begin()+p);
+                        //cout << infos[t+k][j].size()<<endl; 
+                    }    
+                }      
+                p--; 
+            }
+            //if (p>=infos[k*3][0].size()-1) break;
+            //cout <<p <<endl;
+            u++;
+        }
+    }
+    cout <<u <<endl;
+/*
+    for (int k=0;k<3;k++){
+        for (int p=0; p< infos[k*3][0].size(); p++){
+            if ((find(infos[0+k*3][4].begin(), infos[0+k*3][4].end(), p) != infos[0+k*3][4].end())
+                || (find(infos[1+k*3][4].begin(), infos[1+k*3][4].end(), p) != infos[1+k*3][4].end())
+                || (find(infos[2+k*3][4].begin(), infos[2+k*3][4].end(), p) != infos[2+k*3][4].end())){
+                    for (int j=0; j<3; j++){
+                        for (int k=0; k<4; k++){
+                            cout << infos[j][k].size()<<endl;
+                            infos[j][k].erase(infos[j][k].begin()+p);
+                            cout << infos[j][k].size()<<endl;
+                        }
+                    }
+            }
+        }
+    }*/
 
     for(int j=0; j<names.size();j++){
         string run = names[j][0].substr(names[j][0].size()-4, names[j][0].size()-1);
@@ -185,29 +220,20 @@ void triple_coincidence (){
         }
         ntuples.push_back(ntuple);
     }
-/*
-    for(int j=0; j<names.size();j++){
-        for (int k=0;k<infos.size();k++){
-            for (int p=0; p< infos[3*j][0].size(); p++){
-                if (infos[k][3][p])
+    /*
+    for (int i=0; i< ntuples.size(); i++){
+        ntuples[i]->Draw(">>cut_strange", "mask_strange1==1 && mask_strange2==1 && mask_strange3==1 ");
+        TEventList *lst = (TEventList*)gDirectory->Get("cut_strange");
+        ntuples[i]->SetEventList(lst);
+    }*/
 
 
 
 
-        for (int p=0; p< infos[0][0].size(); p++){
-            if ((find(infos[0][4].begin(), infos[0][4].end(), p) != infos[0][4].end())
-                || (find(infos[1][4].begin(), infos[1][4].end(), p) != infos[1][3].end())
-                || (find(infos[2][3].begin(), infos[2][3].end(), p) != infos[2][3].end())){
-                    for (int j=0; j<3; j++){
-                        for (int k=0; k<3; k++){
-                            cout << infos[j][k].size()<<endl;
-                            infos[j][k].erase(infos[j][k].begin()+p);
-                            cout << infos[j][k].size()<<endl;
-                        }
-                    }
-            }
-        }
-*/
+
+
+
+
 
 
 /*
