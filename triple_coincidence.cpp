@@ -206,28 +206,6 @@ void triple_coincidence (){
         }
         ntuples.push_back(ntuple);
     }
-    /*
-    for (int i=0; i< ntuples.size(); i++){
-        ntuples[i]->Draw(">>cut_strange", "mask_strange1==1 && mask_strange2==1 && mask_strange3==1 ");
-        TEventList *lst = (TEventList*)gDirectory->Get("cut_strange");
-        ntuples[i]->SetEventList(lst);
-    }*/
-/*
-    for (int k=0;k<3;k++){
-        for (int p=0; p< infos[k*3][0].size(); p++){
-            if ((find(infos[0+k*3][4].begin(), infos[0+k*3][4].end(), p) != infos[0+k*3][4].end())
-                || (find(infos[1+k*3][4].begin(), infos[1+k*3][4].end(), p) != infos[1+k*3][4].end())
-                || (find(infos[2+k*3][4].begin(), infos[2+k*3][4].end(), p) != infos[2+k*3][4].end())){
-                    for (int j=0; j<3; j++){
-                        for (int k=0; k<4; k++){
-                            cout << infos[j][k].size()<<endl;
-                            infos[j][k].erase(infos[j][k].begin()+p);
-                            cout << infos[j][k].size()<<endl;
-                        }
-                    }
-            }
-        }
-    }*/
 
 
 
@@ -237,14 +215,15 @@ void triple_coincidence (){
 
 
 
-/*
+
+
         for (int n=0 ; n<infos[0][0].size(); n++){
             if(infos[0][0][n]<83000 && infos[0][0][n]>75000 && infos[1][0][n]<74000 && infos[1][0][n]>64000){ // Intervalli tarati su intervalli di picco A dei pmt1 e pmt2 in ext_run2
                 histo_pmt3_12[i]->Fill(infos[2][0][n]);
             } 
         }
         histo_pmt3_12[i]->Draw();
-*/
+
 
         //make_histo(names[i][j], infos.back()[0],infos.back()[1], infos.back()[2]);
 
@@ -262,3 +241,25 @@ void triple_coincidence (){
     tree_file->Close();
 }
 
+/*
+    for (int k=0;k<3;k++){
+        for (int p=0; p< infos[k*3][0].size(); p++){
+            if ((find(infos[0+k*3][4].begin(), infos[0+k*3][4].end(), p) != infos[0+k*3][4].end())
+                || (find(infos[1+k*3][4].begin(), infos[1+k*3][4].end(), p) != infos[1+k*3][4].end())
+                || (find(infos[2+k*3][4].begin(), infos[2+k*3][4].end(), p) != infos[2+k*3][4].end())){
+                    for (int j=0; j<3; j++){
+                        for (int k=0; k<4; k++){
+                            cout << infos[j][k].size()<<endl;
+                            infos[j][k].erase(infos[j][k].begin()+p);
+                            cout << infos[j][k].size()<<endl;
+                        }
+                    }
+            }
+        }
+    }*/
+    /*
+    for (int i=0; i< ntuples.size(); i++){
+        ntuples[i]->Draw(">>cut_strange", "mask_strange1==1 && mask_strange2==1 && mask_strange3==1 ");
+        TEventList *lst = (TEventList*)gDirectory->Get("cut_strange");
+        ntuples[i]->SetEventList(lst);
+    }*/

@@ -15,7 +15,6 @@
 #include <TFile.h>
 #include <TStopwatch.h>
 
-//#include "tools.h"
 
 using namespace std;
 
@@ -205,19 +204,3 @@ void main_func (){
 int main() {
     main_func();
 }
-
-
-
-// execute with:
-// $ root -l
-// $ .L tools.cpp
-// $ .x main_func.cpp
-
-
-// execute with:
-// $ root -l
-// $.L tools.cpp+
-// $ root -l tools_cpp.so main_func.cpp
-
-// $ g++ -Wall -Wextra -Werror -pedantic -std=c++14 main_func.cpp tools.cpp  `root-config --glibs --cflags` -o main_func
-// ./main_func
