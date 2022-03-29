@@ -138,7 +138,7 @@ void correlation_frequency (){
     double freq_a=n_a/time_tot;
     double freq_b=n_b/time_tot;
 
-    double coinc_casuali= freq_a*freq_b*2*pow(10,-9)*time_tot;
+    double coinc_casuali= freq_a*freq_b*4*pow(10,-6)*time_tot;
 
     cout << freq_a <<endl;
     cout << freq_b <<endl;
@@ -147,10 +147,10 @@ void correlation_frequency (){
     out_file << "freq pmt2 nel picco:    "<< freq_b << "\n";
     out_file << "coincidenze casuali stimate:    "<< coinc_casuali << "\n";
 
-    cout << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*2*pow(10,-9)/time_tot <<endl;
+    cout << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*4*pow(10,-6)/time_tot <<endl;
     cout << "coincidenze= "<<coincidenze<<" pm "<< sqrt(coincidenze) << endl;
 
-    out_file << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*2*pow(10,-9)/time_tot << "\n";
+    out_file << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*4*pow(10,-6)/time_tot << "\n";
     out_file << "coincidenze= "<<coincidenze<<" pm "<< sqrt(coincidenze) << "\n";
 
 
