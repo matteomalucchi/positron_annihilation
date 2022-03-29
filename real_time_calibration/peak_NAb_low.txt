@@ -1,6 +1,6 @@
-energy peak NAbpmt1_e6_100_run1_charge = 1.263301+-0.002800
-energy peak NAbpmt1_e6_500_run2_charge = 1.263051+-0.001744
-energy peak NAbpmt2_e6_100_run1_charge = 1.273039+-0.003008
-energy peak NAbpmt2_e6_500_run2_charge = 1.259635+-0.002364
-energy peak NAbpmt3_e6_100_run2_charge = 1.270264+-0.004298
-energy peak NAbpmt3_e6_30_run1_charge = 1.268533+-0.005723
+energy peak NAbpmt1_e6_100_run1_charge = 1.261576+-0.002951
+energy peak NAbpmt1_e6_500_run2_charge = 1.260104+-0.002097
+energy peak NAbpmt2_e6_100_run1_charge = 1.273535+-0.003293
+energy peak NAbpmt2_e6_500_run2_charge = 1.258503+-0.002436
+energy peak NAbpmt3_e6_100_run2_charge = 1.270702+-0.005725
+energy peak NAbpmt3_e6_30_run1_charge = 1.270973+-0.007890
