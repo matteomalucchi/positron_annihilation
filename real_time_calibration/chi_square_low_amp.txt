@@ -49,8 +49,8 @@ pmt2_e6_500_run2   chi2/ndof   27.6832/39
 pmt2_e6_500_run2   chi2/ndof   33.4531/39
 
 pmt2_e6_500_run2   chi2/ndof   172.622/157
-pmt2_e6_500_run2   chi2/ndof   163.724/57
-pmt2_e6_500_run2   chi2/ndof   276.077/87
+pmt2_e6_500_run2   chi2/ndof   495.242/97
+pmt2_e6_500_run2   chi2/ndof   714.829/117
 pmt2_e6_500_run2   chi2/ndof   91.3856/87
 pmt2_e6_500_run2   chi2/ndof   131.549/147
 
@@ -65,15 +65,15 @@ pmt3_e6_100_run2   chi2/ndof   64.6235/62
 pmt3_e6_100_run2   chi2/ndof   246.23/207
 pmt3_e6_100_run2   chi2/ndof   129.482/91
 pmt3_e6_100_run2   chi2/ndof   108.517/90
-pmt3_e6_100_run2   chi2/ndof   65.1539/67
+pmt3_e6_100_run2   chi2/ndof   149.969/160
 pmt3_e6_100_run2   chi2/ndof   198.472/184
 
-pmt3_e6_30_run1   chi2/ndof   430.905/65
+pmt3_e6_30_run1   chi2/ndof   111.465/101
 pmt3_e6_30_run1   chi2/ndof   257.473/160
-pmt3_e6_30_run1   chi2/ndof   72.249/65
+pmt3_e6_30_run1   chi2/ndof   111.465/101
 pmt3_e6_30_run1   chi2/ndof   21.9043/34
 pmt3_e6_30_run1   chi2/ndof   29.2737/44
-pmt3_e6_30_run1   chi2/ndof   83.9615/49
+pmt3_e6_30_run1   chi2/ndof   54.5394/75
 pmt3_e6_30_run1   chi2/ndof   44.9667/44
 
 pmt3_e6_30_run1   chi2/ndof   257.473/160

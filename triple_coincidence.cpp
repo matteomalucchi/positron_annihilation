@@ -18,13 +18,13 @@
 
 using namespace std;
 
-vector<vector<float>> energy_time(string name){
+vector<vector<vector<float>>> energy_time(string name){
     ifstream myfile;
     myfile.open("data/" + name + ".txt", ios::in | ios::out);  
     vector <float> t(1030);
+    iota(begin(t), end(t), 0);
     vector <vector<float>> v;
     vector <TH1F*> histos;
-    iota(begin(t), end(t), 0);
 
     if (myfile.is_open()){
         string tp;
@@ -110,51 +110,25 @@ vector<vector<float>> energy_time(string name){
     vecs.push_back(amp);
     vecs.push_back(time);
     vecs.push_back(mask_strange);
+    vector<vector<vector<float>>> vecs_final;
+    vecs_final.push_back(vecs);
+    vecs_final.push_back(v);
+
     //vecs.push_back(idx_strange);
 
-    return vecs;
+    return vecs_final;
 
 }
-/*
-vector <TH1F*> make_histo(string name, vector<float> charge, vector<float> amp, vector<float> idx_strange){
-    int range_charge=250000;
-    int range_amp=3500; 
-    if (name.find("pmt3")<name.length()){
-        range_charge=50000;
-        range_amp=600;
-    }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, range_amp);
-    for (long unsigned int i=0; i< charge.size(); i++){
-        if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
-            histo_charge->Fill(charge[i]);
-            histo_amp->Fill(amp[i]);
-        }
-    }
-    histo_charge->SetName(&(name + "_charge")[0]);
-    histo_amp->SetName(&(name + "_amp")[0]);
-    histos.push_back(histo_charge);
-    histos.push_back(histo_amp);
 
-    TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
-    histo_charge->Draw();
-    c_charge->SaveAs(&("plots/" + name + "_charge.png")[0]);
-
-    TCanvas *c_amp = new TCanvas(&(name + "_amp")[0], &(name + "_amp")[0]);
-    histo_amp->Draw();
-    c_amp->SaveAs(&("plots/" + name + "_amp.png")[0]);
-
-    cout << "numero di idx_strange  "<<idx_strange.size() <<endl;
-
-
-    return histos;
-}
-*/
 void triple_coincidence (){
     gROOT->SetBatch(kFALSE);
     ROOT::EnableImplicitMT();
     vector <vector<TH1F*>> histos;
     vector<vector <vector<float>>> infos;
+    vector<vector <vector<float>>> waves;
+    vector<vector <vector<float>>> tot_vec;
+    vector <float> t(1030);
+    iota(begin(t), end(t), 0);
     TFile *tree_file= new TFile("triple/ntuple_together_file.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("histograms/histograms_triple_coincidence.root", "RECREATE"/* "UPDATE"*/);
@@ -162,16 +136,45 @@ void triple_coincidence (){
         {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
+        {"pmt1_NA_c6_ext_triple_merc_run4", "pmt2_NA_c6_ext_triple_merc_run4", "pmt3_NA_c6_ext_triple_merc_run4"},
+        {"pmt1_NA_c6_ext_coinc12_merc_run5", "pmt2_NA_c6_ext_coinc12_merc_run5", "pmt3_NA_c6_ext_coinc12_merc_run5"},
     };
     vector <TH1F*> histo_pmt3_12(1);
     vector<TNtuple*> ntuples;
     // loop over various runs
     for(int i=0;i<names.size();i++){
+        string run = names[i][0].substr(names[i][0].size()-4, names[i][0].size()-1);
         // loop over various pmt
         for (int j=0; j<names[0].size(); j++){
             string pmt_name = names[i][j].substr(0,4);
-            infos.push_back(energy_time(names[i][j]));
+            tot_vec=energy_time(names[i][j]);
+            infos.push_back(tot_vec[0]);
+            waves.push_back(tot_vec[1]);
         }
+        int idx_event=1;
+        
+        TCanvas *c_wave = new TCanvas(&(run +"_wave")[0], &(run +"_wave")[0]);
+        TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][idx_event][0]);
+        gr1->GetYaxis()->SetRangeUser(13000, 14800);
+        gr1->SetNameTitle(&(run+"_wave")[0], &(run+ "_wave")[0]);
+        //gr1->SetMarkerStyle(21);
+        gr1->SetLineColor(kGreen);
+
+        gr1->Draw();
+        TGraph* gr2 = new TGraph(t.size(), &t[0], &waves[i*3+1][idx_event][0]);
+        gr2->SetNameTitle(&(run+"_wave")[0], &(run+ "_wave")[0]);
+        //gr2->SetMarkerStyle(21);
+        gr2->SetLineColor(kBlue);
+
+        gr2->Draw("same");
+        TGraph* gr3 = new TGraph(t.size(), &t[0], &waves[i*3+2][idx_event][0]);
+        gr3->SetNameTitle(&(run+"_wave")[0], &(run+ "_wave")[0]);
+        //gr3->SetMarkerStyle(21);
+        gr3->SetLineColor(kRed);
+
+        gr3->Draw("same");
+        c_wave->SaveAs(&("triple/" +run+ "_wave.png")[0]);
+
     }
     cout <<infos[0][0].size()<<endl;
     int u;
@@ -207,15 +210,19 @@ void triple_coincidence (){
         ntuples.push_back(ntuple);
     }
 
+    tree_file->cd();
+    for(int j=0; j<ntuples.size();j++){
+        ntuples[j]->Write();
+    }
+
+    tree_file->Close();
+}
 
 
 
 
 
-
-
-
-
+/*
 
         for (int n=0 ; n<infos[0][0].size(); n++){
             if(infos[0][0][n]<83000 && infos[0][0][n]>75000 && infos[1][0][n]<74000 && infos[1][0][n]>64000){ // Intervalli tarati su intervalli di picco A dei pmt1 e pmt2 in ext_run2
@@ -226,40 +233,46 @@ void triple_coincidence (){
 
 
         //make_histo(names[i][j], infos.back()[0],infos.back()[1], infos.back()[2]);
-
+*/
 
 
     
     //getchar();
    // outfile->Close();
 
-    tree_file->cd();
-    for(int j=0; j<ntuples.size();j++){
-        ntuples[j]->Write();
-    }
-
-    tree_file->Close();
-}
 
 /*
-    for (int k=0;k<3;k++){
-        for (int p=0; p< infos[k*3][0].size(); p++){
-            if ((find(infos[0+k*3][4].begin(), infos[0+k*3][4].end(), p) != infos[0+k*3][4].end())
-                || (find(infos[1+k*3][4].begin(), infos[1+k*3][4].end(), p) != infos[1+k*3][4].end())
-                || (find(infos[2+k*3][4].begin(), infos[2+k*3][4].end(), p) != infos[2+k*3][4].end())){
-                    for (int j=0; j<3; j++){
-                        for (int k=0; k<4; k++){
-                            cout << infos[j][k].size()<<endl;
-                            infos[j][k].erase(infos[j][k].begin()+p);
-                            cout << infos[j][k].size()<<endl;
-                        }
-                    }
-            }
+vector <TH1F*> make_histo(string name, vector<float> charge, vector<float> amp, vector<float> idx_strange){
+    int range_charge=250000;
+    int range_amp=3500; 
+    if (name.find("pmt3")<name.length()){
+        range_charge=50000;
+        range_amp=600;
+    }
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, range_amp);
+    for (long unsigned int i=0; i< charge.size(); i++){
+        if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
+            histo_charge->Fill(charge[i]);
+            histo_amp->Fill(amp[i]);
         }
-    }*/
-    /*
-    for (int i=0; i< ntuples.size(); i++){
-        ntuples[i]->Draw(">>cut_strange", "mask_strange1==1 && mask_strange2==1 && mask_strange3==1 ");
-        TEventList *lst = (TEventList*)gDirectory->Get("cut_strange");
-        ntuples[i]->SetEventList(lst);
-    }*/
+    }
+    histo_charge->SetName(&(name + "_charge")[0]);
+    histo_amp->SetName(&(name + "_amp")[0]);
+    histos.push_back(histo_charge);
+    histos.push_back(histo_amp);
+
+    TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
+    histo_charge->Draw();
+    c_charge->SaveAs(&("plots/" + name + "_charge.png")[0]);
+
+    TCanvas *c_amp = new TCanvas(&(name + "_amp")[0], &(name + "_amp")[0]);
+    histo_amp->Draw();
+    c_amp->SaveAs(&("plots/" + name + "_amp.png")[0]);
+
+    cout << "numero di idx_strange  "<<idx_strange.size() <<endl;
+
+
+    return histos;
+}
+*/

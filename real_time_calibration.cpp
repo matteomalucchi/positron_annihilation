@@ -349,8 +349,13 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     }
 
     float m_ave_err=sqrt(1/weights_sum);
-
-    mass_e_file << "stima combinata =   " << m_ave << "+-" <<m_ave_err << "\n";
+    
+    if (name_final== "combined_mass"){
+        mass_e_file << "stima combinata =   " << m_ave << "+-" <<m_ave_err << "\n";
+    }
+    else if (name_final== "combined_Ne"){
+        peak_Ne_file << "stima combinata =   " << m_ave << "+-" <<m_ave_err << "\n";
+    }
 
     auto meanlinesx=new TLine(m_ave-m_ave_err, 0.5, m_ave-m_ave_err, 6.5);
     meanlinesx->SetLineColor(4);
@@ -387,15 +392,15 @@ void real_time_calibration(){
 
         {{"pmt2_NA_cs_e6_500_run2", "pmt2_NA_cs_co_e6_500_run2"}, 
             {{70000, 76000, 89000, 98000, 150000, 190000, 172000, 182000, 160000, 168000, 182000, 190000},
-            {1025, 1175, 1275, 1500, 1700, 2850, 2200, 2600, 2100, 2325, 2325, 2700}}}, 
+            {925, 1175, 1200, 1500, 1700, 2850, 2200, 2600, 2100, 2325, 2325, 2700}}}, 
 
         {{"pmt3_NA_cs_e6_30_run1", "pmt3_NA_cs_co_e6_30_run1"}, 
-            {{13200, 14600, 16800, 18600, 28000, 40000, 32000, 34600, 30000, 32000, 34200, 36000},
-            {170, 215, 235, 275, 300, 540, 420, 490, 410, 430, 430, 500}}}, 
+            {{13200, 14600, 16800, 18600, 28000, 40000, 31000, 35000, 29000, 32000, 34200, 36000},
+            {170, 215, 235, 275, 300, 540, 420, 490, 380, 430, 430, 500}}}, 
 
         {{"pmt3_NA_cs_e6_100_run2", "pmt3_NA_cs_co_e6_100_run2"}, 
             {{13000, 14600, 16800, 18600, 26000, 40000, 31000, 34800, 29500, 31400, 33500, 36000},
-            {175, 215, 230, 270, 310, 530, 410, 500, 400, 430, 430, 510}}}, 
+            {175, 215, 230, 270, 310, 530, 410, 500, 360, 430, 430, 510}}}, 
         };
     
     vector <float>   y_rescale;

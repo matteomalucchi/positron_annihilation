@@ -123,7 +123,7 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_triple.root", "RECREATE"/* "UPDATE"*/);
+    TFile *outfile= new TFile("histograms/histograms_small.root", "RECREATE"/* "UPDATE"*/);
     list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
@@ -181,7 +181,13 @@ void main_func (){
                         "pmt3_NA_l1_ext_triple_close_run2",
                         "pmt1_NA_l1_ext_triple_close_run3",
                         "pmt2_NA_l1_ext_triple_close_run3",
-                        "pmt3_NA_l1_ext_triple_close_run3",};
+                        "pmt3_NA_l1_ext_triple_close_run3",
+                        "pmt1_NA_c6_ext_triple_merc_run4",
+                        "pmt2_NA_c6_ext_triple_merc_run4",
+                        "pmt3_NA_c6_ext_triple_merc_run4",
+                        "pmt1_NA_c6_ext_coinc12_merc_run5",
+                        "pmt2_NA_c6_ext_coinc12_merc_run5",
+                        "pmt3_NA_c6_ext_coinc12_merc_run5"};
 
     TStopwatch time_tot;
     time_tot.Start();                
@@ -195,7 +201,7 @@ void main_func (){
         time.Stop();
         time.Print();
     }
-    //getchar();
+    getchar();
     outfile->Close();
     time_tot.Stop();
     time_tot.Print();
