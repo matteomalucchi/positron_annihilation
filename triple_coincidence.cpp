@@ -139,7 +139,7 @@ void triple_coincidence (){
         {"pmt1_NA_c6_ext_triple_merc_run4", "pmt2_NA_c6_ext_triple_merc_run4", "pmt3_NA_c6_ext_triple_merc_run4"},
         {"pmt1_NA_c6_ext_coinc12_merc_run5", "pmt2_NA_c6_ext_coinc12_merc_run5", "pmt3_NA_c6_ext_coinc12_merc_run5"},
     };
-    vector <TH1F*> histo_pmt3_12(1);
+    //vector <TH1F*> histo_pmt3_12(1);
     vector<TNtuple*> ntuples;
     // loop over various runs
     for(int i=0;i<names.size();i++){
