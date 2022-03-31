@@ -1,0 +1,84 @@
+pmt1_e6_100_run1   chi2/ndof   53.1985/69
+pmt1_e6_100_run1   chi2/ndof   156.008/117
+pmt1_e6_100_run1   chi2/ndof   53.1985/69
+pmt1_e6_100_run1   chi2/ndof   55.5915/34
+pmt1_e6_100_run1   chi2/ndof   42.4841/38
+pmt1_e6_100_run1   chi2/ndof   60.836/54
+pmt1_e6_100_run1   chi2/ndof   53.7876/59
+
+pmt1_e6_100_run1   chi2/ndof   156.008/117
+pmt1_e6_100_run1   chi2/ndof   50.6724/53
+pmt1_e6_100_run1   chi2/ndof   87.6056/77
+pmt1_e6_100_run1   chi2/ndof   148.893/117
+pmt1_e6_100_run1   chi2/ndof   159.411/117
+
+pmt1_e6_500_run2   chi2/ndof   55.628/70
+pmt1_e6_500_run2   chi2/ndof   91.0986/117
+pmt1_e6_500_run2   chi2/ndof   55.628/70
+pmt1_e6_500_run2   chi2/ndof   28.7914/33
+pmt1_e6_500_run2   chi2/ndof   39.2318/39
+pmt1_e6_500_run2   chi2/ndof   56.5224/54
+pmt1_e6_500_run2   chi2/ndof   64.1795/59
+
+pmt1_e6_500_run2   chi2/ndof   91.0986/117
+pmt1_e6_500_run2   chi2/ndof   48.1804/47
+pmt1_e6_500_run2   chi2/ndof   89.7025/77
+pmt1_e6_500_run2   chi2/ndof   92.5866/77
+pmt1_e6_500_run2   chi2/ndof   159.029/147
+
+pmt2_e6_100_run1   chi2/ndof   440.888/49
+pmt2_e6_100_run1   chi2/ndof   181.282/157
+pmt2_e6_100_run1   chi2/ndof   61.6999/49
+pmt2_e6_100_run1   chi2/ndof   33.0835/33
+pmt2_e6_100_run1   chi2/ndof   57.8512/44
+pmt2_e6_100_run1   chi2/ndof   56.5369/49
+pmt2_e6_100_run1   chi2/ndof   25.4277/39
+
+pmt2_e6_100_run1   chi2/ndof   181.282/157
+pmt2_e6_100_run1   chi2/ndof   58.5432/67
+pmt2_e6_100_run1   chi2/ndof   127.555/89
+pmt2_e6_100_run1   chi2/ndof   118.105/97
+pmt2_e6_100_run1   chi2/ndof   149.527/97
+
+pmt2_e6_500_run2   chi2/ndof   40.6888/49
+pmt2_e6_500_run2   chi2/ndof   172.622/157
+pmt2_e6_500_run2   chi2/ndof   40.6888/49
+pmt2_e6_500_run2   chi2/ndof   32.2526/28
+pmt2_e6_500_run2   chi2/ndof   43.1447/44
+pmt2_e6_500_run2   chi2/ndof   27.6832/39
+pmt2_e6_500_run2   chi2/ndof   33.4531/39
+
+pmt2_e6_500_run2   chi2/ndof   172.622/157
+pmt2_e6_500_run2   chi2/ndof   495.242/97
+pmt2_e6_500_run2   chi2/ndof   714.829/117
+pmt2_e6_500_run2   chi2/ndof   91.3856/87
+pmt2_e6_500_run2   chi2/ndof   131.549/147
+
+pmt3_e6_100_run2   chi2/ndof   111.709/96
+pmt3_e6_100_run2   chi2/ndof   246.23/207
+pmt3_e6_100_run2   chi2/ndof   111.709/96
+pmt3_e6_100_run2   chi2/ndof   40.2811/39
+pmt3_e6_100_run2   chi2/ndof   36.8677/44
+pmt3_e6_100_run2   chi2/ndof   37.7256/46
+pmt3_e6_100_run2   chi2/ndof   64.6235/62
+
+pmt3_e6_100_run2   chi2/ndof   246.23/207
+pmt3_e6_100_run2   chi2/ndof   129.482/91
+pmt3_e6_100_run2   chi2/ndof   108.517/90
+pmt3_e6_100_run2   chi2/ndof   149.969/160
+pmt3_e6_100_run2   chi2/ndof   198.472/184
+
+pmt3_e6_30_run1   chi2/ndof   111.465/101
+pmt3_e6_30_run1   chi2/ndof   257.473/160
+pmt3_e6_30_run1   chi2/ndof   111.465/101
+pmt3_e6_30_run1   chi2/ndof   21.9043/34
+pmt3_e6_30_run1   chi2/ndof   29.2737/44
+pmt3_e6_30_run1   chi2/ndof   54.5394/75
+pmt3_e6_30_run1   chi2/ndof   44.9667/44
+
+pmt3_e6_30_run1   chi2/ndof   257.473/160
+pmt3_e6_30_run1   chi2/ndof   185.636/102
+pmt3_e6_30_run1   chi2/ndof   98.2219/91
+pmt3_e6_30_run1   chi2/ndof   95.6048/113
+pmt3_e6_30_run1   chi2/ndof   150.485/161
+

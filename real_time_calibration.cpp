@@ -18,11 +18,12 @@
 
 using namespace std;
 
-string type_of_file = "_amp";
+string type_of_file = "_saveLinPar";
 
 ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
 ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
 ofstream chi_file("real_time_calibration/chi_square_low"+type_of_file+".txt");
+ofstream params_file("real_time_calibration/lin_params_low"+type_of_file+".txt");
 
 
 vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float amp_min, float amp_max, float y_rescale_charge,float y_rescale_amp, float peak_charge, float peak_amp){
@@ -38,8 +39,8 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float 
     if (myfile.is_open()){
         string tp;
         vector <float> w;
-        int k=0, m, j=0;
-        while(getline(myfile, tp)){ //read data from file object and put it into string.
+        int k=0, m, j=0, f=0;
+        while(getline(myfile, tp) /*&& f<50000*/){ //read data from file object and put it into string.
             if (isalpha(tp[0]) == 0) {
                 if (k>0) {
                     k=0;
@@ -56,6 +57,7 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float 
                 }                
                 k++;
             }
+            f++;
         }
         //non prendo l'ultimo evento perchè è incompleto
         myfile.close(); //close the file object.
@@ -291,18 +293,22 @@ auto peak_energy(string name_final, string type, vector<vector<double>> lin_para
     return energy;
 }
 
-auto combined_graph(vector<float> energy, string name_final, string type,  TFile * outfile){
+auto combined_graph(vector<float> energy, string name_final, string type,  TFile * outfile, int dimension){
+    
+    float x[dimension], y[dimension], x_err[dimension];
+    for (int d=0;d<dimension;d++){
+        x[d]=energy[2*d];
+        y[d]=d+1;
+        x_err[d]=energy[2*d+1];     
+    }
 
-    float x[6]={energy[0], energy[2], energy[4], energy[6], energy[8], energy[10]};
-    float y[sizeof(x)/sizeof(x[0])]={1, 2, 3, 4, 5, 6};
-    float x_err[sizeof(x)/sizeof(x[0])] = {energy[1], energy[3], energy[5], energy[7], energy[9], energy[11]};
 
     TCanvas *c_mass = new TCanvas(&(name_final + type)[0], &( name_final + type)[0]);
 
     TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,x_err,nullptr);
 
     if (name_final== "combined_mass"){
-        auto line=new TLine(0.511, 0.5, 0.511, 6.5);
+        auto line=new TLine(0.511, 0.5, 0.511, dimension+0.5);
         gr->GetXaxis()->SetLimits(0.5, 0.512);
         gStyle->SetStatY(0.9);
         gStyle->SetStatX(0.5);
@@ -314,7 +320,7 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
         line->Draw("SAME");
     }
     else if (name_final== "combined_Ne"){
-        auto line=new TLine(1.274, 0.5, 1.274, 6.5);
+        auto line=new TLine(1.274, 0.5, 1.274, dimension+0.5);
         gr->GetXaxis()->SetLimits(1.23, 1.3);
         gStyle->SetStatY(0.9);
         gStyle->SetStatX(0.5);
@@ -326,20 +332,15 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
         line->Draw("SAME");
     }
 
-
-
+    // weighted average
     float weights[sizeof(x)/sizeof(x[0])];
-
-    for(int k=0; k<sizeof(x)/sizeof(x[0]);k++){
-
-        weights[k]=1/(x_err[k]*x_err[k]);
-    }
 
     float m_ave=0;
     float weights_sum=0;
 
     for(int k=0; k<sizeof(x)/sizeof(x[0]);k++){
 
+        weights[k]=1/(x_err[k]*x_err[k]);
         weights_sum+=weights[k];
     }
 
@@ -351,10 +352,12 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     float m_ave_err=sqrt(1/weights_sum);
     
     if (name_final== "combined_mass"){
-        mass_e_file << "stima combinata =   " << m_ave << "+-" <<m_ave_err << "\n";
+        mass_e_file << "stima combinata "+type+" =   " << m_ave << "+-" <<m_ave_err << "\n";
+        cout <<"stima combinata massa "+type+"=   " << m_ave << "+-" <<m_ave_err << endl;
     }
     else if (name_final== "combined_Ne"){
-        peak_Ne_file << "stima combinata =   " << m_ave << "+-" <<m_ave_err << "\n";
+        peak_Ne_file << "stima combinata "+type+"=   " << m_ave << "+-" <<m_ave_err << "\n";
+        cout <<"stima combinata Ne "+type+"=   " << m_ave << "+-" <<m_ave_err << endl;
     }
 
     auto meanlinesx=new TLine(m_ave-m_ave_err, 0.5, m_ave-m_ave_err, 6.5);
@@ -369,6 +372,38 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     outfile->cd();
     c_mass->Write();
 }
+
+void final_params(vector<vector<vector<double>>> params, string pmt, string type, int j, int dim){
+    int q;
+    double weights[dim];
+    double param_ave, weights_sum, param_ave_err;
+    // loop over the off_set or cal_factor
+    for (int k=0; k<2;k++){
+        param_ave=0;
+        weights_sum=0;
+        q=0;
+        // loop over run
+        for (int d=j*dim;d<(j+1)*dim;d++){
+            weights[q]=1/(params[d][k][1]*params[d][k][1]);
+            weights_sum += weights[q];
+            q++;
+        }
+        q=0;
+        for (int d=j*dim;d<(j+1)*dim;d++){
+            param_ave += params[d][k][0]*weights[q]/weights_sum;
+            q++;
+        }
+        param_ave_err=sqrt(1/weights_sum);
+
+        if (k==0){
+            params_file<<"off_set"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
+        }
+        else if (k==1){
+            params_file<<"cal_factor"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
+        }
+    }
+}
+
 
 void real_time_calibration(){
     TFile *f = new TFile("histograms/histograms_RealTimeCalibration_rebin.root");
@@ -405,9 +440,12 @@ void real_time_calibration(){
     
     vector <float>   y_rescale;
     vector<vector<float>> energy_piccoNe(2), energy(2), gaus_param_Ne;
+    vector<vector<vector<vector<double>>>> cal_params(2);
 
 
     list<string> types= {"_charge", "_amp"};
+    list<string> pmts= {"_pmt1", "_pmt2", "_pmt3"};
+
 
     for (const auto &pair_name : pair_names){  
         const auto name_a = pair_name.first[0];
@@ -440,11 +478,11 @@ void real_time_calibration(){
 */
             float int_NA_a=histo_a->Integral(histo_a->FindFixBin(ranges[i][0]),histo_a->FindFixBin(ranges[i][1]));
             float int_NA_b=histo_b->Integral(histo_b->FindFixBin(ranges[i][0]),histo_b->FindFixBin(ranges[i][1]));
-            cout<< int_NA_a/int_NA_b << endl;
+            //cout<< int_NA_a/int_NA_b << endl;
 
             float int_cs_a=histo_a->Integral(histo_a->FindFixBin(ranges[i][2]),histo_a->FindFixBin(ranges[i][3]));
             float int_cs_b=histo_b->Integral(histo_b->FindFixBin(ranges[i][2]),histo_b->FindFixBin(ranges[i][3]));
-            cout<< int_cs_a/int_cs_b << endl;
+            //cout<< int_cs_a/int_cs_b << endl;
 
             y_rescale.push_back((int_NA_a/int_NA_b + int_cs_a/int_cs_b )/2);
             
@@ -482,7 +520,8 @@ void real_time_calibration(){
 
             vector<float> gaus_params;
             gaus_params=fit_gaus(histo_sub, ranges[i], name_final, *type);
-            auto lin_params = fit_lin(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
+            vector<vector<double>> lin_params = fit_lin(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
+            cal_params[i].push_back(lin_params);
 
             vector<float> x= peak_energy(name_final, *type, lin_params, gaus_params);
             energy[i].insert(energy[i].end(), x.begin(), x.end());
@@ -501,13 +540,26 @@ void real_time_calibration(){
             string peak2 = "energy peak Ne  " + name_final + *type + " = " + to_string(y[0]) + "+-" + to_string(y[1]) + "\n";
             cout << peak2;
             peak_Ne_file << peak2;
+
             i++;
         }
     }
-    combined_graph(energy[0] , "combined_mass", "_charge", outfile);
-    combined_graph(energy[1] , "combined_mass", "_amp", outfile);
-    combined_graph(energy_piccoNe[0] , "combined_Ne", "_charge", outfile);
-    combined_graph(energy_piccoNe[1] , "combined_Ne", "_amp", outfile);
+    combined_graph(energy[0] , "combined_mass", "_charge", outfile, pair_names.size());
+    combined_graph(energy[1] , "combined_mass", "_amp", outfile, pair_names.size());
+    combined_graph(energy_piccoNe[0] , "combined_Ne", "_charge", outfile, pair_names.size());
+    combined_graph(energy_piccoNe[1] , "combined_Ne", "_amp", outfile, pair_names.size());
+
+    cout <<cal_params[0][2][0][0] <<endl;
+    int j=0;
+    // number of runs in total
+    int dim=pair_names.size()/pmts.size();
+    for(list<string>::const_iterator pmt = pmts.begin(); pmt != pmts.end(); ++pmt){
+        final_params(cal_params[0],*pmt, "_charge",j, dim);
+        final_params(cal_params[1],*pmt, "_amp", j, dim);
+        params_file<<"\n";
+        j++;
+    }
+
 
     getchar();
     outfile->Close();

@@ -182,12 +182,12 @@ void main_func (){
                         "pmt1_NA_l1_ext_triple_close_run3",
                         "pmt2_NA_l1_ext_triple_close_run3",
                         "pmt3_NA_l1_ext_triple_close_run3",
-                        "pmt1_NA_c6_ext_triple_merc_run4",
-                        "pmt2_NA_c6_ext_triple_merc_run4",
-                        "pmt3_NA_c6_ext_triple_merc_run4",
-                        "pmt1_NA_c6_ext_coinc12_merc_run5",
-                        "pmt2_NA_c6_ext_coinc12_merc_run5",
-                        "pmt3_NA_c6_ext_coinc12_merc_run5"};
+                        "pmt1_NA_c6_ext_triple_merc_aero_run4",
+                        "pmt2_NA_c6_ext_triple_merc_aero_run4",
+                        "pmt3_NA_c6_ext_triple_merc_aero_run4",
+                        "pmt1_NA_c6_ext_coinc12_merc_metal_run5",
+                        "pmt2_NA_c6_ext_coinc12_merc_metal_run5",
+                        "pmt3_NA_c6_ext_coinc12_merc_metal_run5"};
 
     TStopwatch time_tot;
     time_tot.Start();                
