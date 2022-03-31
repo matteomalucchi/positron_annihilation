@@ -33,7 +33,7 @@ vector<vector<float>> take_params(string path){
                     idx_f=tp.find("+");
                     number=tp.substr(idx_i+2, idx_f-idx_i-3);
                     params[m].push_back(stof(number));
-                    cout <<params[m].back() <<endl;
+                    //cout <<params[m].back() <<endl;
                 }
             }
         myfile.close(); //close the file object.
@@ -43,7 +43,7 @@ vector<vector<float>> take_params(string path){
     return params;
 }
 
-vector<vector<vector<float>>> energy_time(string name,long int &time_tot){
+vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector<float> param){
     ifstream myfile;
     myfile.open("data/" + name + ".txt", ios::in | ios::out);  
     vector <float> t(1030);
@@ -52,6 +52,7 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot){
     vector <TH1F*> histos;
     int bgn=0, g=0;
     long int time_before=0, time_now=0, time_bgn=0;
+    cout << param[0]<<endl;
 
     if (myfile.is_open()){
         string tp;
@@ -116,7 +117,7 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot){
         } 
         min =*min_element(v[i].begin()+300, v[i].end()-80);
         auto bin_min = find(v[i].begin()+300, v[i].end()-80, min);
-        amp[i]=h-min;
+        amp[i]=(h-min-param[2])/param[3];
         int bin_mez=0;
         float diff=1000;
         float tmez=0;
@@ -129,6 +130,7 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot){
                 diff=abs(v[i][j]-min/2-h/2);
                 }
         }
+        charge[i]=(charge[i]-param[0])/param[1];
         float TT[5],VV[5];
         for(int k=0;k<5;k++){
             TT[k] = k;
@@ -137,7 +139,7 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot){
         TGraph* gr_fit = new TGraph(5, TT,VV);
         gr_fit->Fit("pol1", "Q");
         tmez=(min/2 + h/2 - gr_fit->GetFunction("pol1")->GetParameter(0))/(gr_fit->GetFunction("pol1")->GetParameter(1));
-        time[i]=tmez+t[bin_mez-2];
+        time[i]=(tmez+t[bin_mez-2])*4;
     }
 
  /*   if (name.find("run3") != string::npos){
@@ -155,6 +157,7 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot){
     vecs.push_back(amp);
     vecs.push_back(time);
     vecs.push_back(mask_strange);
+
     vector<vector<vector<float>>> vecs_final;
     vecs_final.push_back(vecs);
     vecs_final.push_back(v);
@@ -175,33 +178,33 @@ void triple_coincidence (){
 
     TFile *tree_file= new TFile("triple/ntuple_triple.root", "RECREATE"/* "UPDATE"*/);
 
-    TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
+    //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
         {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
-        /*{"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
+        {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
         {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
-        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},*/
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},
     };
 
     //vector <TH1F*> histo_pmt3_12(1);
     vector<TNtuple*> ntuples;
     vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_saveLinPar.txt");
-    cout << params[2][3] <<endl;
+    //cout << params[2][3] <<endl;
 
     // loop over various runs
     for(int i=0;i<names.size();i++){
         string run = names[i][0].substr(names[i][0].size()-4, names[i][0].size()-1);
         // loop over various pmt
-        for (int j=0; j<names[0].size(); j++){
+        for (int j=0; j<names[i].size(); j++){
             string pmt_name = names[i][j].substr(0,4);
-            tot_vec=energy_time(names[i][j], time_tot);
+            tot_vec=energy_time(names[i][j], time_tot, params[j]);
             infos.push_back(tot_vec[0]);
             waves.push_back(tot_vec[1]);
         }
         cout << "tot time    "<<time_tot <<" s"<<endl;
-
-        /*
+        cout<< infos[0][0][0]<<endl;
+   /*     
         int idx_event=1;
         for  (int o=0; o<infos[3*i][0].size(); o++){
             TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
@@ -228,7 +231,7 @@ void triple_coincidence (){
         }
         */
     }
-
+/*
     // eliminate strange events
     int u;
     for (int k=0;k<names.size();k++){
@@ -251,8 +254,8 @@ void triple_coincidence (){
         }
     }
     //cout <<u <<endl;
-
-
+*/
+    //loop over run
     for(int j=0; j<names.size();j++){
         string run = names[j][0].substr(names[j][0].size()-4, names[j][0].size()-1);
         TNtuple *ntuple= new TNtuple(&run[0], &run[0], "charge1:amp1:time1:mask_strange1:charge2:amp2:time2:mask_strange2:charge3:amp3:time3:mask_strange3");
@@ -270,6 +273,7 @@ void triple_coincidence (){
     }
 
     tree_file->Close();
+    //outfile->Close();
 }
 
 
