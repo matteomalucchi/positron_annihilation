@@ -169,22 +169,22 @@ void triple_coincidence (){
     gROOT->SetBatch(kFALSE);
     ROOT::EnableImplicitMT();
     vector <vector<TH1F*>> histos;
-    vector<vector <vector<float>>> infos;
-    vector<vector <vector<float>>> waves;
-    vector<vector <vector<float>>> tot_vec;
+    vector<vector <vector<float>>> infos, waves, tot_vec;
     vector <float> t(1030);
     iota(begin(t), end(t), 0);
     long int time_tot;
 
-    TFile *tree_file= new TFile("triple/ntuple_triple.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_triple_m.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
-        {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
+        /*{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
         {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
-        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},*/
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
+
     };
 
     //vector <TH1F*> histo_pmt3_12(1);
@@ -204,10 +204,13 @@ void triple_coincidence (){
         }
         cout << "tot time    "<<time_tot <<" s"<<endl;
         cout<< infos[0][0][0]<<endl;
-   /*     
+ /*       TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
+
         int idx_event=1;
         for  (int o=0; o<infos[3*i][0].size(); o++){
             TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
+            tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
+
             TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][o][0]);
             gr1->GetYaxis()->SetRangeUser(1000, 14800);
             gr1->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
@@ -226,12 +229,12 @@ void triple_coincidence (){
 
             c_wave->BuildLegend();
             c_wave->SaveAs(&("triple/" +run+ "_wave_"+o+".png")[0]);
-            outfile->cd();
-            c_wave->Write();
+            tree->Fill();
         }
-        */
+        tree->Write();
+*/
     }
-/*
+
     // eliminate strange events
     int u;
     for (int k=0;k<names.size();k++){
@@ -254,11 +257,11 @@ void triple_coincidence (){
         }
     }
     //cout <<u <<endl;
-*/
+
     //loop over run
     for(int j=0; j<names.size();j++){
         string run = names[j][0].substr(names[j][0].size()-4, names[j][0].size()-1);
-        TNtuple *ntuple= new TNtuple(&run[0], &run[0], "charge1:amp1:time1:mask_strange1:charge2:amp2:time2:mask_strange2:charge3:amp3:time3:mask_strange3");
+        TNtuple *ntuple= new TNtuple(&run[0], &run[0], "charge1_MeV:amp1_MeV:time1_ns:mask_strange1:charge2_MeV:amp2_MeV:time2_ns:mask_strange2:charge3_MeV:amp3_MeV:time3_ns:mask_strange3");
         for (int m=0; m < infos[3*j][0].size(); m++){
             ntuple->Fill(infos[3*j+0][0][m],infos[3*j+0][1][m],infos[3*j+0][2][m],infos[3*j+0][3][m],
                         infos[3*j+1][0][m],infos[3*j+1][1][m],infos[3*j+1][2][m],infos[3*j+1][3][m],
@@ -267,13 +270,13 @@ void triple_coincidence (){
         ntuples.push_back(ntuple);
     }
 
-    tree_file->cd();
+    //tree_file->cd();
     for(int j=0; j<ntuples.size();j++){
         ntuples[j]->Write();
     }
 
+
     tree_file->Close();
-    //outfile->Close();
 }
 
 
