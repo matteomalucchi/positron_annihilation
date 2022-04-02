@@ -14,16 +14,18 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TStopwatch.h>
+#include <TRatioPlot.h>
 
 
 using namespace std;
 
-string type_of_file = "_saveLinPar";
+string type_of_file = "_res";
 
 ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
 ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
 ofstream chi_file("real_time_calibration/chi_square_low"+type_of_file+".txt");
-ofstream params_file("real_time_calibration/lin_params_low"+type_of_file+".txt");
+ofstream gaus_file("real_time_calibration/gaus_params_low"+type_of_file+".txt");
+ofstream lin_file("real_time_calibration/lin_params_low"+type_of_file+".txt");
 
 
 vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float amp_min, float amp_max, float y_rescale_charge,float y_rescale_amp, float peak_charge, float peak_amp){
@@ -126,37 +128,76 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float 
 vector<float> fit_gaus_Ne (TH1F* histo, vector<float> ranges, string name, string type){
     
     cout << endl;
-    cout << "__________________________ Gaussian fit: " << name << type << " __________________________"<<endl; 
+    cout << "__________________________ Gaussian fit Ne: " << name << type << " __________________________"<<endl; 
     cout << endl;
 
-    TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[6], ranges[7]);
-    
-    gaus1->SetParameters(200, abs(ranges[6]+ranges[7])/2, abs(ranges[6]-ranges[7]));
+    int n_bin = histo->GetNbinsX();
+    float x_max = histo->GetXaxis()->GetBinCenter(n_bin);
 
 
     TCanvas *c_Ne = new TCanvas(&(name + type +"_Ne_fit")[0] ,&(name + type +"_Ne_fit")[0]);
-
+    TPad *pad1 = new TPad("pad1","pad1",0,0.33,1,1);
+    TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.33);
+    pad1->SetBottomMargin(0.0001);
+    pad1->SetBorderMode(0);
+    pad2->SetTopMargin(0.00001);
+    pad2->SetBottomMargin(0.1);
+    pad2->SetBorderMode(0);
+    pad1->Draw();
+    pad2->Draw();
+    pad1->cd();
+    TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[6], ranges[7]);
+    gaus1->SetParameters(200, abs(ranges[6]+ranges[7])/2, abs(ranges[6]-ranges[7]));
     histo->Fit("gaus1","R", "SAME");
+    //gStyle->SetStatY(0.9);
+    //gStyle->SetStatX(0.5);
+    histo->GetYaxis()->SetTitle("Entries");
+    //histo->GetXaxis()->SetTitle("Bin");
     histo->Draw("HIST");
     gaus1->Draw("SAME");
-    gStyle->SetOptFit(1111);
+    gStyle->SetOptFit(1111); 
+
+    pad2->cd();
+    TH1F *h2 = new TH1F("h2","residuals",n_bin,0,x_max);
+    TF1 *zero = new TF1("zero","0*x",0, x_max);
+
+    /*h2->GetXaxis()->SetLabelFont(63);
+    h2->GetXaxis()->SetLabelSize(16);
+    h2->GetXaxis()->SetTitle("Bin");
+    h2->GetYaxis()->SetLabelFont(63);
+    h2->GetYaxis()->SetLabelSize(16);*/
+    for (int i=histo->FindFixBin(ranges[6]);i<=histo->FindFixBin(ranges[7]);i++) {
+        float diff = (histo->GetBinContent(i)-gaus1->Eval(histo->GetBinCenter(i)))/histo->GetBinError(i);
+        h2->SetBinContent(i,diff);
+        h2->SetBinError(i,1);
+    }
+    h2->Draw("E"); //"P"
+    zero->Draw("SAME");
+    c_Ne->cd();
+
 
     c_Ne->SaveAs(&("real_time_calibration/"+name + type +"_Ne_fit.png")[0]);
     c_Ne->Write();
 
-    vector<float> gaus_params;
 
+    chi_file<< name << "   chi2/ndof "+type+"  =  "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
+    gaus_file<< name << "   peak Ne "+type+" =   "<< gaus1->GetParameter(1) <<"+-"<< gaus1->GetParError(1) <<"\n";
+    
+    vector<float> gaus_params;
     gaus_params.push_back(gaus1->GetParameter(1));
     gaus_params.push_back(gaus1->GetParError(1));
-    chi_file<< name << "   chi2/ndof   "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
+
     return gaus_params;
 }
 
-vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, string type){
+vector<float> fit_gaus (TH1F* histo, vector<float> ranges, string name, string type){
     
     cout << endl;
-    cout << "__________________________ Gaussian fit: " << name << type << " __________________________"<<endl; 
+    cout << "__________________________ Gaussian fit tot: " << name << type << " __________________________"<<endl; 
     cout << endl;
+
+    int n_bin = histo->GetNbinsX();
+    float x_max = histo->GetXaxis()->GetBinCenter(n_bin);
 
     TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[0], ranges[1]);
     TF1 *gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[2], ranges[3]);
@@ -169,20 +210,59 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gaus4->SetParameters(100, abs(ranges[10]+ranges[11])/2, abs(ranges[10]-ranges[11]));
 
     TCanvas *c_sub = new TCanvas(&(name + type +"_sub_fit")[0] ,&(name + type +"_sub_fit")[0]);
-    
-    histo_sub->Draw("HIST");
-    histo_sub->Fit("gaus1","R", "SAME");
+    TPad *pad1 = new TPad("pad1","pad1",0,0.33,1,1);
+    TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.33);
+    pad1->SetBottomMargin(0.0001);
+    pad1->SetBorderMode(0);
+    pad2->SetTopMargin(0.00001);
+    pad2->SetBottomMargin(0.1);
+    pad2->SetBorderMode(0);
+    pad1->Draw();
+    pad2->Draw();
+    pad1->cd();
+
+    histo->Draw("HIST");
+    histo->Fit("gaus1","R", "SAME");
     gaus1->Draw("SAME");
     gStyle->SetOptFit(1111);
-    histo_sub->Fit("gaus2","R", "SAME"); 
+    histo->Fit("gaus2","R", "SAME"); 
     gaus2->Draw("SAME");
     gStyle->SetOptFit(1111);
-    histo_sub->Fit("gaus3","R", "SAME"); 
+    histo->Fit("gaus3","R", "SAME"); 
     gaus3->Draw("SAME");
     gStyle->SetOptFit(1111);
-    histo_sub->Fit("gaus4","R", "SAME"); 
+    histo->Fit("gaus4","R", "SAME"); 
     gaus4->Draw("SAME");
     gStyle->SetOptFit(1111);
+
+    pad2->cd();
+    TH1F *h2 = new TH1F("h2","residuals",n_bin,0,x_max);
+    TF1 *zero = new TF1("zero","0*x",0, x_max);
+
+    /*h2->GetXaxis()->SetLabelFont(63);
+    h2->GetXaxis()->SetLabelSize(16);
+    h2->GetXaxis()->SetTitle("Bin");
+    h2->GetYaxis()->SetLabelFont(63);
+    h2->GetYaxis()->SetLabelSize(16);*/
+    for (int i=histo->FindFixBin(ranges[0]);i<=histo->FindFixBin(ranges[1]);i++) {
+        float diff = histo->GetBinContent(i)-gaus1->Eval(histo->GetBinCenter(i));
+        h2->SetBinContent(i,diff);
+    }
+        for (int i=histo->FindFixBin(ranges[2]);i<=histo->FindFixBin(ranges[3]);i++) {
+        float diff = histo->GetBinContent(i)-gaus2->Eval(histo->GetBinCenter(i));
+        h2->SetBinContent(i,diff);
+    }
+    for (int i=histo->FindFixBin(ranges[8]);i<=histo->FindFixBin(ranges[9]);i++) {
+        float diff = histo->GetBinContent(i)-gaus3->Eval(histo->GetBinCenter(i));
+        h2->SetBinContent(i,diff);
+    }
+    for (int i=histo->FindFixBin(ranges[10]);i<=histo->FindFixBin(ranges[11]);i++) {
+        float diff = histo->GetBinContent(i)-gaus4->Eval(histo->GetBinCenter(i));
+        h2->SetBinContent(i,diff);
+    }
+    h2->Draw("E");
+    zero->Draw("SAME");
+    c_sub->cd();
 
     c_sub->SaveAs(&("real_time_calibration/"+name + type +"_sub_fit.png")[0]);
     c_sub->Write();
@@ -198,10 +278,15 @@ vector<float> fit_gaus (TH1F* histo_sub, vector<float> ranges, string name, stri
     gaus_params.push_back(gaus4->GetParameter(1));
     gaus_params.push_back(gaus4->GetParError(1));
 
-    chi_file<< name << "   chi2/ndof   "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
-    chi_file<< name << "   chi2/ndof   "<< gaus2->GetChisquare() <<"/"<< gaus2->GetNDF() <<"\n";
-    chi_file<< name << "   chi2/ndof   "<< gaus3->GetChisquare() <<"/"<< gaus3->GetNDF() <<"\n";
-    chi_file<< name << "   chi2/ndof   "<< gaus4->GetChisquare() <<"/"<< gaus4->GetNDF() <<"\n";
+    chi_file<< name << "   chi2/ndof "+type+"   "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
+    chi_file<< name << "   chi2/ndof  "+type+"  "<< gaus2->GetChisquare() <<"/"<< gaus2->GetNDF() <<"\n";
+    chi_file<< name << "   chi2/ndof  "+type+"  "<< gaus3->GetChisquare() <<"/"<< gaus3->GetNDF() <<"\n";
+    chi_file<< name << "   chi2/ndof "+type+"   "<< gaus4->GetChisquare() <<"/"<< gaus4->GetNDF() <<"\n";
+
+    gaus_file<< name << "   peak Na "+type+" =   "<< gaus1->GetParameter(1) <<"+-"<< gaus1->GetParError(1) <<"\n";
+    gaus_file<< name << "   peak Cs "+type+" =   "<< gaus2->GetParameter(1) <<"+-"<< gaus2->GetParError(1) <<"\n";
+    gaus_file<< name << "   peak Co1 "+type+" =   "<< gaus3->GetParameter(1) <<"+-"<< gaus3->GetParError(1) <<"\n";
+    gaus_file<< name << "   peak Co2 "+type+" =   "<< gaus4->GetParameter(1) <<"+-"<< gaus4->GetParError(1) <<"\n";
 
 
     return gaus_params;
@@ -396,10 +481,10 @@ void final_params(vector<vector<vector<double>>> params, string pmt, string type
         param_ave_err=sqrt(1/weights_sum);
 
         if (k==0){
-            params_file<<"off_set"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
+            lin_file<<"off_set"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
         }
         else if (k==1){
-            params_file<<"cal_factor"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
+            lin_file<<"cal_factor"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
         }
     }
 }
@@ -488,6 +573,8 @@ void real_time_calibration(){
             
             gaus_param_Ne.push_back(fit_gaus_Ne(histo_a, ranges[i], name_final, *type));
             i++;
+            chi_file<<"\n";
+            gaus_file<<"\n";
         }
 
         histos=make_histo(name_a, ranges[0][4], ranges[0][5],ranges[1][4], ranges[1][5], y_rescale[0], y_rescale[1], gaus_param_Ne[0][0], gaus_param_Ne[1][0]);
@@ -500,7 +587,7 @@ void real_time_calibration(){
             TH1F *histo_b = nullptr;
             f->GetObject(&(name_b + *type)[0], histo_b);
 
-            auto gaus_param_Ne_clear=fit_gaus_Ne(histos[i], ranges[i], name_final, *type);
+            auto gaus_param_Ne_clear=fit_gaus_Ne(histos[i], ranges[i], name_final+"_clear", *type);
             TH1F *histo_sub = (TH1F*)histo_b->Clone(&("histo_sub"+*type)[0]);
             
             histo_sub->Add(histos[i], -1);
@@ -530,7 +617,7 @@ void real_time_calibration(){
             energy_piccoNe[i].insert(energy_piccoNe[i].end(), y.begin(), y.end());
 
             chi_file<<"\n";
-
+            gaus_file<<"\n";
             cout << endl;
             string peak1 = "electron mass   "+ name_final  + *type + " = " + to_string(x[0]) + "+-" + to_string(x[1]) + "\n";
             cout << peak1;
@@ -543,6 +630,9 @@ void real_time_calibration(){
 
             i++;
         }
+        
+        chi_file<<"---------------------------------";
+        gaus_file<<"---------------------------------";
     }
     combined_graph(energy[0] , "combined_mass", "_charge", outfile, pair_names.size());
     combined_graph(energy[1] , "combined_mass", "_amp", outfile, pair_names.size());
@@ -556,7 +646,7 @@ void real_time_calibration(){
     for(list<string>::const_iterator pmt = pmts.begin(); pmt != pmts.end(); ++pmt){
         final_params(cal_params[0],*pmt, "_charge",j, dim);
         final_params(cal_params[1],*pmt, "_amp", j, dim);
-        params_file<<"\n";
+        lin_file<<"\n";
         j++;
     }
 
