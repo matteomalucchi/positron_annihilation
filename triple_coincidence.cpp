@@ -174,23 +174,20 @@ void triple_coincidence (){
     iota(begin(t), end(t), 0);
     long int time_tot;
 
-    TFile *tree_file= new TFile("triple/ntuple_triple_m.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_mask.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
-        /*{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
+        {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
         {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
-        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},*/
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
-
     };
 
-    //vector <TH1F*> histo_pmt3_12(1);
     vector<TNtuple*> ntuples;
     vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_saveLinPar.txt");
-    //cout << params[2][3] <<endl;
 
     // loop over various runs
     for(int i=0;i<names.size();i++){
@@ -203,13 +200,13 @@ void triple_coincidence (){
             waves.push_back(tot_vec[1]);
         }
         cout << "tot time    "<<time_tot <<" s"<<endl;
-        cout<< infos[0][0][0]<<endl;
- /*       TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
+        //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
 
-        int idx_event=1;
-        for  (int o=0; o<infos[3*i][0].size(); o++){
+
+        // save waveforms
+        for  (int o=0; o<1/*infos[3*i][0].size()*/; o++){
             TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
-            tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
+            //tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
 
             TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][o][0]);
             gr1->GetYaxis()->SetRangeUser(1000, 14800);
@@ -229,12 +226,14 @@ void triple_coincidence (){
 
             c_wave->BuildLegend();
             c_wave->SaveAs(&("triple/" +run+ "_wave_"+o+".png")[0]);
-            tree->Fill();
+            c_wave->Write();
+            //tree->Fill();
         }
-        tree->Write();
-*/
-    }
+        //tree->Write();
 
+
+    }
+/*
     // eliminate strange events
     int u;
     for (int k=0;k<names.size();k++){
@@ -257,20 +256,22 @@ void triple_coincidence (){
         }
     }
     //cout <<u <<endl;
+*/
 
     //loop over run
     for(int j=0; j<names.size();j++){
         string run = names[j][0].substr(names[j][0].size()-4, names[j][0].size()-1);
-        TNtuple *ntuple= new TNtuple(&run[0], &run[0], "charge1_MeV:amp1_MeV:time1_ns:mask_strange1:charge2_MeV:amp2_MeV:time2_ns:mask_strange2:charge3_MeV:amp3_MeV:time3_ns:mask_strange3");
+        TNtuple *ntuple= new TNtuple(&run[0], &run[0], "charge1:amp1:time1:charge2:amp2:time2:charge3:amp3:time3:mask_strange");
         for (int m=0; m < infos[3*j][0].size(); m++){
-            ntuple->Fill(infos[3*j+0][0][m],infos[3*j+0][1][m],infos[3*j+0][2][m],infos[3*j+0][3][m],
-                        infos[3*j+1][0][m],infos[3*j+1][1][m],infos[3*j+1][2][m],infos[3*j+1][3][m],
-                        infos[3*j+2][0][m],infos[3*j+2][1][m],infos[3*j+2][2][m],infos[3*j+2][3][m]);
+            ntuple->Fill(infos[3*j+0][0][m],infos[3*j+0][1][m],infos[3*j+0][2][m],
+                        infos[3*j+1][0][m],infos[3*j+1][1][m],infos[3*j+1][2][m],
+                        infos[3*j+2][0][m],infos[3*j+2][1][m],infos[3*j+2][2][m],
+                        infos[3*j+0][3][m]*infos[3*j+1][3][m]*infos[3*j+2][3][m]);
         }
         ntuples.push_back(ntuple);
     }
 
-    //tree_file->cd();
+    tree_file->cd();
     for(int j=0; j<ntuples.size();j++){
         ntuples[j]->Write();
     }
@@ -279,61 +280,3 @@ void triple_coincidence (){
     tree_file->Close();
 }
 
-
-
-
-
-/*
-
-        for (int n=0 ; n<infos[0][0].size(); n++){
-            if(infos[0][0][n]<83000 && infos[0][0][n]>75000 && infos[1][0][n]<74000 && infos[1][0][n]>64000){ // Intervalli tarati su intervalli di picco A dei pmt1 e pmt2 in ext_run2
-                histo_pmt3_12[i]->Fill(infos[2][0][n]);
-            } 
-        }
-        histo_pmt3_12[i]->Draw();
-
-
-        //make_histo(names[i][j], infos.back()[0],infos.back()[1], infos.back()[2]);
-*/
-
-
-    
-    //getchar();
-   // outfile->Close();
-
-
-/*
-vector <TH1F*> make_histo(string name, vector<float> charge, vector<float> amp, vector<float> idx_strange){
-    int range_charge=250000;
-    int range_amp=3500; 
-    if (name.find("pmt3")<name.length()){
-        range_charge=50000;
-        range_amp=600;
-    }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, range_amp);
-    for (long unsigned int i=0; i< charge.size(); i++){
-        if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
-            histo_charge->Fill(charge[i]);
-            histo_amp->Fill(amp[i]);
-        }
-    }
-    histo_charge->SetName(&(name + "_charge")[0]);
-    histo_amp->SetName(&(name + "_amp")[0]);
-    histos.push_back(histo_charge);
-    histos.push_back(histo_amp);
-
-    TCanvas *c_charge = new TCanvas(&(name + "_charge")[0] , &(name + "_charge")[0]);
-    histo_charge->Draw();
-    c_charge->SaveAs(&("plots/" + name + "_charge.png")[0]);
-
-    TCanvas *c_amp = new TCanvas(&(name + "_amp")[0], &(name + "_amp")[0]);
-    histo_amp->Draw();
-    c_amp->SaveAs(&("plots/" + name + "_amp.png")[0]);
-
-    cout << "numero di idx_strange  "<<idx_strange.size() <<endl;
-
-
-    return histos;
-}
-*/
