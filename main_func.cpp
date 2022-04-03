@@ -123,7 +123,7 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_small.root", "RECREATE"/* "UPDATE"*/);
+    TFile *outfile= new TFile("histograms/histograms_triple_run6.root", "RECREATE"/* "UPDATE"*/);
     list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
@@ -172,7 +172,7 @@ void main_func (){
                         "pmt3_NA_cs_e6_100_run2",
                         "pmt1_NA_cs_co_e6_500_run2", 
                         "pmt2_NA_cs_co_e6_500_run2",
-                        "pmt3_NA_cs_co_e6_100_run2",*/
+                        "pmt3_NA_cs_co_e6_100_run2",
                         "pmt1_NA_e6_ext_triple_90deg_run1",
                         "pmt2_NA_e6_ext_triple_90deg_run1",
                         "pmt3_NA_e6_ext_triple_90deg_run1",
@@ -187,7 +187,10 @@ void main_func (){
                         "pmt3_NA_c6_ext_triple_merc_aero_run4",
                         "pmt1_NA_c6_ext_coinc12_merc_metal_run5",
                         "pmt2_NA_c6_ext_coinc12_merc_metal_run5",
-                        "pmt3_NA_c6_ext_coinc12_merc_metal_run5"};
+                        "pmt3_NA_c6_ext_coinc12_merc_metal_run5", */
+                        "pmt1_NA_c6_ext_coinc12_merc_metal_run6",
+                        "pmt2_NA_c6_ext_coinc12_merc_metal_run6",
+                        "pmt3_NA_c6_ext_coinc12_merc_metal_run6"};
 
     TStopwatch time_tot;
     time_tot.Start();                

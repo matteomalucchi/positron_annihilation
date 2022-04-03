@@ -33,7 +33,6 @@ vector<vector<float>> take_params(string path){
                     idx_f=tp.find("+");
                     number=tp.substr(idx_i+2, idx_f-idx_i-3);
                     params[m].push_back(stof(number));
-                    //cout <<params[m].back() <<endl;
                 }
             }
         myfile.close(); //close the file object.
@@ -52,7 +51,6 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
     vector <TH1F*> histos;
     int bgn=0, g=0;
     long int time_before=0, time_now=0, time_bgn=0;
-    cout << param[0]<<endl;
 
     if (myfile.is_open()){
         string tp;
@@ -78,7 +76,6 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
             if (tp.find("Time")<tp.length()){
                 if (bgn==0) {
                     time_bgn=stol(tp.substr(20,tp.size()-1));
-                    //cout << "begin  "<<time_bgn <<endl;
                     bgn++;
                 }
                 time_now=stol(tp.substr(20,tp.size()-1));
@@ -89,8 +86,6 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
             }
         }
         time_tot=(time_now + g*(pow(2, 32)-1) - time_bgn)*8 *pow(10,-9);
-
-        //cout << "numero ripetizioni    "<<g <<endl;
 
         //non prendo l'ultimo evento perchè è incompleto
         myfile.close(); //close the file object.
@@ -139,18 +134,8 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
         TGraph* gr_fit = new TGraph(5, TT,VV);
         gr_fit->Fit("pol1", "Q");
         tmez=(min/2 + h/2 - gr_fit->GetFunction("pol1")->GetParameter(0))/(gr_fit->GetFunction("pol1")->GetParameter(1));
-        time[i]=(tmez+t[bin_mez-2])*4;
+        time[i]=(tmez+t[bin_mez-2])*4500/1030;
     }
-
- /*   if (name.find("run3") != string::npos){
-        TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
-        TGraph* gr = new TGraph(t.size(), &t[0], &v[32157][0]);
-        gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
-        gr->SetMarkerStyle(21);
-        gr->Draw("AP");
-        c_wave->SaveAs(&("triple/" + name + "_wave.png")[0]);
-    }*/
-    //cout <<idx_strange.size() <<endl;
 
     vector<vector<float>> vecs;
     vecs.push_back(charge);
@@ -172,16 +157,16 @@ void triple_coincidence (){
     vector<vector <vector<float>>> infos, waves, tot_vec;
     vector <float> t(1030);
     iota(begin(t), end(t), 0);
-    long int time_tot;
+    long int time_tot, y;
 
-    TFile *tree_file= new TFile("triple/ntuple_mask.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_new_wave.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
         {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
-        {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
+        //{"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
     };
@@ -202,37 +187,39 @@ void triple_coincidence (){
         cout << "tot time    "<<time_tot <<" s"<<endl;
         //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
 
-
+        y=0;
         // save waveforms
-        for  (int o=0; o<1/*infos[3*i][0].size()*/; o++){
-            TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
-            //tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
+        for  (int o=0; o<infos[3*i][0].size(); o++){
+            if (y==0 && infos[3*i+2][1][o]>0.05){
+                TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
+                //tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
 
-            TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][o][0]);
-            gr1->GetYaxis()->SetRangeUser(1000, 14800);
-            gr1->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
-            gr1->SetLineColor(kGreen);
-            gr1->Draw();
+                TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][o][0]);
+                gr1->GetYaxis()->SetRangeUser(1000, 14800);
+                gr1->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
+                gr1->SetLineColor(kGreen);
+                gr1->Draw();
 
-            TGraph* gr2 = new TGraph(t.size(), &t[0], &waves[i*3+1][o][0]);
-            gr2->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
-            gr2->SetLineColor(kBlue);
-            gr2->Draw("same");
+                TGraph* gr2 = new TGraph(t.size(), &t[0], &waves[i*3+1][o][0]);
+                gr2->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
+                gr2->SetLineColor(kBlue);
+                gr2->Draw("same");
 
-            TGraph* gr3 = new TGraph(t.size(), &t[0], &waves[i*3+2][o][0]);
-            gr3->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
-            gr3->SetLineColor(kRed);
-            gr3->Draw("same");
+                TGraph* gr3 = new TGraph(t.size(), &t[0], &waves[i*3+2][o][0]);
+                gr3->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
+                gr3->SetLineColor(kRed);
+                gr3->Draw("same");
 
-            c_wave->BuildLegend();
-            c_wave->SaveAs(&("triple/" +run+ "_wave_"+o+".png")[0]);
-            c_wave->Write();
-            //tree->Fill();
+                c_wave->BuildLegend();
+                c_wave->SaveAs(&("triple/" +run+ "_wave_"+o+".png")[0]);
+                c_wave->Write();
+                //tree->Fill();
+                y++;
+            }
         }
         //tree->Write();
-
-
     }
+
 /*
     // eliminate strange events
     int u;
@@ -261,7 +248,8 @@ void triple_coincidence (){
     //loop over run
     for(int j=0; j<names.size();j++){
         string run = names[j][0].substr(names[j][0].size()-4, names[j][0].size()-1);
-        TNtuple *ntuple= new TNtuple(&run[0], &run[0], "charge1:amp1:time1:charge2:amp2:time2:charge3:amp3:time3:mask_strange");
+        // each branch is charge, amp, time and mask_strange_tot
+        TNtuple *ntuple= new TNtuple(&run[0], &run[0], "c1:a1:t1:c2:a2:t2:c3:a3:t3:m");
         for (int m=0; m < infos[3*j][0].size(); m++){
             ntuple->Fill(infos[3*j+0][0][m],infos[3*j+0][1][m],infos[3*j+0][2][m],
                         infos[3*j+1][0][m],infos[3*j+1][1][m],infos[3*j+1][2][m],
