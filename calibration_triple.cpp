@@ -63,7 +63,7 @@ vector<vector<float>> fit_gaus (TFile *f ,string name_pmt, string type, vector<f
 }
 
 auto fit_lin(string name_pmt, string type, vector<vector<float>> gaus_params, TFile * outfile){
-    float x[2]={1.061, 1.274};
+    float x[2]={0.511,/*1.061,*/ 1.274};
     vector<vector<double>> lin_params(gaus_params.size());
 
     for (int j=0;j<gaus_params.size();j++){
@@ -94,6 +94,7 @@ auto fit_lin(string name_pmt, string type, vector<vector<float>> gaus_params, TF
         gr->Draw("APE");
         TF1 *   linear  = new TF1("linear","[0]+[1]*x", 0, 1.4);
         linear->SetParNames ("Off-set","Calibration factor");
+        //linear->SetParLimits(0,3000, 5000);
         gr->Fit("linear");
         linear->Draw("SAME");
         gStyle->SetOptFit(111);
@@ -158,14 +159,14 @@ auto peak_energy(string name_pmt, string type, vector<vector<double>> cal_params
 void calibration_triple(){
     // ordine del vector:
     // primo è per charge e secondo è per ampiezza
-    // prima i 2 punti del compton edge Ne | e i 2 del picco del Ne
+    // prima i 2 del NA |poi i 2 punti del compton edge Ne | e i 2 del picco del Ne
     map<string, vector<vector<float>>> pmts{
-        {"pmt1",{{140000, 152000,175000, 192000},
-                {1830, 1920, 2200, 2540}}},
-        {"pmt2",{{130000, 137000, 157000, 176000},
-                {1760, 1900, 2080, 2440}}},
-        {"pmt3",{{23500,26500, 28000,34000},
-                {350, 380, 400, 470}}}
+        {"pmt1",{{70000, 79000, /* 140000, 152000,*/ 175000, 192000},
+                {900, 1100, /*1830, 1920,*/ 2200, 2540}}},
+        {"pmt2",{{63000, 73000,/* 130000, 137000,*/ 157000, 176000},
+                {880, 1070, /*1760, 1900,*/ 2080, 2440}}},
+        {"pmt3",{{11000, 14000, /*23500,26500,*/ 28000,34000},
+                {160, 210,/* 350, 380,*/ 400, 470}}}
         };
     TFile *outfile= new TFile("triple/calibration_plots.root", "RECREATE");
     TFile *f = new TFile("histograms/histograms_triple.root");
@@ -185,10 +186,10 @@ void calibration_triple(){
         auto cal_charge = fit_lin(name_pmt, "_charge", gaus_charge, outfile);
         auto cal_amp = fit_lin(name_pmt, "_amp", gaus_amp, outfile);
         for (int r=0;r<gaus_charge.size();r++){
-            params_file<< "off_set "<<name_pmt<< "_run"<< to_string(r+1)<< "_charge = "<< cal_charge[r][0] << "+-" <<  cal_charge[r][1]<<"\n"; 
-            params_file<< "cal_factor "<<name_pmt<< "_run"<< to_string(r+1)<< "_charge = "<< cal_charge[r][2] << "+-" <<  cal_charge[r][3]<<"\n"; 
-            params_file<< "off_set "<<name_pmt<< "_run"<<to_string(r+1)<< "_amp = "<< cal_amp[r][0] << "+-" <<  cal_amp[r][1]<<"\n"; 
-            params_file<< "cal_factor "<<name_pmt<< "_run"<<to_string(r+1)<< "_amp = "<< cal_amp[r][2] << "+-" <<  cal_amp[r][3]<<"\n"; 
+            params_file<< "off_set "<<name_pmt<< "_run"<< to_string(r+1)<< "_charge = "<< cal_charge[r][0] << " +- " <<  cal_charge[r][1]<<"\n"; 
+            params_file<< "cal_factor "<<name_pmt<< "_run"<< to_string(r+1)<< "_charge = "<< cal_charge[r][2] << " +- " <<  cal_charge[r][3]<<"\n"; 
+            params_file<< "off_set "<<name_pmt<< "_run"<<to_string(r+1)<< "_amp = "<< cal_amp[r][0] << " +- " <<  cal_amp[r][1]<<"\n"; 
+            params_file<< "cal_factor "<<name_pmt<< "_run"<<to_string(r+1)<< "_amp = "<< cal_amp[r][2] << " +- " <<  cal_amp[r][3]<<"\n"; 
             params_file <<"\n";
         }
         /*

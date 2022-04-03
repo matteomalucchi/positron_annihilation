@@ -85,8 +85,8 @@ vector <TH1F*> make_histo(string name){
         range_charge=50000;
         range_amp=600;
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 600/*1300*/, 0, range_charge);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 700/*1400*/, 0, range_amp);
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, range_amp);
     for (long unsigned int i=0; i< charge.size(); i++){
         if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
             histo_charge->Fill(charge[i]);
@@ -123,7 +123,7 @@ vector <TH1F*> make_histo(string name){
 void main_func (){
     gROOT->SetBatch(kFALSE);
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_triple.root", "RECREATE"/* "UPDATE"*/);
+    TFile *outfile= new TFile("histograms/histograms_new_ranges.root", /*"RECREATE"*/ "UPDATE");
     list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
@@ -172,13 +172,13 @@ void main_func (){
                         "pmt3_NA_cs_e6_100_run2",
                         "pmt1_NA_cs_co_e6_500_run2", 
                         "pmt2_NA_cs_co_e6_500_run2",
-                        "pmt3_NA_cs_co_e6_100_run2",*/
+                        "pmt3_NA_cs_co_e6_100_run2",
                         "pmt1_NA_e6_ext_triple_90deg_run1",
                         "pmt2_NA_e6_ext_triple_90deg_run1",
                         "pmt3_NA_e6_ext_triple_90deg_run1",
                         "pmt1_NA_l1_ext_triple_close_run2",
                         "pmt2_NA_l1_ext_triple_close_run2",
-                        "pmt3_NA_l1_ext_triple_close_run2",
+                        "pmt3_NA_l1_ext_triple_close_run2",*/
                         "pmt1_NA_l1_ext_triple_close_run3",
                         "pmt2_NA_l1_ext_triple_close_run3",
                         "pmt3_NA_l1_ext_triple_close_run3",

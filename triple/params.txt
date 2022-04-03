@@ -1,12 +1,15 @@
-off_set pmt1_run1_charge = -46124.3+-2174.49
-cal_factor pmt1_run1_charge = 180045+-1721.65
-off_set pmt1_run1_amp = -583.327+-44.9833
-cal_factor pmt1_run1_amp = 2306.71+-35.6019
-off_set pmt2_run1_charge = -38392.6+-5789.28
-cal_factor pmt2_run1_charge = 160693+-4549.46
-off_set pmt2_run1_amp = -420.458+-54.7132
-cal_factor pmt2_run1_amp = 2114.66+-43.2507
-off_set pmt3_run1_charge = -354309+-11817.3
-cal_factor pmt3_run1_charge = 302524+-9275.76
-off_set pmt3_run1_amp = 42.0814+-128.086
-cal_factor pmt3_run1_amp = 309.099+-109.94
+off_set pmt1_run1_charge = 1399.79 +- 82.4482
+cal_factor pmt1_run1_charge = 142742 +- 122.63
+off_set pmt1_run1_amp = 81.3936 +- 1.69442
+cal_factor pmt1_run1_amp = 1784.95 +- 2.49099
+
+off_set pmt2_run1_charge = 578.109 +- 93.1877
+cal_factor pmt2_run1_charge = 130103 +- 124.89
+off_set pmt2_run1_amp = 81.3839 +- 1.8428
+cal_factor pmt2_run1_amp = 1720.75 +- 2.77456
+
+off_set pmt3_run1_charge = -185.238 +- 518.049
+cal_factor pmt3_run1_charge = 24562.2 +- 984.731
+off_set pmt3_run1_amp = 9.68792 +- 11.5927
+cal_factor pmt3_run1_amp = 334.525 +- 22.474
+

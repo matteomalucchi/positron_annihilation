@@ -19,7 +19,7 @@
 
 using namespace std;
 
-string type_of_file = "_res";
+string type_of_file = "_new_ranges";
 
 ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
 ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
@@ -79,7 +79,7 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float 
                 u++;
             }
         }
-        for (int j=0; j<1000; j++){
+        for (int j=300; j<950; j++){
             charge[i] += h-v[i][j];
         }
         min =*min_element(v[i].begin(), v[i].end());
@@ -491,11 +491,11 @@ void final_params(vector<vector<vector<double>>> params, string pmt, string type
 
 
 void real_time_calibration(){
-    TFile *f = new TFile("histograms/histograms_RealTimeCalibration_rebin.root");
+    TFile *f = new TFile("histograms/histograms_new_ranges.root");
     TFile *outfile= new TFile(&("real_time_calibration/plots_RealTimeCalibration"+type_of_file+".root")[0], "RECREATE");
 
 
-    // primi due sono picco NA(solo cs)| poi picco cs(solo cs)| poi range da sottrare del NA (solo cs)|e poi il range del picco del Ne da sottrarre(solo cs)|
+    // primi due sono picco NA(solo cs)| poi picco cs(solo cs)| poi range da sottrare del NA (solo cs)|e poi il range del picco del Ne (solo cs)|
     // poi il range del primo picco co (cs+co)|e poi del secondo picco co(cs+co)
     map <vector<string>, vector<vector<float>>> pair_names ={ 
         {{"pmt1_NA_cs_e6_100_run1", "pmt1_NA_cs_co_e6_100_run1"}, 
@@ -507,16 +507,16 @@ void real_time_calibration(){
             {1025, 1150, 1275, 1475, 1700, 2850, 2350, 2650, 2225, 2425, 2425, 2800}}}, 
 
         {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
-            {{69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 172000, 182000, 157000, 167000, 182000, 190000},
-            {925, 1100, 1170, 1400, 1600, 2800, 2200, 2600, 2100, 2350, 2350, 2600}}}, 
+            {{69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 170000, 185000, 157000, 167000, 182000, 190000},
+            {925, 1100, 1170, 1400, 1600, 2800, 2200, 2600, 2050, 2300, 2450, 2650}}}, 
 
         {{"pmt2_NA_cs_e6_500_run2", "pmt2_NA_cs_co_e6_500_run2"}, 
-            {{70000, 76000, 89000, 98000, 150000, 190000, 172000, 182000, 160000, 168000, 182000, 190000},
+            {{70000, 76000, 89000, 98000, 150000, 190000, 172000, 182000, 160000, 168000, 180000, 190000},
             {925, 1175, 1200, 1500, 1700, 2850, 2200, 2600, 2100, 2325, 2325, 2700}}}, 
 
         {{"pmt3_NA_cs_e6_30_run1", "pmt3_NA_cs_co_e6_30_run1"}, 
-            {{13200, 14600, 16800, 18600, 28000, 40000, 31000, 35000, 29000, 32000, 34200, 36000},
-            {170, 215, 235, 275, 300, 540, 420, 490, 380, 430, 430, 500}}}, 
+            {{13200, 14600, 16800, 18600, 28000, 40000, 31000, 35000, 29000, 32000, 34000, 36000},
+            {170, 215, 235, 275, 300, 540, 420, 490, 380, 430, 460, 510}}}, 
 
         {{"pmt3_NA_cs_e6_100_run2", "pmt3_NA_cs_co_e6_100_run2"}, 
             {{13000, 14600, 16800, 18600, 26000, 40000, 31000, 34800, 29500, 31400, 33500, 36000},

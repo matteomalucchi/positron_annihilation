@@ -113,6 +113,8 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
         min =*min_element(v[i].begin()+300, v[i].end()-80);
         auto bin_min = find(v[i].begin()+300, v[i].end()-80, min);
         amp[i]=(h-min-param[2])/param[3];
+        //amp[i]=(-159141+sqrt(159141*159141+4*5533*(h-min)))/(2*5533);
+
         int bin_mez=0;
         float diff=1000;
         float tmez=0;
@@ -125,7 +127,8 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
                 diff=abs(v[i][j]-min/2-h/2);
                 }
         }
-        charge[i]=(charge[i]-param[0])/param[1];
+        charge[i]=(charge[i]-param[0])/param[1];  
+        //charge[i]=(-159141+sqrt(159141*159141+4*5533*(charge[i])))/(2*5533);
         float TT[5],VV[5];
         for(int k=0;k<5;k++){
             TT[k] = k;
@@ -159,20 +162,20 @@ void triple_coincidence (){
     iota(begin(t), end(t), 0);
     long int time_tot, y;
 
-    TFile *tree_file= new TFile("triple/ntuple_new_calib.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_new_calib_6.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
-        {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
+        /*{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
         //{"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
-        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},*/
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
     };
 
     vector<TNtuple*> ntuples;
-    //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_saveLinPar.txt");
+    //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_new_ranges.txt");
     vector<vector<float>> params= take_params("triple/params.txt");
 
     // loop over various runs
