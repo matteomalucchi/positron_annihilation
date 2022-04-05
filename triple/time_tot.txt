@@ -4,3 +4,4 @@ run3  tot time    11873 s
 run4  tot time    162 s
 run5  tot time    3186 s
 run6  tot time    8673 s
+run7  tot time    3919 s

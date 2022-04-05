@@ -194,7 +194,7 @@ void calibration_triple(){
             params_file<< "off_set "<<name_pmt<< "_run"<<to_string(r+1)<< "_amp = "<< cal_amp[r][0] << " +- " <<  cal_amp[r][1]<<"\n"; 
             params_file<< "cal_factor "<<name_pmt<< "_run"<<to_string(r+1)<< "_amp = "<< cal_amp[r][2] << " +- " <<  cal_amp[r][3]<<"\n"; 
             params_file <<"\n";
-        }
+        } 
         /*
         vector<string> x= peak_energy(name_pmt, "_charge", cal_charge, gaus_charge);
         vector<string> y= peak_energy(name_pmt, "_amp", cal_amp, gaus_amp);

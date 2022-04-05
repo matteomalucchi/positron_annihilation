@@ -139,7 +139,7 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
         TGraph* gr_fit = new TGraph(5, TT,VV);
         gr_fit->Fit("pol1", "Q");
         tmez=(min/2 + h/2 - gr_fit->GetFunction("pol1")->GetParameter(0))/(gr_fit->GetFunction("pol1")->GetParameter(1));
-        time[i]=(tmez+t[bin_mez-2])*4500/1030;
+        time[i]=(tmez+t[bin_mez-2])*4;
     }
 
     vector<vector<float>> vecs;
@@ -164,7 +164,7 @@ void triple_coincidence (){
     iota(begin(t), end(t), 0);
     long int time_tot, y;
 
-    TFile *tree_file= new TFile("triple/ntuple_triple_realtimecalib_quadfit_fix.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_triple.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
@@ -174,13 +174,14 @@ void triple_coincidence (){
         {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run7"},
     };
 
     vector<TNtuple*> ntuples;
     //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_new_ranges.txt");
-    vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_quadfit_fix.txt");
+    //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_quadfit_fix.txt");
 
-    //vector<vector<float>> params= take_params("triple_calib/lin_params.txt");
+    vector<vector<float>> params= take_params("triple_calib/lin_params.txt");
 
     // loop over various runs
     for(int i=0;i<names.size();i++){
