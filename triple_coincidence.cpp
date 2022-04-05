@@ -18,6 +18,8 @@
 
 using namespace std;
 
+ofstream time_file("triple/time_tot.txt");
+
 vector<vector<float>> take_params(string path){
     ifstream myfile;
     list<string> pmts= {"pmt1", "pmt2", "pmt3"};
@@ -112,8 +114,8 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
         } 
         min =*min_element(v[i].begin()+300, v[i].end()-80);
         auto bin_min = find(v[i].begin()+300, v[i].end()-80, min);
-        amp[i]=(h-min-param[2])/param[3];
-        //amp[i]=(-159141+sqrt(159141*159141+4*5533*(h-min)))/(2*5533);
+        //amp[i]=(h-min-param[2])/param[3];
+        amp[i]=(-param[4]+sqrt(param[4]*param[4]-4*param[5]*(param[3]-(h-min))))/(2*param[5]);
 
         int bin_mez=0;
         float diff=1000;
@@ -127,8 +129,8 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
                 diff=abs(v[i][j]-min/2-h/2);
                 }
         }
-        charge[i]=(charge[i]-param[0])/param[1];  
-        //charge[i]=(-159141+sqrt(159141*159141+4*5533*(charge[i])))/(2*5533);
+        //charge[i]=(charge[i]-param[0])/param[1];  
+        charge[i]=(-param[1]+sqrt(param[1]*param[1]-4*param[2]*(param[0]-(charge[i]))))/(2*param[2]);
         float TT[5],VV[5];
         for(int k=0;k<5;k++){
             TT[k] = k;
@@ -154,7 +156,7 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
 }
 
 void triple_coincidence (){
-    gROOT->SetBatch(kFALSE);
+    gROOT->SetBatch(kTRUE);
     ROOT::EnableImplicitMT();
     vector <vector<TH1F*>> histos;
     vector<vector <vector<float>>> infos, waves, tot_vec;
@@ -162,21 +164,23 @@ void triple_coincidence (){
     iota(begin(t), end(t), 0);
     long int time_tot, y;
 
-    TFile *tree_file= new TFile("triple/ntuple_new_calib_6.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_triple_realtimecalib_quadfit.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
         /*{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
-        //{"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
+        {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},*/
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
     };
 
     vector<TNtuple*> ntuples;
     //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_new_ranges.txt");
-    vector<vector<float>> params= take_params("triple/params.txt");
+    vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_quadfit.txt");
+
+    //vector<vector<float>> params= take_params("triple_calib/lin_params.txt");
 
     // loop over various runs
     for(int i=0;i<names.size();i++){
@@ -188,39 +192,42 @@ void triple_coincidence (){
             infos.push_back(tot_vec[0]);
             waves.push_back(tot_vec[1]);
         }
-        cout << "tot time    "<<time_tot <<" s"<<endl;
+        cout << "tot time    "<< time_tot <<" s"<<endl;
+        time_file<<run <<"  tot time    "<< time_tot <<" s"<< "\n";
         //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
-
+/*
         y=0;
         // save waveforms
         for  (int o=0; o<infos[3*i][0].size(); o++){
-            if (y==0 && infos[3*i+2][1][o]>0.05){
+            if ( infos[3*i+0][0][o]<0.6 && infos[3*i+1][0][o]<0.6 &&infos[3*i+2][0][o]<0.6 && 
+                abs(infos[3*i+0][2][o]-infos[3*i+1][2][o])<13 &&abs(infos[3*i+2][2][o]-infos[3*i+1][2][o])<13 &&abs(infos[3*i+0][2][o]-infos[3*i+2][2][o])<13
+                &&infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o]<1.1 ){
                 TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
                 //tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
 
                 TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][o][0]);
-                gr1->GetYaxis()->SetRangeUser(1000, 14800);
-                gr1->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
+                gr1->GetYaxis()->SetRangeUser(13000, 14800);
+                gr1->SetNameTitle(&("pmt1_"+run+"_wave_"+infos[3*i+0][0][o])[0], &("pmt1_"+run+ "_wave_"+infos[3*i+0][0][o])[0]);
                 gr1->SetLineColor(kGreen);
                 gr1->Draw();
 
                 TGraph* gr2 = new TGraph(t.size(), &t[0], &waves[i*3+1][o][0]);
-                gr2->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
+                gr2->SetNameTitle(&("pmt2_"+run+"_wave_"+infos[3*i+1][0][o])[0], &("pmt2_"+run+ "_wave_"+infos[3*i+1][0][o])[0]);
                 gr2->SetLineColor(kBlue);
                 gr2->Draw("same");
 
                 TGraph* gr3 = new TGraph(t.size(), &t[0], &waves[i*3+2][o][0]);
-                gr3->SetNameTitle(&(run+"_wave_"+o)[0], &(run+ "_wave_"+o)[0]);
+                gr3->SetNameTitle(&("pmt3_"+run+"_wave_"+infos[3*i+2][0][o])[0], &("pmt3_"+run+ "_wave_"+infos[3*i+2][0][o])[0]);
                 gr3->SetLineColor(kRed);
                 gr3->Draw("same");
 
                 c_wave->BuildLegend();
-                c_wave->SaveAs(&("triple/" +run+ "_wave_"+o+".png")[0]);
+                c_wave->SaveAs(&("triple/waves_minor/" +run+ "_wave_"+to_string(infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o])+".png")[0]);
                 c_wave->Write();
                 //tree->Fill();
                 y++;
             }
-        }
+        }*/
         //tree->Write();
     }
 

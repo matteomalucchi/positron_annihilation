@@ -1,0 +1,14 @@
+energy peak Ne  pmt1_e6_100_run1_charge = 1.269902+-1.000000
+energy peak Ne  pmt1_e6_100_run1_amp = 1.269301+-1.000000
+energy peak Ne  pmt1_e6_500_run2_charge = 1.263441+-1.000000
+energy peak Ne  pmt1_e6_500_run2_amp = 1.262537+-1.000000
+energy peak Ne  pmt2_e6_100_run1_charge = 1.271498+-1.000000
+energy peak Ne  pmt2_e6_100_run1_amp = 1.261641+-1.000000
+energy peak Ne  pmt2_e6_500_run2_charge = 1.265015+-1.000000
+energy peak Ne  pmt2_e6_500_run2_amp = 1.264633+-1.000000
+energy peak Ne  pmt3_e6_100_run2_charge = 1.263422+-1.000000
+energy peak Ne  pmt3_e6_100_run2_amp = 1.261711+-1.000000
+energy peak Ne  pmt3_e6_30_run1_charge = 1.266315+-1.000000
+energy peak Ne  pmt3_e6_30_run1_amp = 1.263028+-1.000000
+stima combinata _charge=   1.2666+-0.408248
+stima combinata _amp=   1.26381+-0.408248

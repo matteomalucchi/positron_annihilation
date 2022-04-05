@@ -19,7 +19,7 @@
 
 using namespace std;
 
-string type_of_file = "_new_ranges";
+string type_of_file = "_quadfit";
 
 ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
 ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
@@ -293,6 +293,7 @@ vector<float> fit_gaus (TH1F* histo, vector<float> ranges, string name, string t
 }
 
 auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * outfile, vector<float> gaus_param_Ne){
+    // cs + co1 +co2
     float x[3]={0.66, 1.17/*, 1.27*/, 1.33};
     float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4]/*,gaus_param_Ne[0]*/,  gaus_params[6]};
     //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
@@ -372,6 +373,95 @@ auto division(vector<double> off_set, vector<double> cal_factor, float peak, flo
 auto peak_energy(string name_final, string type, vector<vector<double>> lin_params, vector<float> gaus_params){
     vector<float> energy;
     vector<float> x(division(lin_params[0], lin_params[1], gaus_params[0], gaus_params[1]/*gaus_params[0]/100)*/));    
+    //vector<float> y(division(lin_params[0], lin_params[1], gaus_params[10], gaus_params[11]));
+    energy.insert(energy.end(), x.begin(), x.end());
+    //energy.insert(energy.end(), y.begin(), y.end());
+    return energy;
+}
+auto fit_quad(string name_final, string type, vector<float> gaus_params, TFile * outfile, vector<float> gaus_param_Ne){
+    // cs + co1 +co2
+    float x[3]={0.66, 1.17/*, 1.27*/, 1.33};
+    float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4]/*,gaus_param_Ne[0]*/,  gaus_params[6]};
+    //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
+    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5]/*,gaus_param_Ne[1]*/, gaus_params[7]};
+
+    cout << endl;
+    cout << "__________________________ Quadratic fit: " << name_final << type << " __________________________"<<endl; 
+    cout << endl;
+    gStyle->SetOptStat(0);
+
+    TCanvas *c_fit_quad = new TCanvas(&(name_final + type + "_fit_quad")[0], &( name_final + type + "_fit_quad")[0]);
+    TPad *pad1 = new TPad("pad1","pad1",0,0.33,1,1);
+    TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.33);
+    pad1->SetBottomMargin(0.00001);
+    pad1->SetBorderMode(0);
+    pad2->SetTopMargin(0.00001);
+    pad2->SetBottomMargin(0.1);
+    pad2->SetBorderMode(0);
+    pad1->Draw();
+    pad2->Draw();
+    pad1->cd();
+
+    TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,nullptr,y_err);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatX(0.5);
+    gr->SetMarkerStyle(1);
+    gr->GetYaxis()->SetTitle("Peak [a.u.]");
+    gr->GetXaxis()->SetTitle("Energy [MeV]");
+    gr->GetXaxis()->SetTitleSize(0.15);
+    gr->GetXaxis()->SetLimits(0, 1.4);
+
+    gr->Draw("APE");
+    TF1 *   quadratic  = new TF1("quadratic","[0]+[1]*x+[2]*x*x", 0, 1.4);
+    quadratic->SetParNames ("Off-set","Linear factor", "Quadratic factor");
+    gr->Fit("quadratic");
+    quadratic->Draw("SAME");
+    gStyle->SetOptFit(111);
+
+    pad2->cd();
+    float diff[sizeof(x)/sizeof(x[0])];
+    float diff_norm[sizeof(x)/sizeof(x[0])];
+    for (Int_t i=0;i<sizeof(x)/sizeof(x[0]);i++) {
+        diff[i] =y[i]-quadratic->Eval(x[i]);
+        diff_norm[i]=diff[i]/y_err[i];
+    }  
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1, 1};
+    
+    TGraphErrors* gr2 = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,diff_norm,nullptr,one_array);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatX(0.5);
+    gr2->SetMarkerStyle(1);
+    gr2->GetXaxis()->SetLimits(0, 1.4);
+
+    TF1 *   zero  = new TF1("zero","0*x", 0, 1.4);
+    gr2->Draw("APE");
+    zero->Draw("SAME");
+    c_fit_quad->cd();
+    c_fit_quad->SaveAs(&("real_time_calibration/" + name_final + type + "_fit_quad.png")[0]);
+    outfile->cd();
+    c_fit_quad->Write();
+
+    vector<double> off_set{quadratic->GetParameter(0),quadratic->GetParError(0)};
+    vector<double> lin_factor{quadratic->GetParameter(1),quadratic->GetParError(1)};
+    vector<double> quad_factor{quadratic->GetParameter(2),quadratic->GetParError(2)};
+    vector<vector<double>> quad_params{off_set, lin_factor, quad_factor};
+
+    return quad_params;
+}
+
+auto division_quad(vector<double> off_set, vector<double> lin_factor,vector<double> quad_factor, float peak, float peak_err){
+    vector<float> p;
+    p.push_back((-lin_factor[0]+sqrt(lin_factor[0]*lin_factor[0]-4*quad_factor[0]*(off_set[0]-peak)))/(2*quad_factor[0]));
+    float e = 1;
+    /*sqrt(pow((-1 + lin_factor/sqrt(lin_factor*lin_factor - 4*quad_factor (off_set-peak)))/(2 quad_factor), 2) 
+    +pow(, 2));*/
+    p.push_back(e);
+    return p;
+}
+
+auto peak_energy_quad(string name_final, string type, vector<vector<double>> quad_params, vector<float> gaus_params){
+    vector<float> energy;
+    vector<float> x(division_quad(quad_params[0], quad_params[1], quad_params[2], gaus_params[0], gaus_params[1]/*gaus_params[0]/100)*/));    
     //vector<float> y(division(lin_params[0], lin_params[1], gaus_params[10], gaus_params[11]));
     energy.insert(energy.end(), x.begin(), x.end());
     //energy.insert(energy.end(), y.begin(), y.end());
@@ -463,7 +553,7 @@ void final_params(vector<vector<vector<double>>> params, string pmt, string type
     double weights[dim];
     double param_ave, weights_sum, param_ave_err;
     // loop over the off_set or cal_factor
-    for (int k=0; k<2;k++){
+    for (int k=0; k<params[0].size();k++){
         param_ave=0;
         weights_sum=0;
         q=0;
@@ -484,7 +574,10 @@ void final_params(vector<vector<vector<double>>> params, string pmt, string type
             lin_file<<"off_set"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
         }
         else if (k==1){
-            lin_file<<"cal_factor"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
+            lin_file<<"lin_factor"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
+        }
+        else if (k==2){
+            lin_file<<"quad_factor"<<pmt<<type<<" = "<< param_ave << " +- " << param_ave_err << "\n";
         }
     }
 }
@@ -605,17 +698,33 @@ void real_time_calibration(){
             histos[i]->Write();
             c_all->Write();
 
-            vector<float> gaus_params;
-            gaus_params=fit_gaus(histo_sub, ranges[i], name_final, *type);
-            vector<vector<double>> lin_params = fit_lin(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
-            cal_params[i].push_back(lin_params);
+            if (type_of_file.find("lin") < type_of_file.length()){
+                //lin fit
+                vector<float> gaus_params;
+                gaus_params=fit_gaus(histo_sub, ranges[i], name_final, *type);
+                vector<vector<double>> lin_params = fit_lin(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
+                cal_params[i].push_back(lin_params);
 
-            vector<float> x= peak_energy(name_final, *type, lin_params, gaus_params);
-            energy[i].insert(energy[i].end(), x.begin(), x.end());
+                vector<float> x= peak_energy(name_final, *type, lin_params, gaus_params);
+                energy[i].insert(energy[i].end(), x.begin(), x.end());
 
-            vector<float> y= peak_energy(name_final, *type, lin_params, gaus_param_Ne_clear);
-            energy_piccoNe[i].insert(energy_piccoNe[i].end(), y.begin(), y.end());
+                vector<float> y= peak_energy(name_final, *type, lin_params, gaus_param_Ne_clear);
+                energy_piccoNe[i].insert(energy_piccoNe[i].end(), y.begin(), y.end());
+            }
+            
+            if (type_of_file.find("quad") < type_of_file.length()){
+                // quad fit
+                vector<float> gaus_params;
+                gaus_params=fit_gaus(histo_sub, ranges[i], name_final, *type);
+                vector<vector<double>> lin_params = fit_quad(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
+                cal_params[i].push_back(lin_params);
 
+                vector<float> x= peak_energy_quad(name_final, *type, lin_params, gaus_params);
+                energy[i].insert(energy[i].end(), x.begin(), x.end());
+
+                vector<float> y= peak_energy_quad(name_final, *type, lin_params, gaus_param_Ne_clear);
+                energy_piccoNe[i].insert(energy_piccoNe[i].end(), y.begin(), y.end());
+            }
             chi_file<<"\n";
             gaus_file<<"\n";
             cout << endl;

@@ -1,0 +1,14 @@
+electron mass   pmt1_e6_100_run1_charge = 0.517621+-1.000000
+electron mass   pmt1_e6_100_run1_amp = 0.471232+-1.000000
+electron mass   pmt1_e6_500_run2_charge = 0.511754+-1.000000
+electron mass   pmt1_e6_500_run2_amp = 0.472294+-1.000000
+electron mass   pmt2_e6_100_run1_charge = 0.502785+-1.000000
+electron mass   pmt2_e6_100_run1_amp = 0.392716+-1.000000
+electron mass   pmt2_e6_500_run2_charge = 0.517651+-1.000000
+electron mass   pmt2_e6_500_run2_amp = 0.433415+-1.000000
+electron mass   pmt3_e6_100_run2_charge = 0.489611+-1.000000
+electron mass   pmt3_e6_100_run2_amp = -nan+-1.000000
+electron mass   pmt3_e6_30_run1_charge = 0.494900+-1.000000
+electron mass   pmt3_e6_30_run1_amp = 0.393169+-1.000000
+stima combinata _charge =   0.50572+-0.408248
+stima combinata _amp =   -nan+-0.408248

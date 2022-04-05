@@ -122,6 +122,8 @@ vector <TH1F*> make_histo(string name){
 
 void main_func (){
     gROOT->SetBatch(kFALSE);
+    ROOT::EnableImplicitMT();
+
     vector <TH1F*> histos;
     TFile *outfile= new TFile("histograms/histograms_new_ranges.root", /*"RECREATE"*/ "UPDATE");
     list <string> names ={/*"pmt1_NA_e6_100_or_run1",

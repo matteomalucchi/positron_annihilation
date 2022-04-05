@@ -1,0 +1,12 @@
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_charge   chi2/ndof  NA   =  38.121/19
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_charge   chi2/ndof  Ne   =  40.1756/38
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_amp   chi2/ndof  NA   =  30.0393/37
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_amp   chi2/ndof  Ne   =  69.2264/65
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_charge   chi2/ndof  NA   =  19.115/21
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_charge   chi2/ndof  Ne   =  36.479/42
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_amp   chi2/ndof  NA   =  38.8929/35
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_amp   chi2/ndof  Ne   =  72.9336/69
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_charge   chi2/ndof  NA   =  44.7051/33
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_charge   chi2/ndof  Ne   =  12.2885/38
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_amp   chi2/ndof  NA   =  45.3662/55
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_amp   chi2/ndof  Ne   =  9.53073/51

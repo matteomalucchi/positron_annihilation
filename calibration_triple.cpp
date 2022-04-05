@@ -8,9 +8,10 @@
 
 using namespace std;
 
-ofstream energy_file("triple/energy.txt");
-ofstream params_file("triple/params.txt");
-
+//ofstream energy_file("triple/energy.txt");
+ofstream params_file("triple_calib/lin_params.txt");
+ofstream chi_file("triple_calib/chi_square.txt");
+ofstream gaus_file("triple_calib/gaus_params.txt");
 
 
 vector<vector<float>> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> range, TFile *outfile){
@@ -49,15 +50,17 @@ vector<vector<float>> fit_gaus (TFile *f ,string name_pmt, string type, vector<f
         gStyle->SetOptFit(1111);
 
         gaus_params[i].push_back(gaus1->GetParameter(1));
-        //gaus_params.push_back(gaus1->GetParameter(2));
         gaus_params[i].push_back(gaus1->GetParError(1));
         gaus_params[i].push_back(gaus2->GetParameter(1));
-        //gaus_params.push_back(gaus2->GetParameter(2));
         gaus_params[i].push_back(gaus2->GetParError(1));
         i++;
-        c->SaveAs(&("calibration/" + *sample + type + "_calibration_low.png")[0]);
+        c->SaveAs(&("triple_calib/" + *sample + type + "_calibration_low.png")[0]);
         outfile->cd();
         c->Write();
+        chi_file<< *sample + type << "   chi2/ndof  NA   =  "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
+        gaus_file<< *sample + type << "   peak NA  =   "<< gaus1->GetParameter(1) <<"+-"<< gaus1->GetParError(1) <<"\n";
+        chi_file<< *sample + type << "   chi2/ndof  Ne   =  "<< gaus2->GetChisquare() <<"/"<< gaus2->GetNDF() <<"\n";
+        gaus_file<< *sample + type << "   peak Ne  =   "<< gaus2->GetParameter(1) <<"+-"<< gaus2->GetParError(1) <<"\n";
     }
     return gaus_params;
 }
@@ -116,7 +119,7 @@ auto fit_lin(string name_pmt, string type, vector<vector<float>> gaus_params, TF
         gr2->Draw("APE");
         zero->Draw("SAME");
         c_fit_lin->cd();
-        c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_run"+to_string(j+1)+ "_calibration.png")[0]);
+        c_fit_lin->SaveAs(&("triple_calib/" + name_pmt + type + "_run"+to_string(j+1)+ "_calibration.png")[0]);
         outfile->cd();
         c_fit_lin->Write();
 
@@ -168,7 +171,7 @@ void calibration_triple(){
         {"pmt3",{{11000, 14000, /*23500,26500,*/ 28000,34000},
                 {160, 210,/* 350, 380,*/ 400, 470}}}
         };
-    TFile *outfile= new TFile("triple/calibration_plots.root", "RECREATE");
+    TFile *outfile= new TFile("triple_calib/calibration_plots.root", "RECREATE");
     TFile *f = new TFile("histograms/histograms_triple.root");
 
     vector <string> energy;

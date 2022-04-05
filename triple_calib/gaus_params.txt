@@ -1,0 +1,12 @@
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_charge   peak NA  =   74340.9+-35.0312
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_charge   peak Ne  =   183253+-86.7614
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_amp   peak NA  =   993.503+-0.731196
+pmt1_NA_c6_ext_coinc12_merc_metal_run6_amp   peak Ne  =   2355.42+-1.75435
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_charge   peak NA  =   67060.9+-44.3964
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_charge   peak Ne  =   166330+-84.3165
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_amp   peak NA  =   960.688+-0.769638
+pmt2_NA_c6_ext_coinc12_merc_metal_run6_amp   peak Ne  =   2273.62+-1.97213
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_charge   peak NA  =   12366+-80.5189
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_charge   peak Ne  =   31107+-747.023
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_amp   peak NA  =   180.63+-1.03428
+pmt3_NA_c6_ext_coinc12_merc_metal_run6_amp   peak Ne  =   435.873+-17.1164
