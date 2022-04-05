@@ -18,6 +18,8 @@
 
 using namespace std;
 
+string type_of_file = "triple_lin";
+
 ofstream time_file("triple/time_tot.txt");
 
 vector<vector<float>> take_params(string path){
@@ -114,9 +116,13 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
         } 
         min =*min_element(v[i].begin()+300, v[i].end()-80);
         auto bin_min = find(v[i].begin()+300, v[i].end()-80, min);
-        //amp[i]=(h-min-param[2])/param[3];
-        amp[i]=(-param[4]+sqrt(param[4]*param[4]-4*param[5]*(param[3]-(h-min))))/(2*param[5]);
 
+        if (type_of_file.find("quad")<type_of_file.length()){
+            amp[i]=(-param[4]+sqrt(param[4]*param[4]-4*param[5]*(param[3]-(h-min))))/(2*param[5]);
+        }
+        else if (type_of_file.find("lin")<type_of_file.length()){
+            amp[i]=(h-min-param[2])/param[3];
+        }
         int bin_mez=0;
         float diff=1000;
         float tmez=0;
@@ -129,8 +135,13 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
                 diff=abs(v[i][j]-min/2-h/2);
                 }
         }
-        //charge[i]=(charge[i]-param[0])/param[1];  
-        charge[i]=(-param[1]+sqrt(param[1]*param[1]-4*param[2]*(param[0]-(charge[i]))))/(2*param[2]);
+        if (type_of_file.find("quad")<type_of_file.length()){
+            charge[i]=(-param[1]+sqrt(param[1]*param[1]-4*param[2]*(param[0]-(charge[i]))))/(2*param[2]);
+        }
+        else if (type_of_file.find("lin")<type_of_file.length()){ 
+            charge[i]=(charge[i]-param[0])/param[1];  
+        }
+        
         float TT[5],VV[5];
         for(int k=0;k<5;k++){
             TT[k] = k;
@@ -164,7 +175,7 @@ void triple_coincidence (){
     iota(begin(t), end(t), 0);
     long int time_tot, y;
 
-    TFile *tree_file= new TFile("triple/ntuple_triple.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile(&("triple/ntuple_"+ type_of_file +".root")[0], "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
@@ -176,12 +187,23 @@ void triple_coincidence (){
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run7"},
     };
-
+    vector<vector<float>> params;
     vector<TNtuple*> ntuples;
-    //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_new_ranges.txt");
-    //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_quadfit_fix.txt");
+    if (type_of_file.find("real")<type_of_file.length()){
+        if (type_of_file.find("quad")<type_of_file.length()){
+            if (type_of_file.find("fix")<type_of_file.length()){
+                params= take_params("real_time_calibration/lin_params_low_quadfit_fix.txt"); 
+            }          
+            else params= take_params("real_time_calibration/lin_params_low_quadfit.txt");        
+        } 
+        else if (type_of_file.find("lin")<type_of_file.length()){
+            params= take_params("real_time_calibration/lin_params_low_new_ranges.txt");
+        }
+    }
 
-    vector<vector<float>> params= take_params("triple_calib/lin_params.txt");
+    else if (type_of_file.find("triple_lin")<type_of_file.length()){
+        params= take_params("triple_calib/lin_params.txt");
+    }
 
     // loop over various runs
     for(int i=0;i<names.size();i++){
@@ -195,8 +217,10 @@ void triple_coincidence (){
         }
         cout << "tot time    "<< time_tot <<" s"<<endl;
         time_file<<run <<"  tot time    "<< time_tot <<" s"<< "\n";
-        //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
 
+
+        //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
+/*
         y=0;
         // save waveforms
         if (run=="run6"){
@@ -232,6 +256,7 @@ void triple_coincidence (){
             }
             //tree->Write();
         }
+        */
     }
 
 /*
