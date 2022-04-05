@@ -195,40 +195,42 @@ void triple_coincidence (){
         cout << "tot time    "<< time_tot <<" s"<<endl;
         time_file<<run <<"  tot time    "<< time_tot <<" s"<< "\n";
         //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
-/*
+
         y=0;
         // save waveforms
-        for  (int o=0; o<infos[3*i][0].size(); o++){
-            if ( infos[3*i+0][0][o]<0.6 && infos[3*i+1][0][o]<0.6 &&infos[3*i+2][0][o]<0.6 && 
-                abs(infos[3*i+0][2][o]-infos[3*i+1][2][o])<13 &&abs(infos[3*i+2][2][o]-infos[3*i+1][2][o])<13 &&abs(infos[3*i+0][2][o]-infos[3*i+2][2][o])<13
-                &&infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o]<1.1 ){
-                TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
-                //tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
+        if (run=="run6"){
+            for  (int o=0; o<infos[3*i][0].size(); o++){
+                if ( infos[3*i+0][0][o]<0.6 && infos[3*i+1][0][o]<0.6 &&infos[3*i+2][0][o]<0.6 && 
+                    abs(infos[3*i+0][2][o]-infos[3*i+1][2][o])<13 &&abs(infos[3*i+2][2][o]-infos[3*i+1][2][o])<13 &&abs(infos[3*i+0][2][o]-infos[3*i+2][2][o])<13
+                    &&infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o]>1.1 ){
+                    TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
+                    //tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
 
-                TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][o][0]);
-                gr1->GetYaxis()->SetRangeUser(13000, 14800);
-                gr1->SetNameTitle(&("pmt1_"+run+"_wave_"+infos[3*i+0][0][o])[0], &("pmt1_"+run+ "_wave_"+infos[3*i+0][0][o])[0]);
-                gr1->SetLineColor(kGreen);
-                gr1->Draw();
+                    TGraph* gr1 = new TGraph(t.size(), &t[0], &waves[i*3][o][0]);
+                    gr1->GetYaxis()->SetRangeUser(13000, 14800);
+                    gr1->SetNameTitle(&("pmt1_"+run+"_wave_"+infos[3*i+0][0][o])[0], &("pmt1_"+run+ "_wave_"+infos[3*i+0][0][o])[0]);
+                    gr1->SetLineColor(kGreen);
+                    gr1->Draw();
 
-                TGraph* gr2 = new TGraph(t.size(), &t[0], &waves[i*3+1][o][0]);
-                gr2->SetNameTitle(&("pmt2_"+run+"_wave_"+infos[3*i+1][0][o])[0], &("pmt2_"+run+ "_wave_"+infos[3*i+1][0][o])[0]);
-                gr2->SetLineColor(kBlue);
-                gr2->Draw("same");
+                    TGraph* gr2 = new TGraph(t.size(), &t[0], &waves[i*3+1][o][0]);
+                    gr2->SetNameTitle(&("pmt2_"+run+"_wave_"+infos[3*i+1][0][o])[0], &("pmt2_"+run+ "_wave_"+infos[3*i+1][0][o])[0]);
+                    gr2->SetLineColor(kBlue);
+                    gr2->Draw("same");
 
-                TGraph* gr3 = new TGraph(t.size(), &t[0], &waves[i*3+2][o][0]);
-                gr3->SetNameTitle(&("pmt3_"+run+"_wave_"+infos[3*i+2][0][o])[0], &("pmt3_"+run+ "_wave_"+infos[3*i+2][0][o])[0]);
-                gr3->SetLineColor(kRed);
-                gr3->Draw("same");
+                    TGraph* gr3 = new TGraph(t.size(), &t[0], &waves[i*3+2][o][0]);
+                    gr3->SetNameTitle(&("pmt3_"+run+"_wave_"+infos[3*i+2][0][o])[0], &("pmt3_"+run+ "_wave_"+infos[3*i+2][0][o])[0]);
+                    gr3->SetLineColor(kRed);
+                    gr3->Draw("same");
 
-                c_wave->BuildLegend();
-                c_wave->SaveAs(&("triple/waves_minor/" +run+ "_wave_"+to_string(infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o])+".png")[0]);
-                c_wave->Write();
-                //tree->Fill();
-                y++;
+                    c_wave->BuildLegend();
+                    c_wave->SaveAs(&("triple/waves_hll/" +run+ "_wave_"+to_string(infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o])+".png")[0]);
+                    c_wave->Write();
+                    //tree->Fill();
+                    y++;
+                }
             }
-        }*/
-        //tree->Write();
+            //tree->Write();
+        }
     }
 
 /*
