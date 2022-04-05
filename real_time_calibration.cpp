@@ -19,7 +19,7 @@
 
 using namespace std;
 
-string type_of_file = "_quadfit";
+string type_of_file = "_quadfit_fix";
 
 ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
 ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
@@ -414,6 +414,9 @@ auto fit_quad(string name_final, string type, vector<float> gaus_params, TFile *
     gr->Draw("APE");
     TF1 *   quadratic  = new TF1("quadratic","[0]+[1]*x+[2]*x*x", 0, 1.4);
     quadratic->SetParNames ("Off-set","Linear factor", "Quadratic factor");
+    if(type_of_file.find("fix")<type_of_file.length()){
+        quadratic->FixParameter(0,0);
+    }
     gr->Fit("quadratic");
     quadratic->Draw("SAME");
     gStyle->SetOptFit(111);
@@ -452,9 +455,10 @@ auto fit_quad(string name_final, string type, vector<float> gaus_params, TFile *
 auto division_quad(vector<double> off_set, vector<double> lin_factor,vector<double> quad_factor, float peak, float peak_err){
     vector<float> p;
     p.push_back((-lin_factor[0]+sqrt(lin_factor[0]*lin_factor[0]-4*quad_factor[0]*(off_set[0]-peak)))/(2*quad_factor[0]));
-    float e = 1;
-    /*sqrt(pow((-1 + lin_factor/sqrt(lin_factor*lin_factor - 4*quad_factor (off_set-peak)))/(2 quad_factor), 2) 
-    +pow(, 2));*/
+    float e = sqrt(pow((-1 + lin_factor[0]/sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))/(2 *quad_factor[0])*lin_factor[1], 2) 
+                +pow((-(-peak + off_set[0])/( quad_factor[0] *sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak))) - (-lin_factor[0] + sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))/(2*quad_factor[0]))*quad_factor[1], 2)
+                +pow(1/(sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))*off_set[1],2)
+                +pow(1/(sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))*peak_err,2));
     p.push_back(e);
     return p;
 }
@@ -697,32 +701,32 @@ void real_time_calibration(){
             histo_b->Write();
             histos[i]->Write();
             c_all->Write();
+            vector<float> x, y, gaus_params;
+            vector<vector<double>> lin_params;
 
             if (type_of_file.find("lin") < type_of_file.length()){
                 //lin fit
-                vector<float> gaus_params;
                 gaus_params=fit_gaus(histo_sub, ranges[i], name_final, *type);
-                vector<vector<double>> lin_params = fit_lin(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
+                lin_params = fit_lin(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
                 cal_params[i].push_back(lin_params);
 
-                vector<float> x= peak_energy(name_final, *type, lin_params, gaus_params);
+                x= peak_energy(name_final, *type, lin_params, gaus_params);
                 energy[i].insert(energy[i].end(), x.begin(), x.end());
 
-                vector<float> y= peak_energy(name_final, *type, lin_params, gaus_param_Ne_clear);
+                y=peak_energy(name_final, *type, lin_params, gaus_param_Ne_clear);
                 energy_piccoNe[i].insert(energy_piccoNe[i].end(), y.begin(), y.end());
             }
             
             if (type_of_file.find("quad") < type_of_file.length()){
                 // quad fit
-                vector<float> gaus_params;
                 gaus_params=fit_gaus(histo_sub, ranges[i], name_final, *type);
-                vector<vector<double>> lin_params = fit_quad(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
+                lin_params = fit_quad(name_final, *type, gaus_params, outfile, gaus_param_Ne_clear);
                 cal_params[i].push_back(lin_params);
 
-                vector<float> x= peak_energy_quad(name_final, *type, lin_params, gaus_params);
+                x= peak_energy_quad(name_final, *type, lin_params, gaus_params);
                 energy[i].insert(energy[i].end(), x.begin(), x.end());
 
-                vector<float> y= peak_energy_quad(name_final, *type, lin_params, gaus_param_Ne_clear);
+                y= peak_energy_quad(name_final, *type, lin_params, gaus_param_Ne_clear);
                 energy_piccoNe[i].insert(energy_piccoNe[i].end(), y.begin(), y.end());
             }
             chi_file<<"\n";

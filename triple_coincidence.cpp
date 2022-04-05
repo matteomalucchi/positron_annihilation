@@ -164,7 +164,7 @@ void triple_coincidence (){
     iota(begin(t), end(t), 0);
     long int time_tot, y;
 
-    TFile *tree_file= new TFile("triple/ntuple_triple_realtimecalib_quadfit.root", "RECREATE"/* "UPDATE"*/);
+    TFile *tree_file= new TFile("triple/ntuple_triple_realtimecalib_quadfit_fix.root", "RECREATE"/* "UPDATE"*/);
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
@@ -178,7 +178,7 @@ void triple_coincidence (){
 
     vector<TNtuple*> ntuples;
     //vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_new_ranges.txt");
-    vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_quadfit.txt");
+    vector<vector<float>> params= take_params("real_time_calibration/lin_params_low_quadfit_fix.txt");
 
     //vector<vector<float>> params= take_params("triple_calib/lin_params.txt");
 

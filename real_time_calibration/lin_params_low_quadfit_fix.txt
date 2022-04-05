@@ -1,0 +1,21 @@
+off_set_pmt1_charge = -nan +- 0
+lin_factor_pmt1_charge = 160725 +- 97.138
+quad_factor_pmt1_charge = -5405.15 +- 123.979
+off_set_pmt1_amp = -nan +- 0
+lin_factor_pmt1_amp = 2164.09 +- 1.72035
+quad_factor_pmt1_amp = -154.701 +- 2.23904
+
+off_set_pmt2_charge = -nan +- 0
+lin_factor_pmt2_charge = 144895 +- 104.562
+quad_factor_pmt2_charge = -4523.33 +- 141.813
+off_set_pmt2_amp = -nan +- 0
+lin_factor_pmt2_amp = 2039.84 +- 2.45078
+quad_factor_pmt2_amp = -126.725 +- 3.29236
+
+off_set_pmt3_charge = -nan +- 0
+lin_factor_pmt3_charge = 27138.5 +- 32.4896
+quad_factor_pmt3_charge = -802.631 +- 40.4098
+off_set_pmt3_amp = -nan +- 0
+lin_factor_pmt3_amp = 392.247 +- 1.04303
+quad_factor_pmt3_amp = -28.8288 +- 1.42312
+
