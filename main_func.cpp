@@ -26,7 +26,6 @@ vector <TH1F*> make_histo(string name){
     vector <TH1F*> histos;
     iota(begin(t), end(t), 0);
 
-
     if (myfile.is_open()){
         string tp;
         vector <float> w;

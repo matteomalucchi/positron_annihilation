@@ -486,6 +486,7 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     TCanvas *c_mass = new TCanvas(&(name_final + type)[0], &( name_final + type)[0]);
 
     TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,x_err,nullptr);
+    //gr->SetNameTitle("Measured electron mass", "Measured electron mass");
 
     if (name_final== "combined_mass"){
         auto line=new TLine(0.511, 0.5, 0.511, dimension+0.5);
@@ -563,8 +564,14 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     auto meanlinedx=new TLine(m_ave+m_ave_err, 0.5, m_ave+m_ave_err, dimension+0.5);
     meanlinedx->SetLineColor(4);
     meanlinedx->Draw("SAME");
-    
-
+    /*
+    auto legend = new TLegend(0.1,0.7,0.48,0.9);
+    legend->SetHeader("C"); // option "C" allows to center the header
+    legend->AddEntry(gr,"Histogram filled with random numbers","f");
+    legend->AddEntry("f1","Function abs(#frac{sin(x)}{x})","l");
+    legend->AddEntry("gr","Graph with error bars","lep");
+    legend->Draw();
+*/
     c_mass->SaveAs(&("real_time_calibration/" + name_final + type + ".png")[0]);
     outfile->cd();
     c_mass->Write();
