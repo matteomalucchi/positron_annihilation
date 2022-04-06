@@ -11,4 +11,5 @@ electron mass   pmt3_e6_100_run2_amp = 0.515596+-0.002159
 electron mass   pmt3_e6_30_run1_charge = 0.510635+-0.001279
 electron mass   pmt3_e6_30_run1_amp = 0.512384+-0.003405
 stima combinata _charge =   0.510494+-0.000291959
-stima combinata _amp =   0.512022+-0.000486664
+stima combinata _amp =   0.512022+-0.000486665
+stima combinata _charge_amp =   0.510898+-0.000250362

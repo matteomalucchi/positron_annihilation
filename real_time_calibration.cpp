@@ -14,7 +14,6 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <TStopwatch.h>
-#include <TRatioPlot.h>
 
 
 using namespace std;
@@ -23,7 +22,7 @@ string type_of_file = "_quadfit_fix";
 
 ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
 ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
-ofstream chi_file("real_time_calibration/chi_square_low"+type_of_file+".txt");
+ofstream chi_gaus_file("real_time_calibration/chi_square_low"+type_of_file+".txt");
 ofstream gaus_file("real_time_calibration/gaus_params_low"+type_of_file+".txt");
 ofstream lin_file("real_time_calibration/lin_params_low"+type_of_file+".txt");
 
@@ -180,7 +179,7 @@ vector<float> fit_gaus_Ne (TH1F* histo, vector<float> ranges, string name, strin
     c_Ne->Write();
 
 
-    chi_file<< name << "   chi2/ndof "+type+"  =  "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
+    chi_gaus_file<< name << "   chi2/ndof "+type+"  =  "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
     gaus_file<< name << "   peak Ne "+type+" =   "<< gaus1->GetParameter(1) <<"+-"<< gaus1->GetParError(1) <<"\n";
     
     vector<float> gaus_params;
@@ -278,10 +277,10 @@ vector<float> fit_gaus (TH1F* histo, vector<float> ranges, string name, string t
     gaus_params.push_back(gaus4->GetParameter(1));
     gaus_params.push_back(gaus4->GetParError(1));
 
-    chi_file<< name << "   chi2/ndof "+type+"   "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
-    chi_file<< name << "   chi2/ndof  "+type+"  "<< gaus2->GetChisquare() <<"/"<< gaus2->GetNDF() <<"\n";
-    chi_file<< name << "   chi2/ndof  "+type+"  "<< gaus3->GetChisquare() <<"/"<< gaus3->GetNDF() <<"\n";
-    chi_file<< name << "   chi2/ndof "+type+"   "<< gaus4->GetChisquare() <<"/"<< gaus4->GetNDF() <<"\n";
+    chi_gaus_file<< name << "   chi2/ndof "+type+"   "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
+    chi_gaus_file<< name << "   chi2/ndof  "+type+"  "<< gaus2->GetChisquare() <<"/"<< gaus2->GetNDF() <<"\n";
+    chi_gaus_file<< name << "   chi2/ndof  "+type+"  "<< gaus3->GetChisquare() <<"/"<< gaus3->GetNDF() <<"\n";
+    chi_gaus_file<< name << "   chi2/ndof "+type+"   "<< gaus4->GetChisquare() <<"/"<< gaus4->GetNDF() <<"\n";
 
     gaus_file<< name << "   peak Na "+type+" =   "<< gaus1->GetParameter(1) <<"+-"<< gaus1->GetParError(1) <<"\n";
     gaus_file<< name << "   peak Cs "+type+" =   "<< gaus2->GetParameter(1) <<"+-"<< gaus2->GetParError(1) <<"\n";
@@ -490,7 +489,7 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
 
     if (name_final== "combined_mass"){
         auto line=new TLine(0.511, 0.5, 0.511, dimension+0.5);
-        gr->GetXaxis()->SetLimits(0.5, 0.512);
+        gr->GetXaxis()->SetLimits(0.508, 0.516);
         gStyle->SetStatY(0.9);
         gStyle->SetStatX(0.5);
         gr->SetMarkerStyle(1);
@@ -531,7 +530,7 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     }
 
     float m_ave_err=sqrt(1/weights_sum);
-    
+
     if (name_final== "combined_mass"){
         mass_e_file << "stima combinata "+type+" =   " << m_ave << "+-" <<m_ave_err << "\n";
         cout <<"stima combinata massa "+type+"=   " << m_ave << "+-" <<m_ave_err << endl;
@@ -540,14 +539,31 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
         peak_Ne_file << "stima combinata "+type+"=   " << m_ave << "+-" <<m_ave_err << "\n";
         cout <<"stima combinata Ne "+type+"=   " << m_ave << "+-" <<m_ave_err << endl;
     }
+    
+    /*
+    float ave[dimension], ave_err[dimension];
+    fill_n(ave, dimension, m_ave);
+    fill_n(ave_err, dimension, m_ave_err);
 
-    auto meanlinesx=new TLine(m_ave-m_ave_err, 0.5, m_ave-m_ave_err, 6.5);
+    auto ge = new TGraphErrors(dimension, ave, y, ave_err, nullptr);
+    ge->SetFillColor(4);
+    ge->SetFillStyle(3010);
+    ge->Draw("a3 same");*/
+
+    auto meanline=new TLine(m_ave, 0.5, m_ave, dimension+0.5);
+    meanline->SetLineColor(4);
+    meanline->SetLineStyle(9);
+    meanline->Draw("SAME");
+
+    
+    auto meanlinesx=new TLine(m_ave-m_ave_err, 0.5, m_ave-m_ave_err, dimension+0.5);
     meanlinesx->SetLineColor(4);
     meanlinesx->Draw("SAME");
 
-    auto meanlinedx=new TLine(m_ave+m_ave_err, 0.5, m_ave+m_ave_err, 6.5);
+    auto meanlinedx=new TLine(m_ave+m_ave_err, 0.5, m_ave+m_ave_err, dimension+0.5);
     meanlinedx->SetLineColor(4);
     meanlinedx->Draw("SAME");
+    
 
     c_mass->SaveAs(&("real_time_calibration/" + name_final + type + ".png")[0]);
     outfile->cd();
@@ -590,6 +606,9 @@ void final_params(vector<vector<vector<double>>> params, string pmt, string type
 
 
 void real_time_calibration(){
+    gROOT->SetBatch(kFALSE);
+    ROOT::EnableImplicitMT();
+
     TFile *f = new TFile("histograms/histograms_new_ranges.root");
     TFile *outfile= new TFile(&("real_time_calibration/plots_RealTimeCalibration"+type_of_file+".root")[0], "RECREATE");
 
@@ -672,7 +691,7 @@ void real_time_calibration(){
             
             gaus_param_Ne.push_back(fit_gaus_Ne(histo_a, ranges[i], name_final, *type));
             i++;
-            chi_file<<"\n";
+            chi_gaus_file<<"\n";
             gaus_file<<"\n";
         }
 
@@ -731,7 +750,7 @@ void real_time_calibration(){
                 y= peak_energy_quad(name_final, *type, lin_params, gaus_param_Ne_clear);
                 energy_piccoNe[i].insert(energy_piccoNe[i].end(), y.begin(), y.end());
             }
-            chi_file<<"\n";
+            chi_gaus_file<<"\n";
             gaus_file<<"\n";
             cout << endl;
             string peak1 = "electron mass   "+ name_final  + *type + " = " + to_string(x[0]) + "+-" + to_string(x[1]) + "\n";
@@ -746,21 +765,32 @@ void real_time_calibration(){
             i++;
         }
         
-        chi_file<<"---------------------------------";
+        chi_gaus_file<<"---------------------------------";
         gaus_file<<"---------------------------------";
     }
+    vector<float> energy_comb, energy_piccoNe_comb;
+    energy_comb.insert(energy_comb.end(), energy[0].begin(), energy[0].end());
+    energy_comb.insert(energy_comb.end(), energy[1].begin(), energy[1].end());
+    energy_piccoNe_comb.insert(energy_piccoNe_comb.end(), energy_piccoNe[0].begin(), energy_piccoNe[0].end());
+    energy_piccoNe_comb.insert(energy_piccoNe_comb.end(), energy_piccoNe[1].begin(), energy_piccoNe[1].end());
+    
+    cout << endl;
     combined_graph(energy[0] , "combined_mass", "_charge", outfile, pair_names.size());
     combined_graph(energy[1] , "combined_mass", "_amp", outfile, pair_names.size());
+    cout << endl;
     combined_graph(energy_piccoNe[0] , "combined_Ne", "_charge", outfile, pair_names.size());
     combined_graph(energy_piccoNe[1] , "combined_Ne", "_amp", outfile, pair_names.size());
+    cout << endl;
+    combined_graph(energy_comb , "combined_mass", "_charge_amp", outfile, pair_names.size()*2);
+    combined_graph(energy_piccoNe_comb , "combined_Ne", "_charge_amp", outfile, pair_names.size()*2);
 
-    cout <<cal_params[0][2][0][0] <<endl;
     int j=0;
     // number of runs in total
     int dim=pair_names.size()/pmts.size();
     for(list<string>::const_iterator pmt = pmts.begin(); pmt != pmts.end(); ++pmt){
         final_params(cal_params[0],*pmt, "_charge",j, dim);
         final_params(cal_params[1],*pmt, "_amp", j, dim);
+
         lin_file<<"\n";
         j++;
     }
