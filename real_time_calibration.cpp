@@ -456,10 +456,11 @@ auto division_quad(vector<double> off_set, vector<double> lin_factor,vector<doub
     vector<float> p;
     p.push_back((-lin_factor[0]+sqrt(lin_factor[0]*lin_factor[0]-4*quad_factor[0]*(off_set[0]-peak)))/(2*quad_factor[0]));
     float e = sqrt(pow((-1 + lin_factor[0]/sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))/(2 *quad_factor[0])*lin_factor[1], 2) 
-                +pow((-(-peak + off_set[0])/( quad_factor[0] *sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak))) - (-lin_factor[0] + sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))/(2*quad_factor[0]))*quad_factor[1], 2)
+                +pow((-(-peak + off_set[0])/(quad_factor[0] *sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak))) -
+                    (-lin_factor[0] + sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))/(2*quad_factor[0]*quad_factor[0]))*quad_factor[1], 2)
                 +pow(1/(sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))*off_set[1],2)
                 +pow(1/(sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))*peak_err,2));
-                
+
     p.push_back(e);
     return p;
 }

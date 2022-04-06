@@ -1,8 +1,1 @@
-run1  tot time    5079 s
-run2  tot time    2731 s
-run3  tot time    11873 s
-run4  tot time    162 s
-run5  tot time    3186 s
-run6  tot time    8673 s
-run7  tot time    3919 s
 run8  tot time    19304 s
