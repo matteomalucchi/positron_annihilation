@@ -18,7 +18,7 @@
 
 using namespace std;
 
-string type_of_file = "triple_lin_run8";
+string type_of_file = "triple_lin";
 
 ofstream time_file("triple/time_tot.txt");
 
@@ -179,14 +179,16 @@ void triple_coincidence (){
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
-        /*{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
+        {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
         {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run5", "pmt2_NA_c6_ext_coinc12_merc_metal_run5", "pmt3_NA_c6_ext_coinc12_merc_metal_run5"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_run6", "pmt2_NA_c6_ext_coinc12_merc_metal_run6", "pmt3_NA_c6_ext_coinc12_merc_metal_run6"},
-        {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run7"},*/
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run7"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
+        {"pmt1_NA_i2_T_ext_iron_triple_run9", "pmt2_NA_i2_T_ext_iron_triple_run9", "pmt3_NA_i2_T_ext_iron_triple_run9"},
+        {"pmt1_NA_i2_T_ext_aero_triple_run10", "pmt2_NA_i2_T_ext_aero_triple_run10", "pmt3_NA_i2_T_ext_aero_triple_run10"},
     };
     vector<vector<float>> params;
     vector<TNtuple*> ntuples;
@@ -219,17 +221,16 @@ void triple_coincidence (){
         cout << "tot time    "<< time_tot <<" s"<<endl;
         time_file<<run <<"  tot time    "<< time_tot <<" s"<< "\n";
 
-
+/*
         //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
-
         y=0;
         // save waveforms
         if (run=="run8"){
             for  (int o=0; o<infos[3*i][0].size(); o++){
                 if ( infos[3*i+0][0][o]<0.45 && infos[3*i+1][0][o]<0.45 &&infos[3*i+2][0][o]<0.45 && 
                     abs(infos[3*i+0][2][o]-infos[3*i+1][2][o])<13 &&(abs(infos[3*i+2][2][o]-infos[3*i+1][2][o])<13  || abs(infos[3*i+0][2][o]-infos[3*i+2][2][o])<13)
-                    && infos[3*i+0][3][o]*infos[3*i+1][3][o]*infos[3*i+2][3][o]==1
-                    /*&&infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o]>1.1*/ ){
+                    && infos[3*i+0][3][o]*infos[3*i+1][3][o]*infos[3*i+2][3][o]==1){
+                    //&&infos[3*i+2][0][o]+infos[3*i+0][0][o]+infos[3*i+1][0][o]>1.1 
                     TCanvas *c_wave = new TCanvas(&(run +"_wave_"+o)[0], &(run +"_wave_"+o)[0]);
                     //tree->Branch(&(run +"_wave_"+o)[0], &c_wave);
 
@@ -258,7 +259,7 @@ void triple_coincidence (){
             }
             //tree->Write();
         }
-        
+        */
     }
 
 /*
@@ -304,8 +305,6 @@ void triple_coincidence (){
     for(int j=0; j<ntuples.size();j++){
         ntuples[j]->Write();
     }
-
-
     tree_file->Close();
 }
 

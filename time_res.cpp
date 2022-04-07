@@ -55,12 +55,13 @@ void time_res(){
 
 
     int time_tot=15, idx=1, start_time=529;
-    vector <float> t(time_tot), q(time_tot), y(time_tot), t_tot(1030);
+    vector <float> t(time_tot), q(time_tot), y(time_tot), t_tot(1030), q_tot(1030), y_tot(1030);
     iota(begin(t), end(t), 0);
     iota(begin(t_tot), end(t_tot), 0);
 
-    float min =*min_element(v[idx].begin()+400, v[idx].end()-500), h=0;
-    auto bin_min = find(v[idx].begin()+400, v[idx].end()-500, min);
+    float min =*min_element(v[idx].begin()+300, v[idx].end()-80), h=0;
+    auto bin_min = find(v[idx].begin()+300, v[idx].end()-80, min);
+    cout << "min " << min <<  endl;
 
     for (int j=0; j<20; j++){
         h += v[idx][j] / 20;
@@ -71,20 +72,20 @@ void time_res(){
     gr_tot->SetNameTitle(&(name + "_tot")[0], &(name + "_tot")[0]);
     gr_tot->SetMarkerStyle(2);
     gr_tot->Draw("AP"); 
-
+/*
     TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
     TGraph* gr = new TGraph(t.size(), &t[0], &v[idx][start_time]);
     gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
     gr->SetMarkerStyle(2);
-    gr->Draw("AP");
+    gr->Draw("AP");*/
 
-    TSpline3* sp3 = new TSpline3("sp3",gr);
+    TSpline3* sp3 = new TSpline3("sp3",gr_tot);
     sp3->SetLineColor(kRed);
     sp3->Draw("same");
-    c_wave->SaveAs(&( name + "_wave.png")[0]);
+    c_tot->SaveAs(&( name + "_wave.png")[0]);
 
     float s;
-    float max =100;
+    float max =10;
     int bin_mez=0;
     float diff=1000, time_mes;
     float tmez=0;
@@ -92,23 +93,24 @@ void time_res(){
 
     for(float i=0; i<max;i++){
         s=i/max;
-        for(int j=0; j<time_tot;j++){
-            q[j]=s+t[j];
-            y[j]=sp3->Eval(q[j]);
-            //cout <<q[j]<<"  "<<y[j]<<endl;
+        for(int j=300; j<950;j++){
+            q_tot[j]=s+t_tot[j];
+            y_tot[j]=sp3->Eval(q_tot[j]);
+            //cout <<q[j]<<"  "<<y_tot[j]<<endl;
         }
-        for (int j=0; j<time_tot; j++){
+        for (int j=300; j<950; j++){
         // Algoritmo per ottenere time_tot continuo
-            if(abs(y[j]-min/2-h/2)<diff /*&& j<bin_min-y.begin()*/){
+            if(abs(y_tot[j]-min/2-h/2)<diff && j<bin_min -y_tot.begin()){
                 bin_mez=j;
-                diff=abs(y[j]-min/2-h/2);
+                diff=abs(y_tot[j]-min/2-h/2);
             }
         }
-        cout <<bin_mez<<"  "<<q[bin_mez]<<"  "<< y[bin_mez]<<endl;       
+        //cout <<y_tot.begin() <<endl;
+        //cout <<bin_mez<<"  "<<q_tot[bin_mez]<<"  "<< y_tot[bin_mez]<<endl;       
         float TT[5],VV[5];
         for(int k=0;k<5;k++){
             TT[k] = k;
-            VV[k] = y[bin_mez-2+k];
+            VV[k] = y_tot[bin_mez-2+k];
         }
         //TCanvas *c_wave = new TCanvas(&(to_string(i))[0], &(to_string(i))[0]);
 
@@ -119,14 +121,14 @@ void time_res(){
         //gr_fit->Draw();
 
         tmez=(min/2 + h/2 - gr_fit->GetFunction("pol1")->GetParameter(0))/(gr_fit->GetFunction("pol1")->GetParameter(1));
-        time_mes=(tmez+q[bin_mez-2])*4;
-        /*
+        time_mes=(tmez+q_tot[bin_mez-2]);
+        
         cout << "time measured  "<<s<<" =    "<<time_mes <<endl;
-        cout << "time measured absolute  "<<s<<" =    "<<(start_time*4+time_mes) <<endl;
+        cout << "time measured absolute  "<<s<<" =    "<<(start_time+time_mes) <<endl;
         cout <<"--------------------------"<<endl;
-        cout<<endl;*/
+        cout<<endl;
         time_file <<  "time measured "<<s<<" =    "<<time_mes <<"\n";
-        time_file << "time measured absolute  "<<s<<" =    "<<(start_time*4+time_mes) <<endl;
+        time_file << "time measured absolute  "<<s<<" =    "<<(start_time+time_mes) <<endl;
         time_file<<endl;
 
         times[i]=time_mes;
