@@ -53,14 +53,14 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
     iota(begin(t), end(t), 0);
     vector <vector<float>> v;
     vector <TH1F*> histos;
-    int bgn=0, g=0;
-    long int time_before=0, time_now=0, time_bgn=0;
+    int bgn=0, g=0, a=0;
+    long int time_before=0, time_now=0, time_bgn=0, time_min=pow(2,32);
 
     if (myfile.is_open()){
         string tp;
         vector <float> w;
         int k=0, m, j=0;
-        while(getline(myfile, tp)){ //read data from file object and put it into string.
+        while(getline(myfile, tp)/*&& a<100*/){ //read data from file object and put it into string.
             if (isalpha(tp[0]) == 0) {
                 if (k>0) {
                     k=0;
@@ -79,17 +79,23 @@ vector<vector<vector<float>>> energy_time(string name,long int &time_tot, vector
             }
             if (tp.find("Time")<tp.length()){
                 if (bgn==0) {
-                    time_bgn=stol(tp.substr(20,tp.size()-1));
+                    time_bgn=stol(tp.substr(tp.find(":")+1,tp.size()));
                     bgn++;
                 }
-                time_now=stol(tp.substr(20,tp.size()-1));
+                time_now=stol(tp.substr(tp.find(":")+1,tp.size()));
                 if (time_now<time_before){
                     g++;
+                    a++;
+                    //cout << time_now << "      " <<time_before<<endl;
+                    if (time_now<time_min) time_min=time_now;
                 }
-                time_before=stol(tp.substr(20,tp.size()-1));
+                time_before=stol(tp.substr(tp.find(":")+1,tp.size()));
+                //if (g==1) cout << time_now <<endl;
             }
+            //a++;
         }
-        time_tot=(time_now + g*(pow(2, 32)-1) - time_bgn)*8 *pow(10,-9);
+        time_tot=(time_now + g*(pow(2, 31)-1) - time_bgn)*8 *pow(10,-9);
+        //cout<<time_min<<endl;
 
         //non prendo l'ultimo evento perchè è incompleto
         myfile.close(); //close the file object.
@@ -210,7 +216,7 @@ void triple_coincidence (){
 
     // loop over various runs
     for(int i=0;i<names.size();i++){
-        string run = names[i][0].substr(names[i][0].size()-4, names[i][0].size()-1);
+        string run = names[i][0].substr(names[i][0].find("run"), names[i][0].size()-1);
         // loop over various pmt
         for (int j=0; j<names[i].size(); j++){
             string pmt_name = names[i][j].substr(0,4);
@@ -289,7 +295,7 @@ void triple_coincidence (){
 
     //loop over run
     for(int j=0; j<names.size();j++){
-        string run = names[j][0].substr(names[j][0].size()-4, names[j][0].size()-1);
+        string run = names[j][0].substr(names[j][0].find("run"), names[j][0].size()-1);
         // each branch is charge, amp, time and mask_strange_tot
         TNtuple *ntuple= new TNtuple(&run[0], &run[0], "c1:a1:t1:c2:a2:t2:c3:a3:t3:m");
         for (int m=0; m < infos[3*j][0].size(); m++){
