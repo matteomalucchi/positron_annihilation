@@ -18,7 +18,7 @@
 
 using namespace std;
 
-string type_of_file = "_quadfit_fix";
+string type_of_file = "_quadfit_fix_legend";
 
 ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
 ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
@@ -484,13 +484,14 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
 
 
     TCanvas *c_mass = new TCanvas(&(name_final + type)[0], &( name_final + type)[0]);
+    auto legend = new TLegend(/*0.1,0.7,0.48,0.9*/);
 
     TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,x_err,nullptr);
     //gr->SetNameTitle("Measured electron mass", "Measured electron mass");
 
     if (name_final== "combined_mass"){
         auto line=new TLine(0.511, 0.5, 0.511, dimension+0.5);
-        gr->GetXaxis()->SetLimits(0.508, 0.516);
+        gr->GetXaxis()->SetLimits(0.50, 0.518);
         gStyle->SetStatY(0.9);
         gStyle->SetStatX(0.5);
         gr->SetMarkerStyle(1);
@@ -499,10 +500,12 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
         gr->Draw("APE");
         line->SetLineColor(2);
         line->Draw("SAME");
+        legend->AddEntry(line,"electron mass","l");
+        legend->AddEntry(gr,"Measured electron mass","lep");
     }
     else if (name_final== "combined_Ne"){
         auto line=new TLine(1.274, 0.5, 1.274, dimension+0.5);
-        gr->GetXaxis()->SetLimits(1.23, 1.3);
+        gr->GetXaxis()->SetLimits(1.23, 1.29);
         gStyle->SetStatY(0.9);
         gStyle->SetStatX(0.5);
         gr->SetMarkerStyle(1);
@@ -511,6 +514,8 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
         gr->Draw("APE");
         line->SetLineColor(2);
         line->Draw("SAME");
+        legend->AddEntry(line,"Ne energy peak","l");
+        legend->AddEntry(gr,"Measured Ne energy peak","lep");
     }
 
     // weighted average
@@ -556,7 +561,6 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     meanline->SetLineStyle(9);
     meanline->Draw("SAME");
 
-    
     auto meanlinesx=new TLine(m_ave-m_ave_err, 0.5, m_ave-m_ave_err, dimension+0.5);
     meanlinesx->SetLineColor(4);
     meanlinesx->Draw("SAME");
@@ -564,14 +568,11 @@ auto combined_graph(vector<float> energy, string name_final, string type,  TFile
     auto meanlinedx=new TLine(m_ave+m_ave_err, 0.5, m_ave+m_ave_err, dimension+0.5);
     meanlinedx->SetLineColor(4);
     meanlinedx->Draw("SAME");
-    /*
-    auto legend = new TLegend(0.1,0.7,0.48,0.9);
-    legend->SetHeader("C"); // option "C" allows to center the header
-    legend->AddEntry(gr,"Histogram filled with random numbers","f");
-    legend->AddEntry("f1","Function abs(#frac{sin(x)}{x})","l");
-    legend->AddEntry("gr","Graph with error bars","lep");
+    
+    //legend->SetHeader("C"); // option "C" allows to center the header
+    legend->AddEntry(meanline,"Weighted average of the meausurements","l");
     legend->Draw();
-*/
+
     c_mass->SaveAs(&("real_time_calibration/" + name_final + type + ".png")[0]);
     outfile->cd();
     c_mass->Write();
@@ -641,11 +642,11 @@ void real_time_calibration(){
 
         {{"pmt3_NA_cs_e6_30_run1", "pmt3_NA_cs_co_e6_30_run1"}, 
             {{13200, 14600, 16800, 18600, 28000, 40000, 31000, 35000, 29000, 32000, 34000, 36000},
-            {170, 215, 235, 275, 300, 540, 420, 490, 380, 430, 460, 510}}}, 
+            {170, 215, 235, 275, 300, 540, 420, 490, 380, 440, 450, 510}}}, 
 
         {{"pmt3_NA_cs_e6_100_run2", "pmt3_NA_cs_co_e6_100_run2"}, 
             {{13000, 14600, 16800, 18600, 26000, 40000, 31000, 34800, 29500, 31400, 33500, 36000},
-            {175, 215, 230, 270, 310, 530, 410, 500, 360, 430, 430, 510}}}, 
+            {175, 215, 230, 270, 310, 530, 410, 500, 360, 440, 440, 510}}}, 
         };
     
     vector <float>   y_rescale;
