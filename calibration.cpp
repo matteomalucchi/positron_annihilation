@@ -58,9 +58,9 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
 }
 
 auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * outfile){
-    float x[4]={0.18, 0.66, 1.17, 1.33};
-    float y[sizeof(x)/sizeof(x[0])]={gaus_params[4], gaus_params[6], gaus_params[0], gaus_params[2]};
-    float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[5], gaus_params[7], gaus_params[1], gaus_params[3]};
+    float x[3]={/*0.18,*/ 0.66, 1.17, 1.33};
+    float y[sizeof(x)/sizeof(x[0])]={/*gaus_params[4]*/, gaus_params[6], gaus_params[0], gaus_params[2]};
+    float y_err[sizeof(x)/sizeof(x[0])] = {/*gaus_params[5],*/ gaus_params[7], gaus_params[1], gaus_params[3]};
 
     cout << endl;
     cout << "__________________________ Linear fit: " << name_pmt << type << " __________________________"<<endl; 
@@ -79,7 +79,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
     pad2->Draw();
     pad1->cd();
 
-    TGraphErrors* gr = new TGraphErrors(4,x,y,nullptr,y_err);
+    TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,nullptr,y_err);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr->SetMarkerStyle(1);
@@ -99,7 +99,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
     }  
     float one_array[sizeof(x)/sizeof(x[0])]={1,1,1,1};
     
-    TGraphErrors* gr2 = new TGraphErrors(4,x,diff_norm,nullptr,one_array);
+    TGraphErrors* gr2 = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,diff_norm,nullptr,one_array);
     gStyle->SetStatY(0.9);
     gStyle->SetStatX(0.5);
     gr2->SetMarkerStyle(1);
