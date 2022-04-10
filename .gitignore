@@ -38,5 +38,6 @@ documentation/
 
 #
 *.pcm
-*.pdf
+*.icloud
+*.DS_Store
 *.code-workspace
