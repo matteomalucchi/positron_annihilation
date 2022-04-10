@@ -58,8 +58,8 @@ vector<float> fit_gaus (TFile *f ,string name_pmt, string type, vector<float> ra
 }
 
 auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * outfile){
-    float x[3]={/*0.18,*/ 0.66, 1.17, 1.33};
-    float y[sizeof(x)/sizeof(x[0])]={/*gaus_params[4]*/, gaus_params[6], gaus_params[0], gaus_params[2]};
+    float x[]={/*0.18,*/ 0.66, 1.17, 1.33};
+    float y[sizeof(x)/sizeof(x[0])]={/*gaus_params[4],*/ gaus_params[6], gaus_params[0], gaus_params[2]};
     float y_err[sizeof(x)/sizeof(x[0])] = {/*gaus_params[5],*/ gaus_params[7], gaus_params[1], gaus_params[3]};
 
     cout << endl;
@@ -97,7 +97,7 @@ auto fit_lin(string name_pmt, string type, vector<float> gaus_params, TFile * ou
         diff[i] =y[i]-linear->Eval(x[i]);
         diff_norm[i]=diff[i]/y_err[i];
     }  
-    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1,1};
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1};
     
     TGraphErrors* gr2 = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,diff_norm,nullptr,one_array);
     gStyle->SetStatY(0.9);
@@ -143,6 +143,96 @@ auto peak_energy(string name_pmt, string type, vector<vector<double>> cal_params
 
 }
 
+auto fit_quad(string name_pmt, string type, vector<float> gaus_params, TFile * outfile){
+    float x[]={/*0.18,*/ 0.66, 1.17, 1.33};
+    float y[sizeof(x)/sizeof(x[0])]={/*gaus_params[4],*/ gaus_params[6], gaus_params[0], gaus_params[2]};
+    float y_err[sizeof(x)/sizeof(x[0])] = {/*gaus_params[5],*/ gaus_params[7], gaus_params[1], gaus_params[3]};
+
+    cout << endl;
+    cout << "__________________________ Linear fit: " << name_pmt << type << " __________________________"<<endl; 
+    cout << endl;
+    gStyle->SetOptStat(0);
+
+    TCanvas *c_fit_lin = new TCanvas(&(name_pmt + type + "_calibration")[0], &( name_pmt + type + "_calibration")[0]);
+    TPad *pad1 = new TPad("pad1","pad1",0,0.33,1,1);
+    TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.33);
+    pad1->SetBottomMargin(0.00001);
+    pad1->SetBorderMode(0);
+    pad2->SetTopMargin(0.00001);
+    pad2->SetBottomMargin(0.1);
+    pad2->SetBorderMode(0);
+    pad1->Draw();
+    pad2->Draw();
+    pad1->cd();
+
+    TGraphErrors* gr = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,y,nullptr,y_err);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatX(0.5);
+    gr->SetMarkerStyle(1);
+    gr->Draw("APE");
+    TF1 *   linear  = new TF1("linear","[0]+[1]*x+[2]*x*x", -1, 1.4);
+    linear->SetParNames ("Off-set","Calibration factor", "quad factor");
+    gr->Fit("linear");
+    linear->Draw("SAME");
+    gStyle->SetOptFit(111);
+
+    pad2->cd();
+    float diff[sizeof(x)/sizeof(x[0])];
+    float diff_norm[sizeof(x)/sizeof(x[0])];
+    for (Int_t i=0;i<sizeof(x)/sizeof(x[0]);i++) {
+        diff[i] =y[i]-linear->Eval(x[i]);
+        diff_norm[i]=diff[i]/y_err[i];
+    }  
+    float one_array[sizeof(x)/sizeof(x[0])]={1,1,1};
+    
+    TGraphErrors* gr2 = new TGraphErrors(sizeof(x)/sizeof(x[0]),x,diff_norm,nullptr,one_array);
+    gStyle->SetStatY(0.9);
+    gStyle->SetStatX(0.5);
+    gr2->SetMarkerStyle(1);
+    TF1 *   zero  = new TF1("zero","0*x", -0.1, 1.4);
+    gr2->Draw("APE");
+    zero->Draw("SAME");
+    c_fit_lin->cd();
+    c_fit_lin->SaveAs(&("calibration/" + name_pmt + type + "_calibration_low.png")[0]);
+    outfile->cd();
+    c_fit_lin->Write();
+
+    vector<double> off_set{linear->GetParameter(0),linear->GetParError(0)};
+    vector<double> cal_factor{linear->GetParameter(1),linear->GetParError(1)};
+    vector<double> quad_factor{linear->GetParameter(2),linear->GetParError(2)};
+    vector<vector<double>> lin_params{off_set, cal_factor, quad_factor};
+
+    return lin_params;
+}
+
+auto division_quad(vector<double> off_set, vector<double> lin_factor,vector<double> quad_factor, float peak, float peak_err){
+    vector<float> p;
+    p.push_back((-lin_factor[0]+sqrt(lin_factor[0]*lin_factor[0]-4*quad_factor[0]*(off_set[0]-peak)))/(2*quad_factor[0]));
+    float e = sqrt(pow((-1 + lin_factor[0]/sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))/(2 *quad_factor[0])*lin_factor[1], 2) 
+                +pow((-(-peak + off_set[0])/(quad_factor[0] *sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak))) -
+                    (-lin_factor[0] + sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))/(2*quad_factor[0]*quad_factor[0]))*quad_factor[1], 2)
+                +pow(1/(sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))*off_set[1],2)
+                +pow(1/(sqrt(lin_factor[0]*lin_factor[0] - 4*quad_factor[0] *(off_set[0]-peak)))*peak_err,2));
+    p.push_back(e);
+    return p;
+}
+
+auto peak_energy_quad(string name_pmt, string type, vector<vector<double>> cal_params, vector<float> gaus_params){
+    vector<float> energy;
+    vector<float> x(division_quad(cal_params[0], cal_params[1],cal_params[2], gaus_params[8], gaus_params[9]));    
+    vector<float> y(division_quad(cal_params[0], cal_params[1], cal_params[2],gaus_params[10], gaus_params[11]));
+    energy.insert(energy.end(), x.begin(), x.end());
+    energy.insert(energy.end(), y.begin(), y.end());
+
+    string peak1 = "energy peak " + name_pmt + " " + type + " = " + to_string(energy[0]) + "+-" + to_string(energy[1]) + "\n";
+    string peak2 = "energy peak " + name_pmt + " " + type + " = " + to_string(energy[2]) + "+-" + to_string(energy[3])+ "\n";
+    vector <string> energy_string;
+    energy_string.push_back(peak1);
+    energy_string.push_back(peak2);
+
+    return energy_string;
+
+}
 
 void calibration(){
     // ordine del vector:
@@ -161,16 +251,17 @@ void calibration(){
                  }}},
         {"pmt2",{{150000, 172000, 172000, 196000, 
                  20000, 37000, 80000, 110000, 
-                 60000,90000, 165000, 200000},
+                 60000,90000, 165000, 200000
+                 },
                 {1900, 2300, 2300, 2800, 
                  250, 600, 1050, 1600,
                  800, 1200, 2100, 2600}}}
         /*{"pmt3",{{28000,33000,33000,38000,22000, 40000, 90000, 120000},
             {}}}*/
     };
-    ofstream out_file("calibration/peak_energy_low.txt");
-    TFile *outfile= new TFile("calibration/calibration_plots.root", "RECREATE");
-    TFile *f = new TFile("histograms/histograms.root");
+    ofstream out_file("calibration/peak_energy_low_3fit.txt");
+    TFile *outfile= new TFile("calibration/calibration_plots_3fit.root", "RECREATE");
+    TFile *f = new TFile("histograms/histograms_new_ranges.root");
 
     vector <string> energy;
 
@@ -184,10 +275,19 @@ void calibration(){
 
         vector<float> gaus_charge=fit_gaus(f, name_pmt, "_charge", ranges[0], outfile);
         vector<float> gaus_amp=fit_gaus(f, name_pmt, "_amp", ranges[1], outfile);
+
+
         auto cal_charge = fit_lin(name_pmt, "_charge", gaus_charge, outfile);
         auto cal_amp = fit_lin(name_pmt, "_amp", gaus_amp, outfile);
         vector<string> x= peak_energy(name_pmt, "_charge", cal_charge, gaus_charge);
         vector<string> y= peak_energy(name_pmt, "_amp", cal_amp, gaus_amp);
+
+/*
+        auto cal_charge = fit_quad(name_pmt, "_charge", gaus_charge, outfile);
+        auto cal_amp = fit_quad(name_pmt, "_amp", gaus_amp, outfile);
+        vector<string> x= peak_energy_quad(name_pmt, "_charge", cal_charge, gaus_charge);
+        vector<string> y= peak_energy_quad(name_pmt, "_amp", cal_amp, gaus_amp);
+*/
         energy.insert(energy.end(), x.begin(), x.end());
         energy.insert(energy.end(), y.begin(), y.end());
 

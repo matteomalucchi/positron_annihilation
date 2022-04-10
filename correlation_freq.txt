@@ -1,9 +1,9 @@
 numero coincidenze:    3559
 numero eventi nel picco pmt1:    23970
 numero eventi nel picco pmt2:    13233
-tempo totale:    21.8344
-freq pmt1 nel picco:    1097.81
-freq pmt2 nel picco:    606.062
-coincidenze casuali stimate:    58.1092
-coincidenze casuali attese= 58.1092 pm 0.629319
+tempo totale:    39
+freq pmt1 nel picco:    614.615
+freq pmt2 nel picco:    339.308
+coincidenze casuali stimate:    33.5088
+coincidenze casuali attese= 33.5088 pm 0.362898
 coincidenze= 3559 pm 59.6574

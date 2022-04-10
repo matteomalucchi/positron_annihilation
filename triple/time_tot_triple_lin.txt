@@ -1,0 +1,6 @@
+run8  tot time    9666 s
+run8  tot time    9666 s
+run8  tot time    9666 s
+run2  tot time    1308 s
+run2  tot time    1308 s
+run2  tot time    9666 s

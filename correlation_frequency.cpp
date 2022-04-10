@@ -20,11 +20,12 @@
 
 using namespace std;
 
-vector<float> find_idx_range(string path,string name, long int &time_bgn, long int &time_end){
+vector<float> find_idx_range(string path,string name, long int &time_tot){
     ifstream myfile;
     myfile.open(path, ios::in | ios::out);  
     vector <vector<float>> v;
-
+    long int time_before=0, time_now=0, time_bgn=0, time_min=pow(2,32);
+    int g=0, a=0;
     if (myfile.is_open()){
         string tp;
         vector <float> w;
@@ -51,19 +52,27 @@ vector<float> find_idx_range(string path,string name, long int &time_bgn, long i
             }
             if (tp.find("Time")<tp.length()){
                 if (bgn==0) {
-                    time_bgn=stol(tp.substr(20,tp.size()-1));
-                    cout << "begin  "<<time_bgn <<endl;
+                    time_bgn=stol(tp.substr(tp.find(":")+1,tp.size()));
                     bgn++;
                 }
-                time_end=stol(tp.substr(20,tp.size()-1));
-                
+                time_now=stol(tp.substr(tp.find(":")+1,tp.size()));
+                if (time_now<time_before){
+                    g++;
+                    a++;
+                    //cout << time_now << "      " <<time_before<<endl;
+                    if (time_now<time_min) time_min=time_now;
+                }
+                time_before=stol(tp.substr(tp.find(":")+1,tp.size()));
+                //if (g==1) cout << time_now <<endl;
             }
-
+            //a++;
         }
+        time_tot=(time_now + g*(pow(2, 31)-1) - time_bgn)*8 *pow(10,-9);
+        //cout<<time_min<<endl;
+
         //non prendo l'ultimo evento perchè è incompleto
         myfile.close(); //close the file object.
     }    
-    cout <<"end "<< time_end <<endl;
 
     
     vector <float> charge (v.size());
@@ -99,13 +108,12 @@ void correlation_frequency (){
                         "pmt2_NA_e6_100_or_run1"
                         };
 
-    long int time_b, time_e;
+    long int time_tot;
     for(list<string>::const_iterator name = names.begin(); name != names.end(); ++name){
         cout << "Processing: " << *name << endl; 
-        idx_ranges.push_back(find_idx_range("data/" + *name + ".txt", *name, time_b, time_e));
+        idx_ranges.push_back(find_idx_range("data/" + *name + ".txt", *name, time_tot));
     }
-    cout << time_b << endl;
-    cout << time_e << endl;
+
 
     int max_i =max(*max_element(idx_ranges[0].begin(), idx_ranges[0].end()),
                    *max_element(idx_ranges[1].begin(), idx_ranges[1].end()));
@@ -131,14 +139,14 @@ void correlation_frequency (){
     cout <<n_a<<endl;
     cout <<n_b<<endl;
 
-    double time_tot= (time_e - time_b)*8*pow(10,-9);
     cout << time_tot << endl;
     out_file << "tempo totale:    "<< time_tot << "\n";
 
     double freq_a=n_a/time_tot;
     double freq_b=n_b/time_tot;
+    double time_acq= 4*pow(10,-9)*1030;
 
-    double coinc_casuali= freq_a*freq_b*4*pow(10,-6)*time_tot;
+    double coinc_casuali= freq_a*freq_b*time_acq*time_tot;
 
     cout << freq_a <<endl;
     cout << freq_b <<endl;
@@ -147,10 +155,10 @@ void correlation_frequency (){
     out_file << "freq pmt2 nel picco:    "<< freq_b << "\n";
     out_file << "coincidenze casuali stimate:    "<< coinc_casuali << "\n";
 
-    cout << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*4*pow(10,-6)/time_tot <<endl;
+    cout << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*time_acq/time_tot <<endl;
     cout << "coincidenze= "<<coincidenze<<" pm "<< sqrt(coincidenze) << endl;
 
-    out_file << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*4*pow(10,-6)/time_tot << "\n";
+    out_file << "coincidenze casuali attese= " <<coinc_casuali<< " pm "<< sqrt(n_a*n_b*(n_a+n_b))*time_acq/time_tot << "\n";
     out_file << "coincidenze= "<<coincidenze<<" pm "<< sqrt(coincidenze) << "\n";
 
 

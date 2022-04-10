@@ -71,8 +71,8 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float 
     for (long unsigned int i=0; i<v.size(); i++){
         h = 0;
         u=0;
-        for (int j=0; j<100; j++){
-            h += v[i][j] / 100;
+        for (int j=0; j<20; j++){
+            h += v[i][j] / 20;
             if (v[i][j]<14600 && u==0){
                 idx_strange.push_back(i);
                 u++;
@@ -81,7 +81,7 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float 
         for (int j=300; j<950; j++){
             charge[i] += h-v[i][j];
         }
-        min =*min_element(v[i].begin(), v[i].end());
+        min =*min_element(v[i].begin()+300, v[i].end()-80);
         amp[i]=h-min;
     }
     int range_charge=250000;
@@ -789,8 +789,8 @@ void real_time_calibration(){
     combined_graph(energy_piccoNe[0] , "combined_Ne", "_charge", outfile, pair_names.size());
     combined_graph(energy_piccoNe[1] , "combined_Ne", "_amp", outfile, pair_names.size());
     cout << endl;
-    combined_graph(energy_comb , "combined_mass", "_charge_amp", outfile, pair_names.size()*2);
-    combined_graph(energy_piccoNe_comb , "combined_Ne", "_charge_amp", outfile, pair_names.size()*2);
+    //combined_graph(energy_comb , "combined_mass", "_charge_amp", outfile, pair_names.size()*2);
+    //combined_graph(energy_piccoNe_comb , "combined_Ne", "_charge_amp", outfile, pair_names.size()*2);
 
     int j=0;
     // number of runs in total

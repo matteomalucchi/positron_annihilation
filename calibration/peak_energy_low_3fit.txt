@@ -1,0 +1,8 @@
+energy peak pmt1 _charge = 0.499179+-0.000455
+energy peak pmt1 _charge = 1.279140+-0.000776
+energy peak pmt1 _amp = 0.505973+-0.000900
+energy peak pmt1 _amp = 1.307284+-0.001534
+energy peak pmt2 _charge = 0.497553+-0.000357
+energy peak pmt2 _charge = 1.270797+-0.000613
+energy peak pmt2 _amp = 0.505199+-0.001023
+energy peak pmt2 _amp = 1.305019+-0.001796

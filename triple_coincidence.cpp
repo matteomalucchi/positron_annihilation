@@ -20,7 +20,7 @@ using namespace std;
 
 string type_of_file = "triple_lin";
 
-ofstream time_file("triple/time_tot.txt");
+ofstream time_file("triple/time_tot_"+type_of_file+".txt");
 
 vector<vector<float>> take_params(string path){
     ifstream myfile;
@@ -185,7 +185,7 @@ void triple_coincidence (){
 
     //TFile *outfile= new TFile("triple/waves.root", "RECREATE"/* "UPDATE"*/);
     vector<vector<string>> names ={
-        {"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
+        /*{"pmt1_NA_e6_ext_triple_90deg_run1", "pmt2_NA_e6_ext_triple_90deg_run1", "pmt3_NA_e6_ext_triple_90deg_run1"},
         {"pmt1_NA_l1_ext_triple_close_run2", "pmt2_NA_l1_ext_triple_close_run2", "pmt3_NA_l1_ext_triple_close_run2"},
         {"pmt1_NA_l1_ext_triple_close_run3", "pmt2_NA_l1_ext_triple_close_run3", "pmt3_NA_l1_ext_triple_close_run3"},
         {"pmt1_NA_c6_ext_triple_merc_aero_run4", "pmt2_NA_c6_ext_triple_merc_aero_run4", "pmt3_NA_c6_ext_triple_merc_aero_run4"},
@@ -194,8 +194,10 @@ void triple_coincidence (){
         {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run7", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run7"},
         {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
         {"pmt1_NA_i2_T_ext_iron_triple_run9", "pmt2_NA_i2_T_ext_iron_triple_run9", "pmt3_NA_i2_T_ext_iron_triple_run9"},
-        {"pmt1_NA_i2_T_ext_aero_triple_run10", "pmt2_NA_i2_T_ext_aero_triple_run10", "pmt3_NA_i2_T_ext_aero_triple_run10"},
-    };
+        {"pmt1_NA_i2_T_ext_aero_triple_run10", "pmt2_NA_i2_T_ext_aero_triple_run10", "pmt3_NA_i2_T_ext_aero_triple_run10"},*/
+        {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
+        {"pmt1_NA_e6_ext_run2", "pmt2_NA_e6_ext_run2", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
+};
     vector<vector<float>> params;
     vector<TNtuple*> ntuples;
     if (type_of_file.find("real")<type_of_file.length()){
@@ -223,9 +225,10 @@ void triple_coincidence (){
             tot_vec=energy_time(names[i][j], time_tot, params[j]);
             infos.push_back(tot_vec[0]);
             waves.push_back(tot_vec[1]);
-        }
         cout << "tot time    "<< time_tot <<" s"<<endl;
         time_file<<run <<"  tot time    "<< time_tot <<" s"<< "\n";
+                }
+
 
 /*
         //TTree* tree=new TTree(&("waveforms_"+run)[0],&("waveforms_"+run)[0]);
