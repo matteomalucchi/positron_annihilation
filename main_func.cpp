@@ -25,6 +25,9 @@ vector <TH1F*> make_histo(string name){
     vector <vector<float>> v;
     vector <TH1F*> histos;
     iota(begin(t), end(t), 0);
+    for (int z=0;z<t.size();z++){
+        t[z] *= 4;
+    }
 
     if (myfile.is_open()){
         string tp;
@@ -112,16 +115,20 @@ vector <TH1F*> make_histo(string name){
     c_amp->SaveAs(&("plots/" + name + "_amp.png")[0]);
 
     cout << "numero di idx_strange  "<<idx_strange.size() <<endl;
-    //for (long unsigned int i=0; i< idx_strange.size(); i++){
-    if (idx_strange.size()>0){
-        TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
-        TGraph* gr = new TGraph(t.size(), &t[0], &v[idx_strange[0]][0]);
-        gr->SetNameTitle(&(name + "_wave")[0], &(name + "_wave")[0]);
-        gr->SetMarkerStyle(21);
-        gr->Draw("AP");
-        c_wave->SaveAs(&("waveform/" + name + "_wave_"+1+".png")[0]);
-    }
-    //}
+
+    TCanvas *c_wave = new TCanvas(&(name + "_wave")[0], &(name + "_wave")[0]);
+    c_wave->SetRightMargin(0.09);
+    c_wave->SetLeftMargin(0.15);
+    c_wave->SetBottomMargin(0.15);    
+    TGraph* gr = new TGraph(t.size(), &t[0], &v[1][0]);
+    gr->SetNameTitle("Example of a waveform", "Example of a waveform");
+    gr->GetXaxis()->SetTitle("Time [ns]");
+    gr->GetYaxis()->SetTitle("Voltage [a.u.]");
+    gr->SetMarkerStyle(1);
+    gr->SetLineColor(kBlue);
+    gr->Draw("AL");
+    c_wave->SaveAs(&("final_images/" + name + "_wave.pdf")[0]);
+
     return histos;
 }
 
@@ -130,8 +137,8 @@ void main_func (){
     ROOT::EnableImplicitMT();
 
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_new_ranges.root", "RECREATE" /*"UPDATE"*/);
-    list <string> names ={"pmt1_NA_e6_100_or_run1",
+    TFile *outfile= new TFile("histograms/histograms_final_image.root", "RECREATE" /*"UPDATE"*/);
+    list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
                         "pmt2_NA_e6_700_or_run2",
@@ -208,7 +215,7 @@ void main_func (){
                         "pmt2_NA_i2_T_ext_iron_triple_run9",
                         "pmt3_NA_i2_T_ext_iron_triple_run9",                        
                         "pmt1_NA_i2_T_ext_aero_triple_run10",
-                        "pmt2_NA_i2_T_ext_aero_triple_run10",
+                        "pmt2_NA_i2_T_ext_aero_triple_run10",*/
                         "pmt3_NA_i2_T_ext_aero_triple_run10",};
 
     TStopwatch time_tot;
