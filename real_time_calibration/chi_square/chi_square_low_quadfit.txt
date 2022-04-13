@@ -1,0 +1,97 @@
+pmt1_e6_100_run1   chi2/ndof _charge  =  49.8122/69
+
+pmt1_e6_100_run1   chi2/ndof _amp  =  139.678/117
+
+pmt1_e6_100_run1_clear   chi2/ndof _charge  =  88.7302/69
+pmt1_e6_100_run1   chi2/ndof _charge   40.3098/34
+pmt1_e6_100_run1   chi2/ndof  _charge  35.7371/38
+pmt1_e6_100_run1   chi2/ndof  _charge  50.0556/54
+pmt1_e6_100_run1   chi2/ndof _charge   60.8465/59
+
+pmt1_e6_100_run1_clear   chi2/ndof _amp  =  156.008/117
+pmt1_e6_100_run1   chi2/ndof _amp   56.7041/53
+pmt1_e6_100_run1   chi2/ndof  _amp  82.5041/77
+pmt1_e6_100_run1   chi2/ndof  _amp  152.424/117
+pmt1_e6_100_run1   chi2/ndof _amp   145.655/117
+
+---------------------------------pmt1_e6_500_run2   chi2/ndof _charge  =  70.9613/70
+
+pmt1_e6_500_run2   chi2/ndof _amp  =  94.4172/117
+
+pmt1_e6_500_run2_clear   chi2/ndof _charge  =  51.0268/70
+pmt1_e6_500_run2   chi2/ndof _charge   33.7721/33
+pmt1_e6_500_run2   chi2/ndof  _charge  32.0517/39
+pmt1_e6_500_run2   chi2/ndof  _charge  55.8446/54
+pmt1_e6_500_run2   chi2/ndof _charge   64.1251/59
+
+pmt1_e6_500_run2_clear   chi2/ndof _amp  =  91.0986/117
+pmt1_e6_500_run2   chi2/ndof _amp   51.0747/47
+pmt1_e6_500_run2   chi2/ndof  _amp  91.1908/77
+pmt1_e6_500_run2   chi2/ndof  _amp  95.77/77
+pmt1_e6_500_run2   chi2/ndof _amp   167.687/147
+
+---------------------------------pmt2_e6_100_run1   chi2/ndof _charge  =  85.6657/75
+
+pmt2_e6_100_run1   chi2/ndof _amp  =  162.283/157
+
+pmt2_e6_100_run1_clear   chi2/ndof _charge  =  74.3814/75
+pmt2_e6_100_run1   chi2/ndof _charge   44.5412/33
+pmt2_e6_100_run1   chi2/ndof  _charge  45.1816/44
+pmt2_e6_100_run1   chi2/ndof  _charge  48.3342/49
+pmt2_e6_100_run1   chi2/ndof _charge   52.9441/39
+
+pmt2_e6_100_run1_clear   chi2/ndof _amp  =  181.282/157
+pmt2_e6_100_run1   chi2/ndof _amp   59.4064/67
+pmt2_e6_100_run1   chi2/ndof  _amp  165.755/89
+pmt2_e6_100_run1   chi2/ndof  _amp  100.654/97
+pmt2_e6_100_run1   chi2/ndof _amp   77.2363/77
+
+---------------------------------pmt2_e6_500_run2   chi2/ndof _charge  =  43.6102/49
+
+pmt2_e6_500_run2   chi2/ndof _amp  =  169.27/157
+
+pmt2_e6_500_run2_clear   chi2/ndof _charge  =  43.0737/49
+pmt2_e6_500_run2   chi2/ndof _charge   30.775/28
+pmt2_e6_500_run2   chi2/ndof  _charge  32.0575/44
+pmt2_e6_500_run2   chi2/ndof  _charge  34.2361/39
+pmt2_e6_500_run2   chi2/ndof _charge   48.8598/49
+
+pmt2_e6_500_run2_clear   chi2/ndof _amp  =  172.622/157
+pmt2_e6_500_run2   chi2/ndof _amp   492.584/97
+pmt2_e6_500_run2   chi2/ndof  _amp  728.388/117
+pmt2_e6_500_run2   chi2/ndof  _amp  103.212/87
+pmt2_e6_500_run2   chi2/ndof _amp   138.325/147
+
+---------------------------------pmt3_e6_100_run2   chi2/ndof _charge  =  112.734/96
+
+pmt3_e6_100_run2   chi2/ndof _amp  =  256.524/207
+
+pmt3_e6_100_run2_clear   chi2/ndof _charge  =  96.3331/96
+pmt3_e6_100_run2   chi2/ndof _charge   46.0187/39
+pmt3_e6_100_run2   chi2/ndof  _charge  48.3208/44
+pmt3_e6_100_run2   chi2/ndof  _charge  53.4559/46
+pmt3_e6_100_run2   chi2/ndof _charge   68.6866/62
+
+pmt3_e6_100_run2_clear   chi2/ndof _amp  =  246.23/207
+pmt3_e6_100_run2   chi2/ndof _amp   214.856/91
+pmt3_e6_100_run2   chi2/ndof  _amp  139.218/90
+pmt3_e6_100_run2   chi2/ndof  _amp  179.154/160
+pmt3_e6_100_run2   chi2/ndof _amp   230.748/184
+
+---------------------------------pmt3_e6_30_run1   chi2/ndof _charge  =  101.156/101
+
+pmt3_e6_30_run1   chi2/ndof _amp  =  137.703/160
+
+pmt3_e6_30_run1_clear   chi2/ndof _charge  =  125.149/101
+pmt3_e6_30_run1   chi2/ndof _charge   37.7576/34
+pmt3_e6_30_run1   chi2/ndof  _charge  43.704/44
+pmt3_e6_30_run1   chi2/ndof  _charge  78.2228/75
+pmt3_e6_30_run1   chi2/ndof _charge   44.7981/49
+
+pmt3_e6_30_run1_clear   chi2/ndof _amp  =  257.473/160
+pmt3_e6_30_run1   chi2/ndof _amp   225.64/102
+pmt3_e6_30_run1   chi2/ndof  _amp  143.504/91
+pmt3_e6_30_run1   chi2/ndof  _amp  129.29/113
+pmt3_e6_30_run1   chi2/ndof _amp   118.861/114
+
+---------------------------------

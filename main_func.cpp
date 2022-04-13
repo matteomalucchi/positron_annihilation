@@ -83,12 +83,16 @@ vector <TH1F*> make_histo(string name){
     }
     int range_charge=250000;
     int range_amp=3500; 
+    int bin_charge=1300;//950;
+    int bin_amp=1400;//950;
     if (name.find("pmt3")<name.length()){
         range_charge=50000;
         range_amp=600;
+        bin_charge=1300;//450;
+        bin_amp=1400;//450;
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, range_amp);
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 500, 11500, 15500);
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], bin_amp, 0, range_amp);
     for (long unsigned int i=0; i< charge.size(); i++){
         if (find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()){
             histo_charge->Fill(charge[i]);
@@ -127,7 +131,7 @@ vector <TH1F*> make_histo(string name){
     gr->SetMarkerStyle(1);
     gr->SetLineColor(kBlue);
     gr->Draw("AL");
-    c_wave->SaveAs(&("final_images/" + name + "_wave.pdf")[0]);
+    c_wave->SaveAs(&("waveform/" + name + "_wave.png")[0]);
 
     return histos;
 }
@@ -137,7 +141,7 @@ void main_func (){
     ROOT::EnableImplicitMT();
 
     vector <TH1F*> histos;
-    TFile *outfile= new TFile("histograms/histograms_final_image.root", "RECREATE" /*"UPDATE"*/);
+    TFile *outfile= new TFile("histograms/histograms_csvsco_3.root", "RECREATE" /*"UPDATE"*/);
     list <string> names ={/*"pmt1_NA_e6_100_or_run1",
                         "pmt2_NA_e6_100_or_run1",
                         "pmt1_NA_e6_700_or_run2",
@@ -176,12 +180,12 @@ void main_func (){
                         "pmt2_NA_cs1_co1_e6_ext_run1", 
                         "pmt1_NA_cs1_co1_e6_ext_run1", 
                         "pmt1_NA_cs_e6_100_run1", 
-                        "pmt2_NA_cs_e6_100_run1",
+                        "pmt2_NA_cs_e6_100_run1",*/
                         "pmt3_NA_cs_e6_30_run1",
-                        "pmt1_NA_cs_co_e6_100_run1",
-                        "pmt2_NA_cs_co_e6_100_run1",
+                        //"pmt1_NA_cs_co_e6_100_run1",
+                        /*"pmt2_NA_cs_co_e6_100_run1",*/
                         "pmt3_NA_cs_co_e6_30_run1", 
-                        "pmt1_NA_cs_e6_500_run2", 
+                        /*"pmt1_NA_cs_e6_500_run2", 
                         "pmt2_NA_cs_e6_500_run2",
                         "pmt3_NA_cs_e6_100_run2",
                         "pmt1_NA_cs_co_e6_500_run2", 
@@ -204,7 +208,7 @@ void main_func (){
                         "pmt3_NA_c6_ext_coinc12_merc_metal_run5", 
                         "pmt1_NA_c6_ext_coinc12_merc_metal_run6",
                         "pmt2_NA_c6_ext_coinc12_merc_metal_run6",
-                        "pmt3_NA_c6_ext_coinc12_merc_metal_run6"
+                        "pmt3_NA_c6_ext_coinc12_merc_metal_run6",
                         "pmt1_NA_c6_ext_coinc12_merc_metal_block_run7",
                         "pmt2_NA_c6_ext_coinc12_merc_metal_block_run7",
                         "pmt3_NA_c6_ext_coinc12_merc_metal_block_run7",
@@ -215,8 +219,8 @@ void main_func (){
                         "pmt2_NA_i2_T_ext_iron_triple_run9",
                         "pmt3_NA_i2_T_ext_iron_triple_run9",                        
                         "pmt1_NA_i2_T_ext_aero_triple_run10",
-                        "pmt2_NA_i2_T_ext_aero_triple_run10",*/
-                        "pmt3_NA_i2_T_ext_aero_triple_run10",};
+                        "pmt2_NA_i2_T_ext_aero_triple_run10",
+                        "pmt3_NA_i2_T_ext_aero_triple_run10",*/};
 
     TStopwatch time_tot;
     time_tot.Start();                

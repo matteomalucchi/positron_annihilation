@@ -84,13 +84,13 @@ vector<vector<float>>  charge_amp(string name){
 void scatter(){
     map <string, string> pair_names ={
         {"pmt1_NA_e6_ext_run1","pmt2_NA_e6_ext_run1"},
-        {"pmt1_NA_e6_ext_run2","pmt2_NA_e6_ext_run2"},
+        //{"pmt1_NA_e6_ext_run2","pmt2_NA_e6_ext_run2"},
         //{"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
-        {"pmt1_NA_e6_100_or_run1", "pmt2_NA_e6_100_or_run1"},
+        /*{"pmt1_NA_e6_100_or_run1", "pmt2_NA_e6_100_or_run1"},
         {"pmt1_NA_e6_700_or_run2", "pmt2_NA_e6_700_or_run2"},
-        {"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"}
+        {"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"}*/
     };
-    TFile *outfile= new TFile("scatter/scatter_plots.root", "RECREATE");
+    TFile *outfile= new TFile("scatter/scatter_plots_run1_ext.root", "RECREATE");
 
     for (const auto &pair_name : pair_names){  
         const auto name_a = pair_name.first;
@@ -172,39 +172,50 @@ void scatter(){
 
         TCanvas *c_fit_lin = new TCanvas(&("scatter_" + name + "_charge_correlationfit")[0], &("scatter_" + name + "_charge_correlationfit")[0]);
         TGraphErrors* gr = new TGraphErrors(picco_a.size(),&picco_a[0],&picco_b[0],nullptr,nullptr);
-        gStyle->SetStatY(0.9);
-        gStyle->SetStatX(0.5);
-        gr->SetMarkerStyle(1);
+/*        c_fit_lin->Update();
+        TPaveStats *st = (TPaveStats*)gr->FindObject("stats");
+        st->SetX1NDC(0.7); //new x start position
+        st->SetX2NDC(0.9); //new x end position
+        st->SetY1NDC(0.7); //new x start position
+        st->SetY2NDC(0.9); //new x end position
+        gr->SetMarkerStyle(1);*/
+        gr->SetNameTitle(&("scatter plot (pmt1 vs pmt2) charge")[0],&("scatter plot (pmt1 vs pmt2) charge")[0]);
+        gr->GetXaxis()->SetTitle(&(pmt_a+" charge [a.u.]")[0]);
+        gr->GetYaxis()->SetTitle(&(pmt_b+" charge [a.u.]")[0]);
         gr->Draw("APE");
-        TF1 *   linear  = new TF1("linear","[0]+[1]*x", option="W",-1, 1.4);
+        TF1 *   linear  = new TF1("linear","[0]+[1]*x",-1, 1.4,"W");
         linear->SetParNames ("Off-set","Correlation factor");
         gr->Fit("linear");
         linear->Draw("SAME");
         gStyle->SetOptFit(111);
-        c_fit_lin->SaveAs(&("scatter/scatter_linear" + name +"_charge"+ ".png")[0]);
+        gPad->SetLeftMargin(0.15);
+        gPad->SetRightMargin(0.1);
         c_fit_lin->Write();
 
+        c_fit_lin->SaveAs(&("scatter/scatter_linear" + name +"_charge"+ ".pdf")[0]);
 
 
 
         TCanvas *c_scatter_charge = new TCanvas(&("scatter_" + name + "_charge")[0], &("scatter_" + name + "_charge")[0]);
         TGraph* gr_charge = new TGraph(min(charge_a_def.size(), charge_b_def.size()),&charge_a_def[0],&charge_b_def[0]);
         gr_charge->SetMarkerStyle(1);
-        gr_charge->SetNameTitle(&("scatter_" + name + "_charge")[0],&("scatter_" + name + "_charge")[0]);
-        gr_charge->GetXaxis()->SetTitle(&(pmt_a)[0]);
-        gr_charge->GetYaxis()->SetTitle(&(pmt_b)[0]);
+        gr_charge->SetNameTitle(&("scatter plot (pmt1 vs pmt2) charge")[0],&("scatter plot (pmt1 vs pmt2) charge")[0]);
+        gr_charge->GetXaxis()->SetTitle(&(pmt_a+" charge [a.u.]")[0]);
+        gr_charge->GetYaxis()->SetTitle(&(pmt_b+" charge [a.u.]")[0]);
+        gPad->SetLeftMargin(0.15);
         gr_charge->Draw("AP");
-        c_scatter_charge->SaveAs(&("scatter/scatter_" + name +"_charge"+ ".png")[0]);
+        c_scatter_charge->SaveAs(&("scatter/scatter_" + name +"_charge"+ ".pdf")[0]);
         c_scatter_charge->Write();
 
         TCanvas *c_scatter_amp = new TCanvas(&("scatter_" + name + "_amp")[0],&("scatter_" + name + "_amp")[0]);
         TGraph* gr_amp = new TGraph(min(amp_a_def.size(), amp_b_def.size()),&amp_a_def[0],&amp_b_def[0]);
         gr_amp->SetMarkerStyle(1);
-        gr_amp->SetNameTitle(&("scatter_" + name + "_amp")[0],&("scatter_" + name + "_amp")[0]);
-        gr_amp->GetXaxis()->SetTitle(&(pmt_a)[0]);
-        gr_amp->GetYaxis()->SetTitle(&(pmt_b)[0]);
+        gr_amp->SetNameTitle(&("scatter plot (pmt1 vs pmt2) amplitude")[0], &("scatter plot (pmt1 vs pmt2) amplitude")[0]);
+        gr_amp->GetXaxis()->SetTitle(&(pmt_a+" amplitude [a.u.]")[0]);
+        gr_amp->GetYaxis()->SetTitle(&(pmt_b+" amplitude [a.u.]")[0]);
+        gPad->SetLeftMargin(0.15);
         gr_amp->Draw("AP");
-        c_scatter_amp->SaveAs(&("scatter/scatter_" + name +"_amp" +".png")[0]);
+        c_scatter_amp->SaveAs(&("scatter/scatter_" + name +"_amp" +".pdf")[0]);
         c_scatter_amp->Write();
     }
     outfile->Close();

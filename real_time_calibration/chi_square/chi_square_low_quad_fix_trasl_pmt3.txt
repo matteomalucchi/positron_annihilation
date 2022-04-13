@@ -1,0 +1,50 @@
+pmt3_e6_100_run2_Ne   chi2/ndof _charge  =  16.6381/31
+pmt3_e6_100_run2_Na_cs   chi2/ndof _charge  =  6.30259/11
+pmt3_e6_100_run2_Na_co   chi2/ndof _charge  =  14.5478/11
+pmt3_e6_100_run2_Cs_cs   chi2/ndof _charge  =  11.137/13
+pmt3_e6_100_run2_Cs_co   chi2/ndof _charge  =  12.9058/13
+
+pmt3_e6_100_run2_Ne   chi2/ndof _amp  =  64.6816/65
+pmt3_e6_100_run2_Na_cs   chi2/ndof _amp  =  63.539/27
+pmt3_e6_100_run2_Na_co   chi2/ndof _amp  =  63.3946/27
+pmt3_e6_100_run2_Cs_cs   chi2/ndof _amp  =  175.537/35
+pmt3_e6_100_run2_Cs_co   chi2/ndof _amp  =  144.048/35
+
+pmt3_e6_100_run2_clear   chi2/ndof _charge  =  28.6818/31
+pmt3_e6_100_run2   chi2/ndof _charge   14.5478/11
+pmt3_e6_100_run2   chi2/ndof  _charge  12.9058/13
+pmt3_e6_100_run2   chi2/ndof  _charge  21.2343/15
+pmt3_e6_100_run2   chi2/ndof _charge   14.7162/20
+
+pmt3_e6_100_run2_clear   chi2/ndof _amp  =  73.7632/65
+pmt3_e6_100_run2   chi2/ndof _amp   63.3946/27
+pmt3_e6_100_run2   chi2/ndof  _amp  144.048/35
+pmt3_e6_100_run2   chi2/ndof  _amp  56.1808/57
+pmt3_e6_100_run2   chi2/ndof _amp   58.1995/50
+
+---------------------------------
+pmt3_e6_30_run1_Ne   chi2/ndof _charge  =  34.199/33
+pmt3_e6_30_run1_Na_cs   chi2/ndof _charge  =  5.72242/9
+pmt3_e6_30_run1_Na_co   chi2/ndof _charge  =  9.29283/9
+pmt3_e6_30_run1_Cs_cs   chi2/ndof _charge  =  20.464/13
+pmt3_e6_30_run1_Cs_co   chi2/ndof _charge  =  10.399/13
+
+pmt3_e6_30_run1_Ne   chi2/ndof _amp  =  43.186/50
+pmt3_e6_30_run1_Na_cs   chi2/ndof _amp  =  63.8567/30
+pmt3_e6_30_run1_Na_co   chi2/ndof _amp  =  69.5929/30
+pmt3_e6_30_run1_Cs_cs   chi2/ndof _amp  =  110.996/42
+pmt3_e6_30_run1_Cs_co   chi2/ndof _amp  =  154.555/42
+
+pmt3_e6_30_run1_clear   chi2/ndof _charge  =  32.8826/33
+pmt3_e6_30_run1   chi2/ndof _charge   9.29283/9
+pmt3_e6_30_run1   chi2/ndof  _charge  10.399/13
+pmt3_e6_30_run1   chi2/ndof  _charge  29.5936/24
+pmt3_e6_30_run1   chi2/ndof _charge   7.61974/15
+
+pmt3_e6_30_run1_clear   chi2/ndof _amp  =  39.2352/50
+pmt3_e6_30_run1   chi2/ndof _amp   69.5929/30
+pmt3_e6_30_run1   chi2/ndof  _amp  154.555/42
+pmt3_e6_30_run1   chi2/ndof  _amp  47.4424/42
+pmt3_e6_30_run1   chi2/ndof _amp   37.9614/43
+
+---------------------------------

@@ -1,0 +1,15 @@
+off_set_pmt1_charge = 4349.43 +- 100.213
+cal_factor_pmt1_charge = 150570 +- 142.42
+off_set_pmt1_amp = 132.015 +- 1.88799
+cal_factor_pmt1_amp = 1862 +- 2.71973
+
+off_set_pmt2_charge = 3647.85 +- 115.368
+cal_factor_pmt2_charge = 136328 +- 168.219
+off_set_pmt2_amp = 107.424 +- 2.7152
+cal_factor_pmt2_amp = 1794.7 +- 3.95005
+
+off_set_pmt3_charge = 685.689 +- 33.7901
+cal_factor_pmt3_charge = 25572.9 +- 47.6648
+off_set_pmt3_amp = 24.7929 +- 1.18351
+cal_factor_pmt3_amp = 335.763 +- 1.73316
+

@@ -18,7 +18,7 @@
 
 using namespace std;
 
-string type_of_file = "triple_lin";
+string type_of_file = "triple_quad_90deg";
 
 ofstream time_file("triple/time_tot_"+type_of_file+".txt");
 
@@ -195,9 +195,11 @@ void triple_coincidence (){
         {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
         {"pmt1_NA_i2_T_ext_iron_triple_run9", "pmt2_NA_i2_T_ext_iron_triple_run9", "pmt3_NA_i2_T_ext_iron_triple_run9"},
         {"pmt1_NA_i2_T_ext_aero_triple_run10", "pmt2_NA_i2_T_ext_aero_triple_run10", "pmt3_NA_i2_T_ext_aero_triple_run10"},*/
-        {"pmt1_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
-        {"pmt1_NA_e6_ext_run2", "pmt2_NA_e6_ext_run2", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
-};
+        //{"pmt1_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3", "pmt2_NA_e6_700_or_run3"},
+        //{"pmt1_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt2_NA_c6_ext_coinc12_merc_metal_block_run8", "pmt3_NA_c6_ext_coinc12_merc_metal_block_run8"},
+        {"pmt1_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3", "pmt3_NA_e6_ext_run3"},
+        {"pmt3_NA_e6_100_run1", "pmt3_NA_e6_100_run1", "pmt3_NA_e6_100_run1"},
+        };
     vector<vector<float>> params;
     vector<TNtuple*> ntuples;
     if (type_of_file.find("real")<type_of_file.length()){
@@ -212,8 +214,8 @@ void triple_coincidence (){
         }
     }
 
-    else if (type_of_file.find("triple_lin")<type_of_file.length()){
-        params= take_params("triple_calib/lin_params.txt");
+    else if (type_of_file.find("triple_quad")<type_of_file.length()){
+        params= take_params("triple_calib/quad_params.txt");
     }
 
     // loop over various runs

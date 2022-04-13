@@ -1,0 +1,193 @@
+pmt1_e6_100_run1_Ne   peak Ne _charge =   192318+-94.0224
+pmt1_e6_100_run1_Na_cs   peak Ne _charge =   78749.6+-28.9419
+pmt1_e6_100_run1_Na_co   peak Ne _charge =   79623.8+-25.6601
+pmt1_e6_100_run1_Cs_cs   peak Ne _charge =   101535+-34.1882
+pmt1_e6_100_run1_Cs_co   peak Ne _charge =   102571+-34.2864
+
+pmt1_e6_100_run1_Ne   peak Ne _amp =   2452.06+-1.32752
+pmt1_e6_100_run1_Na_cs   peak Ne _amp =   1042.73+-0.607997
+pmt1_e6_100_run1_Na_co   peak Ne _amp =   1054.14+-0.642336
+pmt1_e6_100_run1_Cs_cs   peak Ne _amp =   1329.11+-0.708039
+pmt1_e6_100_run1_Cs_co   peak Ne _amp =   1343.95+-0.556892
+
+pmt1_e6_100_run1_clear   peak Ne _charge =   191845+-27550.5
+pmt1_e6_100_run1   peak Na _charge =   79602.6+-23.4357
+pmt1_e6_100_run1   peak Cs _charge =   102542+-26.3923
+pmt1_e6_100_run1   peak Co1 _charge =   178911+-151.75
+pmt1_e6_100_run1   peak Co2 _charge =   203158+-232.234
+pmt1_e6_100_run1   peak Na _charge =   79602.6+-23.4357
+pmt1_e6_100_run1   peak Cs _charge =   102542+-26.3923
+pmt1_e6_100_run1   peak Co1 _charge =   178911+-151.75
+pmt1_e6_100_run1   peak Co2 _charge =   203158+-232.234
+
+pmt1_e6_100_run1_clear   peak Ne _amp =   2478.57+-1.49526
+pmt1_e6_100_run1   peak Na _amp =   1054.27+-0.579862
+pmt1_e6_100_run1   peak Cs _amp =   1344.03+-0.570691
+pmt1_e6_100_run1   peak Co1 _amp =   2284.87+-5.34782
+pmt1_e6_100_run1   peak Co2 _amp =   2590.14+-6.80767
+pmt1_e6_100_run1   peak Na _amp =   1054.27+-0.579862
+pmt1_e6_100_run1   peak Cs _amp =   1344.03+-0.570691
+pmt1_e6_100_run1   peak Co1 _amp =   2284.87+-5.34782
+pmt1_e6_100_run1   peak Co2 _amp =   2590.14+-6.80767
+
+---------------------------------pmt1_e6_500_run2_Ne   peak Ne _charge =   195251+-83.9929
+pmt1_e6_500_run2_Na_cs   peak Ne _charge =   80082.3+-43.9571
+pmt1_e6_500_run2_Na_co   peak Ne _charge =   80996.7+-33.7548
+pmt1_e6_500_run2_Cs_cs   peak Ne _charge =   103001+-23.8146
+pmt1_e6_500_run2_Cs_co   peak Ne _charge =   104135+-22.5316
+
+pmt1_e6_500_run2_Ne   peak Ne _amp =   2503.58+-1.34491
+pmt1_e6_500_run2_Na_cs   peak Ne _amp =   1061.54+-1.28909
+pmt1_e6_500_run2_Na_co   peak Ne _amp =   1074.63+-1.11224
+pmt1_e6_500_run2_Cs_cs   peak Ne _amp =   1355.76+-0.407807
+pmt1_e6_500_run2_Cs_co   peak Ne _amp =   1370.61+-0.406362
+
+pmt1_e6_500_run2_clear   peak Ne _charge =   197278+-71.3835
+pmt1_e6_500_run2   peak Na _charge =   80984.7+-33.1083
+pmt1_e6_500_run2   peak Cs _charge =   104137+-20.3932
+pmt1_e6_500_run2   peak Co1 _charge =   181640+-105.489
+pmt1_e6_500_run2   peak Co2 _charge =   206378+-138.268
+pmt1_e6_500_run2   peak Na _charge =   80984.7+-33.1083
+pmt1_e6_500_run2   peak Cs _charge =   104137+-20.3932
+pmt1_e6_500_run2   peak Co1 _charge =   181640+-105.489
+pmt1_e6_500_run2   peak Co2 _charge =   206378+-138.268
+
+pmt1_e6_500_run2_clear   peak Ne _amp =   2530.06+-1.53579
+pmt1_e6_500_run2   peak Na _amp =   1074.48+-1.09001
+pmt1_e6_500_run2   peak Cs _amp =   1370.82+-0.407452
+pmt1_e6_500_run2   peak Co1 _amp =   2325.82+-3.15174
+pmt1_e6_500_run2   peak Co2 _amp =   2660.32+-3.92847
+pmt1_e6_500_run2   peak Na _amp =   1074.48+-1.09001
+pmt1_e6_500_run2   peak Cs _amp =   1370.82+-0.407452
+pmt1_e6_500_run2   peak Co1 _amp =   2325.82+-3.15174
+pmt1_e6_500_run2   peak Co2 _amp =   2660.32+-3.92847
+
+---------------------------------pmt2_e6_100_run1_Ne   peak Ne _charge =   176418+-51.7354
+pmt2_e6_100_run1_Na_cs   peak Ne _charge =   72298.6+-20.7953
+pmt2_e6_100_run1_Na_co   peak Ne _charge =   72161.2+-22.8651
+pmt2_e6_100_run1_Cs_cs   peak Ne _charge =   93233+-34.5899
+pmt2_e6_100_run1_Cs_co   peak Ne _charge =   93003.4+-36.0783
+
+pmt2_e6_100_run1_Ne   peak Ne _amp =   2377.29+-1.19932
+pmt2_e6_100_run1_Na_cs   peak Ne _amp =   1004.67+-0.474249
+pmt2_e6_100_run1_Na_co   peak Ne _amp =   1001.05+-0.559583
+pmt2_e6_100_run1_Cs_cs   peak Ne _amp =   1278.57+-0.681529
+pmt2_e6_100_run1_Cs_co   peak Ne _amp =   1279.46+-0.618559
+
+pmt2_e6_100_run1_clear   peak Ne _charge =   178292+-51.0381
+pmt2_e6_100_run1   peak Na _charge =   72157.1+-22.5485
+pmt2_e6_100_run1   peak Cs _charge =   93001.5+-34.366
+pmt2_e6_100_run1   peak Co1 _charge =   162602+-195.344
+pmt2_e6_100_run1   peak Co2 _charge =   204009+-1.41421
+pmt2_e6_100_run1   peak Na _charge =   72157.1+-22.5485
+pmt2_e6_100_run1   peak Cs _charge =   93001.5+-34.366
+pmt2_e6_100_run1   peak Co1 _charge =   162602+-195.344
+pmt2_e6_100_run1   peak Co2 _charge =   204009+-1.41421
+
+pmt2_e6_100_run1_clear   peak Ne _amp =   2403.31+-1.18738
+pmt2_e6_100_run1   peak Na _amp =   1000.65+-0.568345
+pmt2_e6_100_run1   peak Cs _amp =   1278.32+-0.633951
+pmt2_e6_100_run1   peak Co1 _amp =   2205.9+-7.37509
+pmt2_e6_100_run1   peak Co2 _amp =   2476.34+-7.96985
+pmt2_e6_100_run1   peak Na _amp =   1000.65+-0.568345
+pmt2_e6_100_run1   peak Cs _amp =   1278.32+-0.633951
+pmt2_e6_100_run1   peak Co1 _amp =   2205.9+-7.37509
+pmt2_e6_100_run1   peak Co2 _amp =   2476.34+-7.96985
+
+---------------------------------pmt2_e6_500_run2_Ne   peak Ne _charge =   176209+-67.3317
+pmt2_e6_500_run2_Na_cs   peak Ne _charge =   72371.5+-25.1791
+pmt2_e6_500_run2_Na_co   peak Ne _charge =   72934.9+-24.4792
+pmt2_e6_500_run2_Cs_cs   peak Ne _charge =   93226.9+-16.3759
+pmt2_e6_500_run2_Cs_co   peak Ne _charge =   93885.2+-18.8647
+
+pmt2_e6_500_run2_Ne   peak Ne _amp =   2386.45+-1.15687
+pmt2_e6_500_run2_Na_cs   peak Ne _amp =   1006.45+-0.567325
+pmt2_e6_500_run2_Na_co   peak Ne _amp =   1014.59+-0.573562
+pmt2_e6_500_run2_Cs_cs   peak Ne _amp =   1286.49+-0.520962
+pmt2_e6_500_run2_Cs_co   peak Ne _amp =   1296.86+-0.520495
+
+pmt2_e6_500_run2_clear   peak Ne _charge =   178062+-72.1327
+pmt2_e6_500_run2   peak Na _charge =   72915.3+-22.0915
+pmt2_e6_500_run2   peak Cs _charge =   93868.2+-17.0633
+pmt2_e6_500_run2   peak Co1 _charge =   164108+-156.374
+pmt2_e6_500_run2   peak Co2 _charge =   186505+-157.044
+pmt2_e6_500_run2   peak Na _charge =   72915.3+-22.0915
+pmt2_e6_500_run2   peak Cs _charge =   93868.2+-17.0633
+pmt2_e6_500_run2   peak Co1 _charge =   164108+-156.374
+pmt2_e6_500_run2   peak Co2 _charge =   186505+-157.044
+
+pmt2_e6_500_run2_clear   peak Ne _amp =   2411.77+-1.18443
+pmt2_e6_500_run2   peak Na _amp =   1013.09+-0.525405
+pmt2_e6_500_run2   peak Cs _amp =   1296.08+-0.466998
+pmt2_e6_500_run2   peak Co1 _amp =   2204.47+-3.57987
+pmt2_e6_500_run2   peak Co2 _amp =   2554.25+-7.72443
+pmt2_e6_500_run2   peak Na _amp =   1013.09+-0.525405
+pmt2_e6_500_run2   peak Cs _amp =   1296.08+-0.466998
+pmt2_e6_500_run2   peak Co1 _amp =   2204.47+-3.57987
+pmt2_e6_500_run2   peak Co2 _amp =   2554.25+-7.72443
+
+---------------------------------pmt3_e6_100_run2_Ne   peak Ne _charge =   32934.4+-11.1992
+pmt3_e6_100_run2_Na_cs   peak Ne _charge =   13634.1+-6.79319
+pmt3_e6_100_run2_Na_co   peak Ne _charge =   13659.1+-6.89649
+pmt3_e6_100_run2_Cs_cs   peak Ne _charge =   17515+-8.28713
+pmt3_e6_100_run2_Cs_co   peak Ne _charge =   17520.2+-8.885
+
+pmt3_e6_100_run2_Ne   peak Ne _amp =   449.248+-0.245203
+pmt3_e6_100_run2_Na_cs   peak Ne _amp =   194.188+-0.0942448
+pmt3_e6_100_run2_Na_co   peak Ne _amp =   194.344+-0.104106
+pmt3_e6_100_run2_Cs_cs   peak Ne _amp =   244.424+-0.142089
+pmt3_e6_100_run2_Cs_co   peak Ne _amp =   244.782+-0.1599
+
+pmt3_e6_100_run2_clear   peak Ne _charge =   33277.6+-12.6561
+pmt3_e6_100_run2   peak Na _charge =   13658.8+-6.83558
+pmt3_e6_100_run2   peak Cs _charge =   17518.3+-8.64714
+pmt3_e6_100_run2   peak Co1 _charge =   30499.7+-68.922
+pmt3_e6_100_run2   peak Co2 _charge =   33629.4+-176.565
+pmt3_e6_100_run2   peak Na _charge =   13658.8+-6.83558
+pmt3_e6_100_run2   peak Cs _charge =   17518.3+-8.64714
+pmt3_e6_100_run2   peak Co1 _charge =   30499.7+-68.922
+pmt3_e6_100_run2   peak Co2 _charge =   33629.4+-176.565
+
+pmt3_e6_100_run2_clear   peak Ne _amp =   454.027+-0.240413
+pmt3_e6_100_run2   peak Na _amp =   194.28+-0.108893
+pmt3_e6_100_run2   peak Cs _amp =   244.7+-0.144311
+pmt3_e6_100_run2   peak Co1 _amp =   415.816+-1.24441
+pmt3_e6_100_run2   peak Co2 _amp =   458.61+-2.04059
+pmt3_e6_100_run2   peak Na _amp =   194.28+-0.108893
+pmt3_e6_100_run2   peak Cs _amp =   244.7+-0.144311
+pmt3_e6_100_run2   peak Co1 _amp =   415.816+-1.24441
+pmt3_e6_100_run2   peak Co2 _amp =   458.61+-2.04059
+
+---------------------------------pmt3_e6_30_run1_Ne   peak Ne _charge =   33147.8+-14.4643
+pmt3_e6_30_run1_Na_cs   peak Ne _charge =   13705.8+-12.2047
+pmt3_e6_30_run1_Na_co   peak Ne _charge =   13709.7+-12.3437
+pmt3_e6_30_run1_Cs_cs   peak Ne _charge =   17618.3+-9.41655
+pmt3_e6_30_run1_Cs_co   peak Ne _charge =   17633.2+-10.8186
+
+pmt3_e6_30_run1_Ne   peak Ne _amp =   449.547+-0.365691
+pmt3_e6_30_run1_Na_cs   peak Ne _amp =   193.642+-0.125355
+pmt3_e6_30_run1_Na_co   peak Ne _amp =   194.103+-0.132655
+pmt3_e6_30_run1_Cs_cs   peak Ne _amp =   246.122+-0.346795
+pmt3_e6_30_run1_Cs_co   peak Ne _amp =   246.87+-0.350135
+
+pmt3_e6_30_run1_clear   peak Ne _charge =   33508.2+-17.5372
+pmt3_e6_30_run1   peak Na _charge =   13712.9+-11.268
+pmt3_e6_30_run1   peak Cs _charge =   17630.2+-10.1786
+pmt3_e6_30_run1   peak Co1 _charge =   30804.6+-76.4554
+pmt3_e6_30_run1   peak Co2 _charge =   35441.4+-70.5855
+pmt3_e6_30_run1   peak Na _charge =   13712.9+-11.268
+pmt3_e6_30_run1   peak Cs _charge =   17630.2+-10.1786
+pmt3_e6_30_run1   peak Co1 _charge =   30804.6+-76.4554
+pmt3_e6_30_run1   peak Co2 _charge =   35441.4+-70.5855
+
+pmt3_e6_30_run1_clear   peak Ne _amp =   454.481+-0.351513
+pmt3_e6_30_run1   peak Na _amp =   194.195+-0.134538
+pmt3_e6_30_run1   peak Cs _amp =   244.839+-0.55443
+pmt3_e6_30_run1   peak Co1 _amp =   422.954+-3.38688
+pmt3_e6_30_run1   peak Co2 _amp =   488.784+-1.99044
+pmt3_e6_30_run1   peak Na _amp =   194.195+-0.134538
+pmt3_e6_30_run1   peak Cs _amp =   244.839+-0.55443
+pmt3_e6_30_run1   peak Co1 _amp =   422.954+-3.38688
+pmt3_e6_30_run1   peak Co2 _amp =   488.784+-1.99044
+
+---------------------------------

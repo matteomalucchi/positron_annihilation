@@ -1,0 +1,4 @@
+energy peak Ne  pmt3_e6_100_run2_charge = 1.285603+-0.021498
+energy peak Ne  pmt3_e6_100_run2_amp = 1.322420+-0.007201
+stima combinata _charge=   1.2856+-0.0214976
+stima combinata _amp=   1.32242+-0.00720117

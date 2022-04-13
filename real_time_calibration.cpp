@@ -20,13 +20,13 @@ using namespace std;
 
 // lin|quad     fix     trasl      baseline
 
-string type_of_file = "_quadfit_fix_baseline";
+string type_of_file = "_quad_fix_oldbin";
 
-ofstream mass_e_file("real_time_calibration/peak_energy_low"+type_of_file+".txt");
-ofstream peak_Ne_file("real_time_calibration/peak_Ne_low"+type_of_file+".txt");
-ofstream chi_gaus_file("real_time_calibration/chi_square_low"+type_of_file+".txt");
-ofstream gaus_file("real_time_calibration/gaus_params_low"+type_of_file+".txt");
-ofstream lin_file("real_time_calibration/lin_params_low"+type_of_file+".txt");
+ofstream mass_e_file("real_time_calibration/mass/peak_energy_low"+type_of_file+".txt");
+ofstream peak_Ne_file("real_time_calibration/ne/peak_Ne_low"+type_of_file+".txt");
+ofstream chi_gaus_file("real_time_calibration/chi_square/chi_square_low"+type_of_file+".txt");
+ofstream gaus_file("real_time_calibration/gaus_params/gaus_params_low"+type_of_file+".txt");
+ofstream lin_file("real_time_calibration/lin_params/lin_params_low"+type_of_file+".txt");
 
 
 vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float amp_min, float amp_max, float y_rescale_charge,float y_rescale_amp, float x_rescale_charge, float x_rescale_amp){
@@ -86,24 +86,43 @@ vector <TH1F*> make_histo(string name, float charge_min, float charge_max,float 
         min =*min_element(v[i].begin()+300, v[i].end()-80);
         amp[i]=h-min;
     }
-    int range_charge=250000;
+    /*int range_charge=250000;
     int range_amp=3500; 
+    int bin_charge=950;
+    int bin_amp=950;
     if (name.find("pmt3")<name.length()){
         range_charge=50000;
         range_amp=600;
+        bin_charge=450;
+        bin_amp=450;
+    }*/
+    int range_charge=250000;
+    int range_amp=3500; 
+    int bin_charge=1300;
+    int bin_amp=1400;
+    if (name.find("pmt3")<name.length()){
+        range_charge=50000;
+        range_amp=600;
+        bin_charge=1300;
+        bin_amp=1400;
     }
-    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], 1300, 0, range_charge);
-    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], 1400, 0, range_amp);
+
+    TH1F *histo_charge=  new TH1F(&(name + "_charge")[0],&(name + "_charge")[0], bin_charge, 0, range_charge);
+    TH1F *histo_amp=  new TH1F(&(name + "_amp")[0],&(name + "_amp")[0], bin_amp, 0, range_amp);
     for (long unsigned int i=0; i< charge.size(); i++){
         if ((find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()) && charge[i]> charge_min && charge[i]<charge_max){
-            if (type_of_file.find("trasl") < type_of_file.length()) histo_charge->Fill(charge[i]+x_rescale_charge);
+            if (type_of_file.find("trasl") < type_of_file.length()){
+                histo_charge->Fill(charge[i]+x_rescale_charge);
+            }
             else histo_charge->Fill(charge[i]);
         }
     }
     for (long unsigned int i=0; i< charge.size(); i++){
         if ((find(idx_strange.begin(), idx_strange.end(), i) == idx_strange.end()) && amp[i]> amp_min && amp[i]<amp_max){
-            if (type_of_file.find("trasl") < type_of_file.length()) histo_amp->Fill(amp[i]+x_rescale_amp);
-            else histo_amp->Fill(amp[i]);        
+            if (type_of_file.find("trasl") < type_of_file.length()){
+                histo_amp->Fill(amp[i]+x_rescale_amp);
+            }
+            else histo_amp->Fill(amp[i]);
         }
     }
     histo_charge->Scale(y_rescale_charge);
@@ -149,8 +168,15 @@ vector<float> fit_gaus_single (TH1F* histo, float ranges1, float ranges2 , strin
     pad1->Draw();
     pad2->Draw();
     pad1->cd();
-    TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges1, ranges2);
-    gaus1->SetParameters(200, abs(ranges1+ranges2)/2, abs(ranges1-ranges2));
+    TF1 *gaus1;
+    /*if (type_of_file.find("baseline") < type_of_file.length()){
+        gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))+[3]",ranges1, ranges2);
+        gaus1->SetParameters(200, abs(ranges1+ranges2)/2, abs(ranges1-ranges2),50);
+    }*/
+    //else{
+        gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges1, ranges2);
+        gaus1->SetParameters(200, abs(ranges1+ranges2)/2, abs(ranges1-ranges2));
+    //}
     histo->Fit("gaus1","R", "SAME");
     //gStyle->SetStatY(0.9);
     //gStyle->SetStatX(0.5);
@@ -182,7 +208,7 @@ vector<float> fit_gaus_single (TH1F* histo, float ranges1, float ranges2 , strin
     //c_Ne->Write();
 
     chi_gaus_file<< name << "   chi2/ndof "+type+"  =  "<< gaus1->GetChisquare() <<"/"<< gaus1->GetNDF() <<"\n";
-    gaus_file<< name << "   peak Ne "+type+" =   "<< gaus1->GetParameter(1) <<"+-"<< gaus1->GetParError(1) <<"\n";
+    gaus_file<< name <<type<<" =   "<< gaus1->GetParameter(1) <<"+-"<< gaus1->GetParError(1) <<"\n";
     
     vector<float> gaus_params;
     gaus_params.push_back(gaus1->GetParameter(1));
@@ -214,8 +240,8 @@ vector<float> fit_gaus (TH1F* histo, vector<float> ranges, string name, string t
         gaus4->SetParameters(100, abs(ranges[10]+ranges[11])/2, abs(ranges[10]-ranges[11]));
     }
     else if (type_of_file.find("expo") < type_of_file.length()){
-        gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))+[3]*exp([4]*x)",ranges[0], ranges[1]*(1.05));
-        gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))+[3]*exp([4]*x)",ranges[2], ranges[3]*(1.2));
+        gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))+[3]*exp([4]*x)",ranges[0]*0.8, ranges[1]*(1.05));
+        gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))+[3]*exp([4]*x)",ranges[2]*0.95, ranges[3]*(1.2));
         gaus3 = new TF1("gaus3","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[8], ranges[9]);
         gaus4 = new TF1("gaus4","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[10], ranges[11]);
 
@@ -322,7 +348,7 @@ vector<float> fit_gaus (TH1F* histo, vector<float> ranges, string name, string t
 
 auto fit_lin(string name_final, string type, vector<float> gaus_params, TFile * outfile, vector<float> gaus_param_Ne){
     // cs + co1 +co2
-    float x[3]={0.66, 1.17/*, 1.27*/, 1.33};
+    float x[3]={0.6617, 1.1732/*, 1.274*/, 1.3325};
     float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4]/*,gaus_param_Ne[0]*/,  gaus_params[6]};
     //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
     float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5]/*,gaus_param_Ne[1]*/, gaus_params[7]};
@@ -406,9 +432,10 @@ auto peak_energy(string name_final, string type, vector<vector<double>> lin_para
     //energy.insert(energy.end(), y.begin(), y.end());
     return energy;
 }
+
 auto fit_quad(string name_final, string type, vector<float> gaus_params, TFile * outfile, vector<float> gaus_param_Ne){
     // cs + co1 +co2
-    float x[3]={0.66, 1.17/*, 1.27*/, 1.33};
+    float x[3]={0.6617, 1.1732/*, 1.274*/, 1.3325};
     float y[sizeof(x)/sizeof(x[0])]={gaus_params[2], gaus_params[4]/*,gaus_param_Ne[0]*/,  gaus_params[6]};
     //float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[2]/100, gaus_params[4]/100, gaus_params[6]/100};
     float y_err[sizeof(x)/sizeof(x[0])] = {gaus_params[3], gaus_params[5]/*,gaus_param_Ne[1]*/, gaus_params[7]};
@@ -663,19 +690,19 @@ void real_time_calibration(){
 
         {{"pmt2_NA_cs_e6_100_run1", "pmt2_NA_cs_co_e6_100_run1"}, 
             {{69000, 76000, 90000, 108000-9000, 150000-9000, 210000-9000, 170000, 185000, 157000, 167000, 182000, 190000},
-            {925, 1100, 1170, 1430, 1900, 2800, 2200, 2600, 2050, 2300, 2450, 2650}}}, 
+            {925, 1100, 1150, 1430, 1900, 2800, 2200, 2600, 2050, 2300, 2450, 2650}}}, 
 
         {{"pmt2_NA_cs_e6_500_run2", "pmt2_NA_cs_co_e6_500_run2"}, 
             {{70000, 76000, 89000, 98000, 150000, 190000, 172000, 182000, 160000, 168000, 180000, 190000},
-            {925, 1175, 1200, 1500, 1900, 2850, 2200, 2600, 2100, 2325, 2325, 2700}}}, 
+            {925, 1150, 1200, 1450, 1900, 2850, 2200, 2600, 2100, 2325, 2325, 2700}}}, 
 
         {{"pmt3_NA_cs_e6_30_run1", "pmt3_NA_cs_co_e6_30_run1"}, 
             {{13200, 14600, 16800, 18600, 28000, 40000, 31000, 35000, 29000, 32000, 34000, 36000},
-            {170, 215, 235, 275, 300, 540, 420, 490, 380, 440, 450, 510}}}, 
+            {170, 215, 225, 280, 340, 540, 420, 490, 380, 440, 450, 510}}}, 
 
         {{"pmt3_NA_cs_e6_100_run2", "pmt3_NA_cs_co_e6_100_run2"}, 
             {{13000, 14600, 16800, 18600, 26000, 40000, 31000, 34800, 29500, 31400, 33500, 36000},
-            {175, 215, 215, 270, 330, 530, 410, 500, 360, 440, 440, 510}}}, 
+            {175, 215, 225, 270, 330, 530, 410, 500, 360, 440, 440, 510}}}, 
         };
     
     vector <float>   y_rescale, discrepancy;
@@ -727,13 +754,14 @@ void real_time_calibration(){
             y_rescale.push_back((int_NA_b/int_NA_a + int_cs_b/int_cs_a)/2);
             
             gaus_param_Ne.push_back(fit_gaus_single(histo_a, ranges[i][6],ranges[i][7] , name_final+"_Ne", *type));
+            gROOT->SetBatch(kTRUE);
 
             gaus_param_Na_cs.push_back(fit_gaus_single(histo_a, ranges[i][0],ranges[i][1] , name_final+"_Na_cs", *type));
             gaus_param_Na_co.push_back(fit_gaus_single(histo_b, ranges[i][0],ranges[i][1] , name_final+"_Na_co", *type));
             gaus_param_Cs_cs.push_back(fit_gaus_single(histo_a, ranges[i][2],ranges[i][3] , name_final+"_Cs_cs", *type));
             gaus_param_Cs_co.push_back(fit_gaus_single(histo_b, ranges[i][2],ranges[i][3] , name_final+"_Cs_co", *type));
             discrepancy.push_back(((gaus_param_Na_co[i][0]-gaus_param_Na_cs[i][0])+(gaus_param_Cs_co[i][0]-gaus_param_Cs_cs[i][0]))/2);
-
+            cout << discrepancy[i] << endl;
             i++;
             chi_gaus_file<<"\n";
             gaus_file<<"\n";
@@ -749,10 +777,12 @@ void real_time_calibration(){
             f->GetObject(&(name_a + *type)[0], histo_a);
             TH1F *histo_b = nullptr;
             f->GetObject(&(name_b + *type)[0], histo_b);
+            gROOT->SetBatch(kTRUE);
 
             auto gaus_param_Ne_clear=fit_gaus_single(histos[i], ranges[i][6],ranges[i][7], name_final+"_clear", *type);
             TH1F *histo_sub = (TH1F*)histo_b->Clone(&("histo_sub"+*type)[0]);
-            
+            gROOT->SetBatch(kFALSE);
+
             histo_sub->Add(histos[i], -1);
             TCanvas *c_all = new TCanvas(&(name_final + *type +"_all")[0] ,&(name_final + *type +"_all")[0]);
             histo_sub->SetName(&(name_final + *type +"_all")[0]);
@@ -761,11 +791,12 @@ void real_time_calibration(){
             histo_b->Draw("SAME HIST");
             histo_a->Draw("SAME HIST");
             histos[i]->Draw("SAME HIST");
+            c_all->BuildLegend();
             //c_all->SaveAs(&("real_time_calibration/"+name_final + *type +"_all.png")[0]);
             
-            histo_a->Write();
-            histo_b->Write();
-            histos[i]->Write();
+            //histo_a->Write();
+            //histo_b->Write();
+            //histos[i]->Write();
             c_all->Write();
             vector<float> x, y, gaus_params;
             vector<vector<double>> lin_params;
@@ -810,8 +841,8 @@ void real_time_calibration(){
             i++;
         }
         
-        chi_gaus_file<<"---------------------------------";
-        gaus_file<<"---------------------------------";
+        chi_gaus_file<<"---------------------------------"<<"\n";
+        gaus_file<<"---------------------------------"<<"\n";
     }
     vector<float> energy_comb, energy_piccoNe_comb;
     energy_comb.insert(energy_comb.end(), energy[0].begin(), energy[0].end());

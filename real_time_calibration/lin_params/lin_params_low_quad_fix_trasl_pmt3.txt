@@ -1,0 +1,21 @@
+off_set_pmt1_charge = 0 +- inf
+lin_factor_pmt1_charge = 0 +- inf
+quad_factor_pmt1_charge = 0 +- inf
+off_set_pmt1_amp = 0 +- inf
+lin_factor_pmt1_amp = 0 +- inf
+quad_factor_pmt1_amp = 0 +- inf
+
+off_set_pmt2_charge = 0 +- inf
+lin_factor_pmt2_charge = 0 +- inf
+quad_factor_pmt2_charge = 0 +- inf
+off_set_pmt2_amp = 0 +- inf
+lin_factor_pmt2_amp = 0 +- inf
+quad_factor_pmt2_amp = 0 +- inf
+
+off_set_pmt3_charge = 0 +- inf
+lin_factor_pmt3_charge = 0 +- inf
+quad_factor_pmt3_charge = 0 +- inf
+off_set_pmt3_amp = 0 +- inf
+lin_factor_pmt3_amp = 0 +- inf
+quad_factor_pmt3_amp = 0 +- inf
+

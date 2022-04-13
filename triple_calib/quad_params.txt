@@ -1,0 +1,84 @@
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run1_charge = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run1_charge = 146339 +- 217.497
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run1_charge = -2283.64 +- 234.849
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run1_amp = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run1_amp = 1977.46 +- 5.16557
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run1_amp = -136.261 +- 5.76482
+
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run2_charge = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run2_charge = 146339 +- 217.497
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run2_charge = -2283.64 +- 234.849
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run2_amp = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run2_amp = 1977.46 +- 5.16557
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run2_amp = -136.261 +- 5.76482
+
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run3_charge = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run3_charge = 146339 +- 217.497
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run3_charge = -2283.64 +- 234.849
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run3_amp = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run3_amp = 1977.46 +- 5.16557
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run3_amp = -136.261 +- 5.76482
+
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run4_charge = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run4_charge = 146339 +- 217.497
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run4_charge = -2283.64 +- 234.849
+off_set pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run4_amp = 0 +- 0
+cal_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run4_amp = 1977.46 +- 5.16557
+quad_factor pmt1_NA_c6_ext_coinc12_merc_metal_block_run8_run4_amp = -136.261 +- 5.76482
+
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run1_charge = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run1_charge = 134111 +- 251.24
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run1_charge = -1227.63 +- 252.407
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run1_amp = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run1_amp = 1948.77 +- 4.90014
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run1_amp = -131.503 +- 5.22036
+
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run2_charge = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run2_charge = 134111 +- 251.24
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run2_charge = -1227.63 +- 252.407
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run2_amp = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run2_amp = 1948.77 +- 4.90014
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run2_amp = -131.503 +- 5.22036
+
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run3_charge = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run3_charge = 134111 +- 251.24
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run3_charge = -1227.63 +- 252.407
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run3_amp = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run3_amp = 1948.77 +- 4.90014
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run3_amp = -131.503 +- 5.22036
+
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run4_charge = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run4_charge = 134111 +- 251.24
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run4_charge = -1227.63 +- 252.407
+off_set pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run4_amp = 0 +- 0
+cal_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run4_amp = 1948.77 +- 4.90014
+quad_factor pmt2_NA_c6_ext_coinc12_merc_metal_block_run8_run4_amp = -131.503 +- 5.22036
+
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run1_charge = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run1_charge = 25341.7 +- 334.874
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run1_charge = -1902.06 +- 262.856
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run1_amp = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run1_amp = 374.78 +- 6.82233
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run1_amp = -43.4516 +- 5.51827
+
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run2_charge = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run2_charge = 25341.7 +- 334.874
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run2_charge = -1902.06 +- 262.856
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run2_amp = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run2_amp = 374.78 +- 6.82233
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run2_amp = -43.4516 +- 5.51827
+
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run3_charge = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run3_charge = 25341.7 +- 334.874
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run3_charge = -1902.06 +- 262.856
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run3_amp = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run3_amp = 374.78 +- 6.82233
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run3_amp = -43.4516 +- 5.51827
+
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run4_charge = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run4_charge = 25341.7 +- 334.874
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run4_charge = -1902.06 +- 262.856
+off_set pmt3_NA_c6_ext_coinc12_merc_metal_run6_run4_amp = 0 +- 0
+cal_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run4_amp = 374.78 +- 6.82233
+quad_factor pmt3_NA_c6_ext_coinc12_merc_metal_run6_run4_amp = -43.4516 +- 5.51827
+

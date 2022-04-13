@@ -1,0 +1,15 @@
+off_set_pmt1_charge = -nan +- 0
+lin_factor_pmt1_charge = 156117 +- 148.542
+off_set_pmt1_amp = -nan +- 0
+lin_factor_pmt1_amp = 2050.84 +- 2.44654
+
+off_set_pmt2_charge = -nan +- 0
+lin_factor_pmt2_charge = 158276 +- 92.4739
+off_set_pmt2_amp = -nan +- 0
+lin_factor_pmt2_amp = 2092.03 +- 1.81544
+
+off_set_pmt3_charge = -nan +- 0
+lin_factor_pmt3_charge = 141228 +- 159.292
+off_set_pmt3_amp = -nan +- 0
+lin_factor_pmt3_amp = 1953.62 +- 4.09456
+

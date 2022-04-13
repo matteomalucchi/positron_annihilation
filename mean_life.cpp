@@ -19,7 +19,7 @@
 
 using namespace std;
 
-string type_of_file = "triple_lin";
+string type_of_file = "triple_quad";
 
 void mean_life(){
     TFile *f= new TFile(&("triple/ntuple_" + type_of_file + ".root")[0]);
@@ -35,9 +35,11 @@ void mean_life(){
         {"run9",{-5,2.5, -5, 8, 2.5, 15,0,15,-1,0,7.45, -0.67}},
         {"run10",{-5,2.5, -5, 8, 3, 15,0,15,-1,0, 6.35, -0.52}},
     };
+    vector<string> material={"air", "iron", "aerogel"};
+    vector<float>taus, taus_err;
     TNtuple *ntuple;
     int bins=400, min=-10,max=20;
-
+    int i=0;
     for (const auto &run : runs) {
         const auto ntuple_name = run.first;
         const auto ranges = run.second;  
@@ -56,14 +58,14 @@ void mean_life(){
 
         TF1 *gaus1 = new TF1("gaus1","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[0], ranges[1]);
         gaus1->SetParameters(100, 5,2);
-        gaus1->SetLineColor(kRed);
+        gaus1->SetLineColor(kYellow);
         h->Fit("gaus1","R");
 
         TF1 *gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[2], ranges[3]);
         gaus2->FixParameter(0,gaus1->GetParameter(0));
         gaus2->FixParameter(1,gaus1->GetParameter(1));
         gaus2->FixParameter(2,gaus1->GetParameter(2));
-        gaus2->SetLineColor(kYellow);
+        gaus2->SetLineColor(kRed);
 /*
         TF1 *expo1 = new TF1("expo1", "exp([0]+[1]*x)",ranges[4], ranges[5]);
         expo1->SetParameters(ranges[10], ranges[11]);
@@ -89,68 +91,57 @@ void mean_life(){
         //gaus_exp->SetParameters(100,5,2,ranges[10], ranges[11]);
 
         h->Fit("gaus_exp","R");
+        gStyle->SetOptFit(1111); 
 
         TF1 *expo1 = new TF1("expo1","exp([0]+[1]*x)",ranges[4], ranges[5]);
         expo1->SetParameter(0,ranges[10]);
         expo1->SetParameter(1,ranges[11]);    
         expo1->SetLineColor(kBlack);
-        h->Fit("expo1","R");
+        //h->Fit("expo1","R");
 
         TF1 *expo2 = new TF1("expo2","exp([0]+[1]*x)",ranges[4], ranges[5]);
         expo2->SetParameter(0,gaus_exp->GetParameter(0));
         expo2->SetParameter(1,gaus_exp->GetParameter(1));    
         expo2->SetLineColor(kGray);
 
+        h->SetNameTitle(&("(t2+t1)/2-t3 "+material[i])[0],&("(t2+t1)/2-t3 "+material[i])[0]);
+        h->GetXaxis()->SetTitle("Time [ns]");
+        h->GetYaxis()->SetTitle(&("Entries / "+to_string(h->GetBinWidth(1))+" [ns]")[0]);
+        gStyle->SetOptStat("neou");
+
         h->Draw();
-        gaus1->Draw("SAME");
+        //gaus1->Draw("SAME");
         gaus_exp->Draw("SAME");
-        expo1->Draw("SAME");
-        expo2->Draw("SAME");
+        //expo1->Draw("SAME");
+        //expo2->Draw("SAME");
         gaus2->Draw("same");
 
-        c->BuildLegend();
+        auto legend = new TLegend(0.1,0.75,0.35,0.9);
+        //legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+        legend->AddEntry(h,&("(t2+t1)/2-t3 "+material[i])[0],"l");
+        legend->AddEntry("gaus_exp","gaus + expo","l");
+        legend->AddEntry("gaus2","gaus","l");
+        legend->Draw();
+
+        taus.push_back(1/abs(gaus_exp->GetParameter(1)));
+        taus_err.push_back(abs(gaus_exp->GetParError(1)/(gaus_exp->GetParameter(1)*gaus_exp->GetParameter(1))));
 
         cout<<endl;
         cout << "mean life "<< ntuple_name<<"= "  <<1/abs(gaus_exp->GetParameter(1)) <<"+-"<< abs(gaus_exp->GetParError(1)/(gaus_exp->GetParameter(1)*gaus_exp->GetParameter(1)))<<endl;
-
-
-/*
-        gaus1->SetLineColor(kRed);
-        gStyle->SetOptFit(1111);
-
-        h->Fit("gaus1","R", "SAME");
-        gaus1->SetLineColor(kRed);
-        gStyle->SetOptFit(1111);
-
-        TF1 *gaus2 = new TF1("gaus2","[0]*exp(-0.5*pow(((x-[1])/[2]),2))",ranges[2], ranges[3]);
-        gaus2->FixParameter(0,gaus1->GetParameter(0));
-        gaus2->FixParameter(1,gaus1->GetParameter(1));
-        gaus2->FixParameter(2,gaus1->GetParameter(2));
-        gaus2->SetLineColor(kGreen);
-                
-        h->Draw();
-        gaus1->Draw("SAME");
-        gaus2->Draw("SAME");
-
-        TCanvas *c_sub = new TCanvas(&("histo_sub_"+ntuple_name)[0], &("histo_sub_"+ntuple_name)[0]);   
-        TH1F *h_sub = (TH1F*)h->Clone(&("histo_sub"+ntuple_name)[0]);
-        h_sub->Reset();
-        for (int j=0;j<bins;j++){
-            h_sub->SetBinContent(j,h->GetBinContent(j)-gaus2->Eval(h->GetXaxis()->GetBinCenter(j)));
-        }
-        TF1 *expo1 = new TF1("expo1", "expo(0)",ranges[4], ranges[5]);
-        expo1->SetParameters(ranges[10], ranges[11]);
-        expo1->SetParLimits(0,ranges[6], ranges[7]);
-        expo1->SetParLimits(1, ranges[8], ranges[9]) ;
-        
-        h_sub->Fit("expo1","R");
-        expo1->SetLineColor(kRed);
-        gStyle->SetOptFit(1111);
-        h_sub->Draw();
-        expo1->Draw("same");
-        cout<<endl;
-        cout << "mean life "<< ntuple_name<<"= "  <<1/abs(expo1->GetParameter(1)) <<endl;
-*/
+        i++;
     }
+    vector<float> weights(6);
+    float t0=0, t0_err=0, weights_sum=0;
+                // weighted average
+    for(int k=0; k<3;k++){
+        weights[k]=1/(taus_err[k]*taus_err[k]);
+        weights_sum+=weights[k];
+    }
+
+    for(int k=0; k<3;k++){
+        t0+=taus[k]*weights[k]/weights_sum;
+    }
+    t0_err=sqrt(1/weights_sum);
+    cout << t0 <<"  "<< t0_err <<endl;
 }
 

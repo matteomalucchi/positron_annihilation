@@ -1,0 +1,6 @@
+run3  tot time    1061 s
+run3  tot time    1061 s
+run3  tot time    1061 s
+run1  tot time    67 s
+run1  tot time    67 s
+run1  tot time    67 s
