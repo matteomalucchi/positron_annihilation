@@ -1,2 +1,2 @@
 # positron_annihilation
-Annichilazione del positrone 2022 (Laboratorio di Fisica delle Interazioni Fondamentali)
+Positron annihilation 2022 (Fundamental interaction laboratory - Unipi)
